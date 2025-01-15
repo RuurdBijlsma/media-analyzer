@@ -1,21 +1,24 @@
 from __future__ import annotations
 
 from pgvecto_rs.sqlalchemy import VECTOR
-from pgvecto_rs.types import Vector
+from pgvecto_rs.types import Hnsw, IndexOption, Vector
 from sqlalchemy import (
-    Integer,
-    String,
+    ARRAY,
+    Boolean,
+    DateTime,
+    Enum,
     Float,
     ForeignKey,
-    DateTime,
+    Index,
+    Integer,
     Interval,
+    String,
+    Text,
     UniqueConstraint,
-    Enum,
-    Boolean, Text, ARRAY,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncAttrs
-from sqlalchemy.orm import relationship, Mapped, mapped_column, DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 from app.data.enums.classification.activity_type import ActivityType
 from app.data.enums.classification.animal_type import AnimalType
@@ -77,7 +80,8 @@ class ImageModel(Base):
     altitude = mapped_column(Float, nullable=True)
     location_id = mapped_column(Integer, ForeignKey("geo_locations.id"), nullable=True)
     location: Mapped[GeoLocationModel | None] = relationship(
-        "GeoLocationModel", back_populates="images"
+        "GeoLocationModel",
+        back_populates="images",
     )
     # Weather https://dev.meteostat.net/formats.html#weather-condition-codes
     weather_recorded_at = mapped_column(DateTime(timezone=False), nullable=True)
@@ -90,67 +94,76 @@ class ImageModel(Base):
     weather_sun_hours = mapped_column(Float, nullable=True)
     weather_condition = mapped_column(Enum(WeatherCondition), nullable=True)
     # Relations
-    visual_information: Mapped[list["VisualInformationModel"]] = relationship(
+    visual_information: Mapped[list[VisualInformationModel]] = relationship(
         "VisualInformationModel",
         back_populates="image",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
     # User
     user_id = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
     owner: Mapped[UserModel] = relationship("UserModel", back_populates="images")
+
+    __table_args__ = (Index("idx_datetime_local_utc", "datetime_local", "datetime_utc"),)
 
 
 class VisualInformationModel(Base):
     __tablename__ = "visual_information"
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
     image_id: Mapped[str] = mapped_column(String, ForeignKey("images.id"))
-    image: Mapped["ImageModel"] = relationship("ImageModel",
-                                               back_populates="visual_information")
+    image: Mapped[ImageModel] = relationship("ImageModel", back_populates="visual_information")
     frame_percentage = mapped_column(Integer, nullable=False)
     # AI shit
     embedding: Mapped[Vector] = mapped_column(VECTOR(768), nullable=False)
     # Objects
-    objects: Mapped[list["ObjectBoxModel"]] = relationship(
+    objects: Mapped[list[ObjectBoxModel]] = relationship(
         "ObjectBoxModel",
         back_populates="visual_information",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
     # OCR
-    ocr_boxes: Mapped[list["OCRBoxModel"]] = relationship(
+    ocr_boxes: Mapped[list[OCRBoxModel]] = relationship(
         "OCRBoxModel",
         back_populates="visual_information",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
     # Faces
-    faces: Mapped[list["FaceBoxModel"]] = relationship(
+    faces: Mapped[list[FaceBoxModel]] = relationship(
         "FaceBoxModel",
         back_populates="visual_information",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
     # Classifications
     scene_type: Mapped[SceneType] = mapped_column(
-        Enum(SceneType), nullable=False
+        Enum(SceneType),
+        nullable=False,
     )
     people_type: Mapped[PeopleType | None] = mapped_column(
-        Enum(PeopleType), nullable=True
+        Enum(PeopleType),
+        nullable=True,
     )
     animal_type: Mapped[AnimalType | None] = mapped_column(
-        Enum(AnimalType), nullable=True
+        Enum(AnimalType),
+        nullable=True,
     )
     document_type: Mapped[DocumentType | None] = mapped_column(
-        Enum(DocumentType), nullable=True
+        Enum(DocumentType),
+        nullable=True,
     )
     object_type: Mapped[ObjectType | None] = mapped_column(
-        Enum(ObjectType), nullable=True
+        Enum(ObjectType),
+        nullable=True,
     )
     activity_type: Mapped[ActivityType | None] = mapped_column(
-        Enum(ActivityType), nullable=True
+        Enum(ActivityType),
+        nullable=True,
     )
     event_type: Mapped[EventType | None] = mapped_column(
-        Enum(EventType), nullable=True
+        Enum(EventType),
+        nullable=True,
     )
     weather_condition: Mapped[WeatherCondition | None] = mapped_column(
-        Enum(WeatherCondition), nullable=True
+        Enum(WeatherCondition),
+        nullable=True,
     )
     is_outside = mapped_column(Boolean, nullable=False)
     is_landscape = mapped_column(Boolean, nullable=False)
@@ -161,19 +174,39 @@ class VisualInformationModel(Base):
     has_legible_text = mapped_column(Boolean, nullable=False)
     ocr_text = mapped_column(Text, nullable=True)
     document_summary = mapped_column(Text, nullable=True)
+    # Quality measurements
+    measured_sharpness = mapped_column(Float)
+    measured_noise = mapped_column(Integer)
+    measured_brightness = mapped_column(Float)
+    measured_contrast = mapped_column(Float)
+    measured_clipping = mapped_column(Float)
+    measured_dynamic_range = mapped_column(Float)
+    quality_score = mapped_column(Float)
     #   --
     summary = mapped_column(String, nullable=True)
     caption = mapped_column(String, nullable=False)
 
+    __table_args__ = (
+        Index(
+            "emb_idx_2",
+            "embedding",
+            postgresql_using="vectors",
+            postgresql_with={
+                "options": f"$${IndexOption(index=Hnsw()).dumps()}$$",
+            },
+            postgresql_ops={"embedding": "vector_l2_ops"},
+        ),
+    )
+
 
 class ObjectBoxModel(Base):
-    __tablename__ = 'object_boxes'
+    __tablename__ = "object_boxes"
 
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
     visual_information_id = mapped_column(Integer, ForeignKey("visual_information.id"))
-    visual_information: Mapped["VisualInformationModel"] = relationship(
+    visual_information: Mapped[VisualInformationModel] = relationship(
         "VisualInformationModel",
-        back_populates="objects"
+        back_populates="objects",
     )
 
     position: Mapped[tuple[float, float]] = mapped_column(ARRAY(Float), nullable=False)
@@ -184,13 +217,13 @@ class ObjectBoxModel(Base):
 
 
 class OCRBoxModel(Base):
-    __tablename__ = 'ocr_boxes'
+    __tablename__ = "ocr_boxes"
 
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
     visual_information_id = mapped_column(Integer, ForeignKey("visual_information.id"))
-    visual_information: Mapped["VisualInformationModel"] = relationship(
+    visual_information: Mapped[VisualInformationModel] = relationship(
         "VisualInformationModel",
-        back_populates="ocr_boxes"
+        back_populates="ocr_boxes",
     )
 
     position: Mapped[tuple[float, float]] = mapped_column(ARRAY(Float), nullable=False)
@@ -201,18 +234,18 @@ class OCRBoxModel(Base):
 
 
 class FaceBoxModel(Base):
-    __tablename__ = 'face_boxes'
+    __tablename__ = "face_boxes"
 
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
     visual_information_id = mapped_column(Integer, ForeignKey("visual_information.id"))
-    visual_information: Mapped["VisualInformationModel"] = relationship(
+    visual_information: Mapped[VisualInformationModel] = relationship(
         "VisualInformationModel",
-        back_populates="faces"
+        back_populates="faces",
     )
     unique_face_id = mapped_column(Integer, ForeignKey("unique_faces.id"))
-    unique_face: Mapped["UniqueFaceModel"] = relationship(
+    unique_face: Mapped[UniqueFaceModel] = relationship(
         "UniqueFaceModel",
-        back_populates="faces"
+        back_populates="faces",
     )
 
     # Position and dimensions
@@ -226,16 +259,26 @@ class FaceBoxModel(Base):
     sex = mapped_column(Enum(FaceSex), nullable=False)
 
     # Facial feature points
-    mouth_left: Mapped[tuple[float, float]] = mapped_column(ARRAY(Float),
-                                                            nullable=False)
-    mouth_right: Mapped[tuple[float, float]] = mapped_column(ARRAY(Float),
-                                                             nullable=False)
+    mouth_left: Mapped[tuple[float, float]] = mapped_column(ARRAY(Float), nullable=False)
+    mouth_right: Mapped[tuple[float, float]] = mapped_column(ARRAY(Float), nullable=False)
     nose_tip: Mapped[tuple[float, float]] = mapped_column(ARRAY(Float), nullable=False)
     eye_left: Mapped[tuple[float, float]] = mapped_column(ARRAY(Float), nullable=False)
     eye_right: Mapped[tuple[float, float]] = mapped_column(ARRAY(Float), nullable=False)
 
     # Embedding
     embedding: Mapped[Vector] = mapped_column(VECTOR(512), nullable=False)
+
+    __table_args__ = (
+        Index(
+            "face_emb_index",
+            "embedding",
+            postgresql_using="vectors",
+            postgresql_with={
+                "options": f"$${IndexOption(index=Hnsw()).dumps()}$$",
+            },
+            postgresql_ops={"embedding": "vector_l2_ops"},
+        ),
+    )
 
 
 class UniqueFaceModel(Base):
@@ -247,7 +290,20 @@ class UniqueFaceModel(Base):
 
     # One-to-many relationship with FaceBox
     faces: Mapped[list[FaceBoxModel]] = relationship(
-        FaceBoxModel, back_populates="unique_face"
+        FaceBoxModel,
+        back_populates="unique_face",
+    )
+
+    __table_args__ = (
+        Index(
+            "centroid_index",
+            "centroid",
+            postgresql_using="vectors",
+            postgresql_with={
+                "options": f"$${IndexOption(index=Hnsw()).dumps()}$$",
+            },
+            postgresql_ops={"centroid": "vector_l2_ops"},
+        ),
     )
 
 
@@ -262,11 +318,10 @@ class GeoLocationModel(Base):
     longitude = mapped_column(Float, nullable=False)
     # One-to-many relationship with ImageLocation
     images: Mapped[list[ImageModel]] = relationship(
-        ImageModel, back_populates="location"
+        ImageModel,
+        back_populates="location",
     )
-    __table_args__ = (
-        UniqueConstraint("city", "province", "country", name="unique_location"),
-    )
+    __table_args__ = (UniqueConstraint("city", "province", "country", name="unique_location"),)
 
 
 class UserModel(Base):

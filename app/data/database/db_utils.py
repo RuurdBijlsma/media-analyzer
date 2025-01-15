@@ -19,19 +19,19 @@ def path_str(path: Path) -> str:
 
 
 async def add_user(
-    session: AsyncSession, username: str, password: str, role: Role
+    session: AsyncSession, username: str, password: str, role: Role,
 ) -> None:
     user_exists = (
         await session.execute(select(UserModel).filter_by(username=username))
     ).scalar_one_or_none()
     if user_exists:
         return
-    admin = UserModel(
+    user = UserModel(
         username=username,
         hashed_password=get_password_hash(password),
         role=role,
     )
-    session.add(admin)
+    session.add(user)
     await session.commit()
 
 

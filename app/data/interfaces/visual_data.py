@@ -8,7 +8,7 @@ from app.data.enums.classification.object_type import ObjectType
 from app.data.enums.classification.people_type import PeopleType
 from app.data.enums.classification.scene_type import SceneType
 from app.data.enums.classification.weather_condition import WeatherCondition
-from app.data.interfaces.ml_types import OCRBox, FaceBox, ObjectBox
+from app.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox
 
 
 class VisualData(BaseModel):
@@ -55,3 +55,13 @@ class CaptionData(SummaryData):
 
 class ObjectsData(CaptionData):
     objects: list[ObjectBox]
+
+
+class ImageQualityData(ObjectsData):
+    measured_sharpness: float
+    measured_noise: int
+    measured_brightness: float
+    measured_contrast: float
+    measured_clipping:float
+    measured_dynamic_range:float
+    quality_score: float

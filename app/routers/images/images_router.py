@@ -1,52 +1,35 @@
 from collections.abc import Sequence
-from datetime import datetime, timedelta
+from datetime import UTC, datetime
 
+from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Query
 
 from app.data.database.database import SessionDep
 from app.data.image_models import ImageModel
 from app.data.interfaces.response_types import GridImageData
-from app.routers.auth.auth_model import UserDep
-from app.routers.images.images_model import scroll_down, scroll_up, at_date
+from app.routers.images.images_model import get_month_images, random_db_image
 
 images_router = APIRouter(prefix="/images", tags=["images"])
 
 
-@images_router.get("/at-date", response_model=list[GridImageData])
+def default_start_date(n_months: int) -> datetime:
+    now = datetime.now(tz=UTC)
+    return (now - relativedelta(months=n_months)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+
+@images_router.get("/", response_model=list[GridImageData])
 async def get_at_date(
-    _: UserDep,
+    # _: UserDep,
     session: SessionDep,
-    lower_date: datetime = Query(default_factory=lambda: datetime(1970, 1, 1, 1, 1, 1)),
-    date: datetime = Query(default_factory=datetime.now),
-    upper_date: datetime = Query(
-        default_factory=lambda: datetime.now() + timedelta(days=1)
-    ),
-    limit: int = Query(default=100, ge=1, le=200),
+    start_date: datetime = Query(default_factory=lambda: default_start_date(10)),  # noqa: B008
+    end_date: datetime | None = None,
 ) -> Sequence[ImageModel]:
-    return await at_date(session, lower_date, date, upper_date, limit)
+    return await get_month_images(session, start_date, end_date)
 
 
-@images_router.get("/scroll-up", response_model=list[GridImageData])
-async def get_scroll_up(
-    _: UserDep,
+@images_router.get("/random", response_model=str)
+async def get_random_image(
+    # _: UserDep,
     session: SessionDep,
-    lower_date: datetime,
-    upper_date: datetime = Query(
-        default_factory=lambda: datetime.now() + timedelta(days=1)
-    ),
-    limit: int = Query(default=100, ge=1, le=200),
-) -> Sequence[ImageModel]:
-    """give newer photos. upper_date is next cached date in frontend."""
-    return await scroll_up(session, lower_date, upper_date, limit)
-
-
-@images_router.get("/scroll-down", response_model=list[GridImageData])
-async def get_scroll_down(
-    _: UserDep,
-    session: SessionDep,
-    upper_date: datetime,
-    lower_date: datetime = Query(default_factory=lambda: datetime(1970, 1, 1, 1, 1, 1)),
-    limit: int = Query(default=100, ge=1, le=200),
-) -> Sequence[ImageModel]:
-    """give older photos. lower_date is next cached date in frontend."""
-    return await scroll_down(session, lower_date, upper_date, limit)
+) -> str:
+    return await random_db_image(session)
