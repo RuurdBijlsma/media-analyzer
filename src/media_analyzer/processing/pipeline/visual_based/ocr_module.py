@@ -3,24 +3,24 @@ from typing import TYPE_CHECKING
 from PIL.Image import Image
 
 from media_analyzer.data.interfaces.visual_data import OCRData, VisualData
+from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import VisualModule
 
 if TYPE_CHECKING:
     from media_analyzer.data.interfaces.ml_types import OCRBox
 
-
 class OCRModule(VisualModule):
-    def process(self, frame: Path, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> OCRData:
-        has_text = ocr.has_legible_text(image)
+    def process(self, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> OCRData:
+        has_text = analyzer.ocr.has_legible_text(image)
         extracted_text: str | None = None
         summary: str | None = None
         boxes: list[OCRBox] = []
         if has_text:
-            extracted_text = ocr.get_text(image, analyzer.config.media_languages)
+            extracted_text = analyzer.ocr.get_text(image, analyzer.config.media_languages)
             if extracted_text.strip() == "":
                 has_text = False
                 extracted_text = None
-            boxes = ocr.get_boxes(image, analyzer.config.media_languages)
+            boxes = analyzer.ocr.get_boxes(image, analyzer.config.media_languages)
 
         # Check if this could be a photo of a document
         if (

@@ -1,11 +1,12 @@
 from PIL.Image import Image
 
 from media_analyzer.data.interfaces.visual_data import SummaryData, VisualData
+from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import VisualModule
 
 
 class SummaryModule(VisualModule):
-    def process(self, frame: Path, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> SummaryData:
+    def process(self, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> SummaryData:
         if not analyzer.config.enable_text_summary:
             return SummaryData(
                 **data.model_dump(),

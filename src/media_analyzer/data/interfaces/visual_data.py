@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic import BaseModel
 
 from media_analyzer.data.enums.classification.activity_type import ActivityType
@@ -12,7 +14,8 @@ from media_analyzer.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox
 
 
 class VisualData(BaseModel):
-    frame_percentage: int
+    index: int
+    path:Path
 
 
 class EmbeddingData(VisualData):
@@ -57,7 +60,7 @@ class ObjectsData(CaptionData):
     objects: list[ObjectBox]
 
 
-class ImageQualityData(ObjectsData):
+class MediaAnalyzerFrame(ObjectsData):
     measured_sharpness: float
     measured_noise: int
     measured_brightness: float

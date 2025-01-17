@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 import pytz
 
 from media_analyzer.data.interfaces.image_data import GpsData, ImageData, TimeData
+from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import FileModule
 from media_analyzer.processing.post_processing.timezone_finder import timezone_finder
 
@@ -70,14 +71,14 @@ def get_local_datetime(image_info: GpsData) -> tuple[datetime, str]:
     for fn in [f1, f2, f3, f4, f5, f6]:
         try:
             return fn()
-        except (KeyError, AssertionError, ValueError):
-            pass
+        except (KeyError, AssertionError, ValueError):  # noqa: PERF203
+            continue
     raise ValueError(f"Could not parse datetime for {image_info.filename}!")
 
 
 def get_timezone_info(
-    image_info: GpsData,
-    date: datetime,
+        image_info: GpsData,
+        date: datetime,
 ) -> tuple[datetime | None, str | None, timedelta | None]:
     """Gets timezone name and offset from latitude, longitude, and date."""
     if not image_info.latitude or not image_info.longitude:
@@ -101,7 +102,7 @@ def get_timezone_info(
 
 
 class TimeModule(FileModule):
-    def process(self, input_media: InputMedia, data: ImageData, analyzer: MediaAnalyzer) -> TimeData:
+    def process(self, data: ImageData, _: MediaAnalyzer) -> TimeData:
         assert isinstance(data, GpsData)
         datetime_taken, datetime_source = get_local_datetime(data)
         datetime_utc, timezone_name, timezone_offset = get_timezone_info(

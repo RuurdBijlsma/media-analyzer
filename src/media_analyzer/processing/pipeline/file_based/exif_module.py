@@ -4,8 +4,8 @@ from typing import Any
 from exiftool import ExifToolHelper
 from PIL.ExifTags import TAGS
 
-from media_analyzer.data.anaylzer_config import app_config
 from media_analyzer.data.interfaces.image_data import ExifData, ImageData
+from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import FileModule
 
 
@@ -75,9 +75,9 @@ def structure_exiftool_dict(exiftool_dict: dict[str, Any]) -> dict[str, Any]:
 
 
 class ExifModule(FileModule):
-    def process(self, input_media: InputMedia, data: ImageData, analyzer: MediaAnalyzer) -> ExifData:
+    def process(self, data: ImageData, _: MediaAnalyzer) -> ExifData:
         with ExifToolHelper() as et:
-            result = et.execute_json(app_config.images_dir / data.relative_path)
+            result = et.execute_json(str(data.path))
             if result is None or not isinstance(result, list) or not isinstance(result[0], dict):
                 raise ValueError(
                     f"Exiftool can't handle this file {data.relative_path}.",

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel
@@ -8,8 +9,8 @@ from media_analyzer.data.interfaces.location_types import GeoLocation
 
 
 class ImageData(BaseModel):
-    filename: str
-    hash: str
+    path: Path
+    frames: list[Path]
 
 
 class ExifData(ImageData):

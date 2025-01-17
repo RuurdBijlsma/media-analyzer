@@ -5,13 +5,14 @@ import PIL
 import pillow_avif  # noqa: F401
 
 from media_analyzer.data.interfaces.image_data import DataUrlData, ImageData
+from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import FileModule
 
 
 class DataUrlModule(FileModule):
-    def process(self, input_media: InputMedia, data: ImageData, analyzer: MediaAnalyzer) -> DataUrlData:
+    def process(self, data: ImageData, _: MediaAnalyzer) -> DataUrlData:
         tiny_height = 6
-        with PIL.Image.open(input_media.frames[0]) as pil_image:
+        with PIL.Image.open(data.frames[0]) as pil_image:
             img = pil_image.resize(
                 (
                     int(pil_image.width / pil_image.height * tiny_height),

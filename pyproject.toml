@@ -8,15 +8,18 @@ authors = [
 ]
 requires-python = ">=3.10,<3.13"
 dependencies = [
+    "bitsandbytes>=0.45.0",
     "hdbscan>=0.8.40",
     "insightface>=0.7.3",
+    "meteostat>=1.6.8",
     "onnxruntime>=1.20.1",
     "openai>=1.59.8",
     "opencv-python>=4.11.0.86",
     "pillow>=11.1.0",
     "pydantic>=2.10.5",
-    "pydantic-settings>=2.7.1",
+    "pyexiftool>=0.5.6",
     "pytesseract>=0.3.13",
+    "reverse-geocode>=1.6.5",
     "scikit-learn>=1.6.1",
     "scipy>=1.15.1",
     "torch>=2.5.1",
@@ -95,4 +98,5 @@ explicit = true
 [dependency-groups]
 dev = [
     "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
 ]

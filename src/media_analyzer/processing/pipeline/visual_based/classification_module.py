@@ -24,11 +24,10 @@ from media_analyzer.data.interfaces.visual_data import (
     EmbeddingData,
     VisualData,
 )
+from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
 from media_analyzer.machine_learning.classifier.clip_classifier import CLIPClassifier
-from media_analyzer.machine_learning.embedding.clip_embedder import CLIPEmbedder
+from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import VisualModule
-
-classifier = CLIPClassifier()
 
 
 @lru_cache
@@ -40,7 +39,7 @@ def get_scenes() -> dict[str, str]:
     return result
 
 
-def classify_image_scene(image_embedding: NDArray[Any]) -> tuple[SceneType, float]:
+def classify_image_scene(image_embedding: NDArray[Any], classifier: BaseClassifier) -> tuple[SceneType, float]:
     scenes = get_scenes()
     best_index, confidence = classifier.classify_image(
         image_embedding,
@@ -55,7 +54,8 @@ def classify_image_scene(image_embedding: NDArray[Any]) -> tuple[SceneType, floa
 
 
 def binary_classifications(
-    image_embedding: NDArray[Any],
+        image_embedding: NDArray[Any],
+        classifier: BaseClassifier,
 ) -> tuple[
     PeopleType | None,
     AnimalType | None,
@@ -100,8 +100,8 @@ def binary_classifications(
             DocumentType.SCREENSHOT: "This is a digital screenshot from a phone or a computer.",
             DocumentType.TICKET: "This is an event ticket, with information about the event and or the ticket holder.",
             DocumentType.IDENTITY: "This is an identity document, such as an ID card, "
-            "passport, drivers license, or other identifiable "
-            "card.",
+                                   "passport, drivers license, or other identifiable "
+                                   "card.",
             DocumentType.NOTES: "This is a person's notes, notebook, or homework.",
             DocumentType.PAYMENT_METHOD: "This is a payment method, such as a credit card or debit card.",
             DocumentType.MENU: "This is a restaurant menu.",
@@ -182,19 +182,19 @@ def binary_classifications(
 
 
 def experiment() -> None:
-    embedder = CLIPEmbedder()
+    classifier = CLIPClassifier()
     with PIL.Image.open("media/images/1/IMG_20190717_172849.jpg") as img:
-        image_embedding = embedder.embed_image(img)
+        image_embedding = classifier.embedder.embed_image(img)
 
-        scene, conf = classify_image_scene(image_embedding)
+        scene, conf = classify_image_scene(image_embedding, classifier)
         print(scene, conf)
 
-        binary_dict = binary_classifications(image_embedding)
+        binary_dict = binary_classifications(image_embedding, classifier)
         print(binary_dict)
 
 
 class ClassificationModule(VisualModule):
-    def process(self, frame: Path, data: VisualData, _: Image, analyzer: MediaAnalyzer) -> ClassificationData:
+    def process(self, data: VisualData, _i: Image, _ma: MediaAnalyzer) -> ClassificationData:
         assert isinstance(data, EmbeddingData)
         (
             people_type,

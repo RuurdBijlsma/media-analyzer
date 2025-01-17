@@ -21,22 +21,22 @@ class BaseModule(ABC):
 
 
 class FileModule(BaseModule):
-    def run(self, input_media: InputMedia, data: ImageData, analyzer: MediaAnalyzer) -> ImageData:
+    def run(self, data: ImageData, analyzer: MediaAnalyzer) -> ImageData:
         start_time = time.time()
-        result = self.process(input_media, data, analyzer)
+        result = self.process(data, analyzer)
         self.run_times.append(time.time() - start_time)
         return result
 
     @abstractmethod
-    def process(self, input_media: InputMedia, data: ImageData, analyzer: MediaAnalyzer) -> ImageData: ...
+    def process(self, data: ImageData, analyzer: MediaAnalyzer) -> ImageData: ...
 
 
 class VisualModule(BaseModule):
-    def run(self, frame: Path, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> VisualData:
+    def run(self, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> VisualData:
         start_time = time.time()
-        result = self.process(frame, data, image, analyzer)
+        result = self.process(data, image, analyzer)
         self.run_times.append(time.time() - start_time)
         return result
 
     @abstractmethod
-    def process(self, frame: Path, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> VisualData: ...
+    def process(self, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> VisualData: ...

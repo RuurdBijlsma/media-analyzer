@@ -5,8 +5,8 @@ import PIL.Image
 import pillow_avif  # noqa: F401
 
 from media_analyzer.data.interfaces.image_data import ImageData, WeatherData
-from media_analyzer.data.interfaces.input_media import InputMedia
-from media_analyzer.data.interfaces.visual_data import ImageQualityData, VisualData
+from media_analyzer.data.interfaces.api_io import InputMedia
+from media_analyzer.data.interfaces.visual_data import MediaAnalyzerFrame, VisualData
 from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import FileModule, VisualModule
 from media_analyzer.processing.pipeline.file_based.data_url_module import DataUrlModule
@@ -54,28 +54,24 @@ visual_pipeline: list[VisualModule] = [
 
 
 def run_metadata_pipeline(
-    image_input: InputMedia,
-    analyzer: MediaAnalyzer,
-    image_hash: str,
-) -> tuple[WeatherData, list[ImageQualityData]]:
-    image_data = ImageData(
-        filename=image_path.name,
-        hash=image_hash,
-    )
+        input_media: InputMedia,
+        analyzer: MediaAnalyzer,
+) -> tuple[WeatherData, list[MediaAnalyzerFrame]]:
+    image_data = ImageData(path=input_media.path, frames=input_media.frames)
 
     for image_module in image_pipeline:
         image_data = image_module.run(image_data, analyzer)
     assert isinstance(image_data, WeatherData)
 
-    visual_datas: list[ImageQualityData] = []
-    for frame_percentage, frame_image_path in thumbnails.frames.items():
+    visual_datas: list[MediaAnalyzerFrame] = []
+    for i, frame_image_path in enumerate(input_media.frames):
         with PIL.Image.open(frame_image_path) as frame_image:
             jpeg_image = pil_to_jpeg(frame_image)
 
-        visual_data = VisualData(frame_percentage=frame_percentage)
+        visual_data = VisualData(index=i, path=frame_image_path)
         for visual_module in visual_pipeline:
             visual_data = visual_module.run(visual_data, jpeg_image, analyzer)
-        assert isinstance(visual_data, ImageQualityData)
+        assert isinstance(visual_data, MediaAnalyzerFrame)
         visual_datas.append(visual_data)
         jpeg_image.close()
 
