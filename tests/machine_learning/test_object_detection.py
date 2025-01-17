@@ -3,16 +3,19 @@ from pathlib import Path
 import PIL
 import pytest
 
-from app.machine_learning.object_detection.resnet_object_detection import (
+from media_analyzer.machine_learning.object_detection.resnet_object_detection import (
     ResnetObjectDetection,
 )
-from app.machine_learning.utils import draw_bounding_box
+from media_analyzer.machine_learning.utils import draw_bounding_box
 
 
-@pytest.mark.parametrize(("image", "objects"), [
-    ("cat.jpg", ["cat"]),
-    ("cluster.jpg", ["laptop"]),
-])
+@pytest.mark.parametrize(
+    ("image", "objects"),
+    [
+        ("cat.jpg", ["cat"]),
+        ("cluster.jpg", ["laptop"]),
+    ],
+)
 def test_resnet_object_detection(
     assets_folder: Path,
     image: str,

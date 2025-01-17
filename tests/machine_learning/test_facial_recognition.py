@@ -4,10 +4,10 @@ import numpy as np
 from PIL import Image
 from scipy.spatial.distance import cosine
 
-from app.machine_learning.facial_recognition.insight_facial_recognition import (
+from media_analyzer.machine_learning.facial_recognition.insight_facial_recognition import (
     InsightFacialRecognition,
 )
-from app.machine_learning.utils import draw_bounding_box
+from media_analyzer.machine_learning.utils import draw_bounding_box
 
 
 def test_insight_facial_detection(assets_folder: Path) -> None:

@@ -1,0 +1,62 @@
+from typing import TYPE_CHECKING
+
+from PIL.Image import Image
+
+from media_analyzer.data.interfaces.visual_data import OCRData, VisualData
+from media_analyzer.processing.pipeline.base_module import VisualModule
+
+if TYPE_CHECKING:
+    from media_analyzer.data.interfaces.ml_types import OCRBox
+
+
+class OCRModule(VisualModule):
+    def process(self, frame: Path, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> OCRData:
+        has_text = ocr.has_legible_text(image)
+        extracted_text: str | None = None
+        summary: str | None = None
+        boxes: list[OCRBox] = []
+        if has_text:
+            extracted_text = ocr.get_text(image, analyzer.config.media_languages)
+            if extracted_text.strip() == "":
+                has_text = False
+                extracted_text = None
+            boxes = ocr.get_boxes(image, analyzer.config.media_languages)
+
+        # Check if this could be a photo of a document
+        if (
+            analyzer.config.enable_document_summary
+            and has_text
+            and extracted_text
+            and len(extracted_text) > analyzer.config.document_detection_threshold
+        ):
+            prompt = (
+                "Analyze the image and provide the following details:\n\n"
+                "Summary: A concise summary of the content in the photo, including any"
+                "key points or important sections visible."
+                "Text Detection: Detect and list any legible text visible in the image."
+                "If possible, extract it and provide a short excerpt or the full text."
+                "Language Detection: Identify the language(s) in the text and specify the"
+                "primary language used."
+                "Document Type: Determine the type of document or text. Is it a formal"
+                "document (e.g., letter, contract, form), informal (e.g., note, memo),"
+                "or something else? Provide details about the document's likely purpose"
+                "(e.g., invoice, receipt, report, etc.)."
+                "Text Formatting: If relevant, describe any specific formatting styles"
+                "such as headings, bullet points, numbered lists, tables, or signatures."
+                "Additional Features: Detect if there are any images, logos, or other"
+                "non-text elements present that provide additional context or information"
+                "about the document (e.g., company logos, photos, charts)."
+                "Contextual Details: If applicable, mention any visible date, address,"
+                "or other contextual information that could help understand the document's"
+                "origin or purpose."
+            )
+
+            summary = analyzer.llm.image_question(image, prompt)
+
+        return OCRData(
+            **data.model_dump(),
+            has_legible_text=has_text,
+            ocr_text=extracted_text,
+            document_summary=summary,
+            ocr_boxes=boxes,
+        )
