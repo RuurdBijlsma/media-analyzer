@@ -2,10 +2,15 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvider
+from media_analyzer.machine_learning.caption.captioner_protocol import CaptionerProtocol
+from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
+from media_analyzer.machine_learning.embedding.embedder_protocol import EmbedderProtocol
+from media_analyzer.machine_learning.ocr.ocr_protocol import OCRProtocol
+from media_analyzer.machine_learning.visual_llm.base_visual_llm import BaseVisualLLM
 
 
 @dataclass
-class AnalyzerConfig:
+class AnalyzerSettings:
     media_languages: tuple[str, ...] = ("nld", "eng")
     captions_provider: CaptionerProvider = CaptionerProvider.BLIP
     llm_provider: LLMProvider = LLMProvider.MINICPM
@@ -33,3 +38,12 @@ class AnalyzerConfig:
     @property
     def image_suffixes(self) -> tuple[str, ...]:
         return self.photo_suffixes + self.video_suffixes
+
+@dataclass
+class FullAnalyzerConfig:
+    llm: BaseVisualLLM
+    captioner: CaptionerProtocol
+    ocr: OCRProtocol
+    classifier: BaseClassifier
+    embedder: EmbedderProtocol
+    settings: AnalyzerSettings

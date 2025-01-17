@@ -1,13 +1,13 @@
 from PIL.Image import Image
 
+from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.interfaces.visual_data import SummaryData, VisualData
-from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import VisualModule
 
 
 class SummaryModule(VisualModule):
-    def process(self, data: VisualData, image: Image, analyzer: MediaAnalyzer) -> SummaryData:
-        if not analyzer.config.enable_text_summary:
+    def process(self, data: VisualData, image: Image, config: FullAnalyzerConfig) -> SummaryData:
+        if not config.settings.enable_text_summary:
             return SummaryData(
                 **data.model_dump(),
                 summary=None,
@@ -21,7 +21,7 @@ class SummaryModule(VisualModule):
             "interpretations or ambiguous terms."
         )
 
-        caption = analyzer.llm.image_question(image, prompt)
+        caption = config.llm.image_question(image, prompt)
 
         return SummaryData(
             **data.model_dump(),

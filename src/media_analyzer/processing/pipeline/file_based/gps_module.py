@@ -2,14 +2,14 @@ from datetime import datetime
 
 import reverse_geocode
 
+from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.interfaces.image_data import ExifData, GpsData, ImageData
 from media_analyzer.data.interfaces.location_types import GeoLocation
-from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import FileModule
 
 
 class GpsModule(FileModule):
-    def process(self, data: ImageData, _: MediaAnalyzer) -> GpsData:
+    def process(self, data: ImageData, _: FullAnalyzerConfig) -> GpsData:
         assert isinstance(data, ExifData)
         if not data.composite or "GPSLatitude" not in data.composite or "GPSLongitude" not in data.composite:
             return GpsData(**data.model_dump())

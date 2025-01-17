@@ -8,6 +8,7 @@ import PIL
 from numpy.typing import NDArray
 from PIL.Image import Image
 
+from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.enums.classification.activity_type import ActivityType
 from media_analyzer.data.enums.classification.animal_type import AnimalType
 from media_analyzer.data.enums.classification.document_type import DocumentType
@@ -26,7 +27,6 @@ from media_analyzer.data.interfaces.visual_data import (
 )
 from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
 from media_analyzer.machine_learning.classifier.clip_classifier import CLIPClassifier
-from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import VisualModule
 
 
@@ -194,7 +194,7 @@ def experiment() -> None:
 
 
 class ClassificationModule(VisualModule):
-    def process(self, data: VisualData, _i: Image, _ma: MediaAnalyzer) -> ClassificationData:
+    def process(self, data: VisualData, _i: Image, config: FullAnalyzerConfig) -> ClassificationData:
         assert isinstance(data, EmbeddingData)
         (
             people_type,
@@ -208,8 +208,8 @@ class ClassificationModule(VisualModule):
             is_landscape,
             is_cityscape,
             is_travel,
-        ) = binary_classifications(np.array(data.embedding))
-        scene, _conf = classify_image_scene(np.array(data.embedding))
+        ) = binary_classifications(np.array(data.embedding), config.classifier)
+        scene, _conf = classify_image_scene(np.array(data.embedding), config.classifier)
 
         return ClassificationData(
             **data.model_dump(),

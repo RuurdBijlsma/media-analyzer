@@ -3,8 +3,8 @@ import numpy as np
 import numpy.typing as npt
 from PIL.Image import Image
 
+from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.interfaces.visual_data import MediaAnalyzerFrame, VisualData
-from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import VisualModule
 
 
@@ -127,7 +127,7 @@ def composite_quality_score(
 
 
 class QualityDetectionModule(VisualModule):
-    def process(self, data: VisualData, image: Image, _: MediaAnalyzer) -> MediaAnalyzerFrame:
+    def process(self, data: VisualData, image: Image, _: FullAnalyzerConfig) -> MediaAnalyzerFrame:
         image_cv2: npt.NDArray[np.uint8] = np.array(image)
         image_cv2 = cv2.cvtColor(image_cv2, cv2.COLOR_RGB2BGR)  # type: ignore[assignment]
         mean_brightness, contrast = exposure_measurement(image_cv2)

@@ -12,9 +12,11 @@ from media_analyzer.machine_learning.embedding.embedder_protocol import Embedder
 
 
 class CLIPClassifier(BaseClassifier):
-    embedder:EmbedderProtocol
+    embedder: EmbedderProtocol
 
-    def __init__(self, embedder: EmbedderProtocol= CLIPEmbedder()) -> None:
+    def __init__(self, embedder: EmbedderProtocol | None = None) -> None:
+        if embedder is None:
+            embedder = CLIPEmbedder()
         self.embedder = embedder
 
     @lru_cache

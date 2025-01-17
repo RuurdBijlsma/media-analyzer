@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, timezone
 
 import pytz
 
+from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.interfaces.image_data import GpsData, ImageData, TimeData
-from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import FileModule
 from media_analyzer.processing.post_processing.timezone_finder import timezone_finder
 
@@ -102,7 +102,7 @@ def get_timezone_info(
 
 
 class TimeModule(FileModule):
-    def process(self, data: ImageData, _: MediaAnalyzer) -> TimeData:
+    def process(self, data: ImageData, _: FullAnalyzerConfig) -> TimeData:
         assert isinstance(data, GpsData)
         datetime_taken, datetime_source = get_local_datetime(data)
         datetime_utc, timezone_name, timezone_offset = get_timezone_info(

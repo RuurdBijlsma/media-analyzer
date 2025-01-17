@@ -3,14 +3,14 @@ from datetime import timedelta
 
 from meteostat import Hourly, Point
 
+from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.enums.classification.weather_condition import WeatherCondition
 from media_analyzer.data.interfaces.image_data import ImageData, TimeData, WeatherData
-from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.base_module import FileModule
 
 
 class WeatherModule(FileModule):
-    def process(self, data: ImageData, _: MediaAnalyzer) -> WeatherData:
+    def process(self, data: ImageData, _: FullAnalyzerConfig) -> WeatherData:
         assert isinstance(data, TimeData)
         if not data.datetime_utc or not data.latitude or not data.longitude:
             return WeatherData(**data.model_dump())
