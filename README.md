@@ -37,6 +37,12 @@ You must have the following in PATH.
 * ExifTool: https://exiftool.org/
 * Tesseract OCR: https://tesseract-ocr.github.io/tessdoc/Installation.html
 
+## Examples
+
+Example output of the main analyze function can be viewed
+at [example_output.json](examples/example_output.json). Further example
+code is available at [/examples](/examples).
+
 ## Usage
 
 Here's a basic example of how to use Media Analyzer:
@@ -49,9 +55,45 @@ analyzer = MediaAnalyzer()
 media_file = Path("image.jpg")
 result = analyzer.photo(media_file)
 
-# Access analysis results
-print(result.image_data)
-print(result.frame_data)
+print(result)
+```
+
+### Disable analysis modules
+
+The analysis is done based on modules, the following modules are available and enabled by default:
+
+#### File-based Modules:
+
+* `"DataUrlModule"`
+* `"ExifModule"`
+* `"GpsModule"`
+* `"TimeModule"`
+* `"WeatherModule"`
+
+#### Visual Modules:
+
+* `"CaptionModule"`
+* `"ClassificationModule"`
+* `"EmbeddingModule"`
+* `"FacesModule"`
+* `"ObjectsModule"`
+* `"OCRModule"`
+* `"QualityDetectionModule"`
+* `"SummaryModule"`
+
+Modules can be turned off by changing the config provided to the MediaAnalyzer class:
+
+```python
+from media_analyzer import MediaAnalyzer, AnalyzerSettings
+from pathlib import Path
+
+config = AnalyzerSettings(
+    enabled_file_modules={"ExifModule"},  # Only do exif data analysis on file
+    enabled_visual_modules={"CaptionModule"},  # Only do caption module as visual module
+)
+analyzer = MediaAnalyzer(config=config)
+media_file = Path(__file__).parents[1] / "tests/assets/tent.jpg"
+result = analyzer.photo(media_file)
 ```
 
 ### Configuration
@@ -69,3 +111,9 @@ The AnalyzerSettings class allows you to customize various aspects of the analys
 
 Full docs can be found
 at https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#MediaAnalyzer.
+
+## Attribution
+
+* Meteostat for weather info: https://dev.meteostat.net/python/
+* Reverse geocoding data from geonames: https://download.geonames.org/
+* ExifTool for exif and similar data: https://exiftool.org/
