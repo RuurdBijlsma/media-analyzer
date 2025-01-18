@@ -1,7 +1,6 @@
 from pathlib import Path
 
-from media_analyzer import MediaAnalyzer
-from media_analyzer.data.anaylzer_config import AnalyzerSettings
+from media_analyzer import MediaAnalyzer, AnalyzerSettings
 
 config = AnalyzerSettings(
     enabled_file_modules={"ExifModule"},  # Only do exif data analysis on file

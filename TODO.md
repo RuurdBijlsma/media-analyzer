@@ -1,5 +1,6 @@
 # TODO
 
+* Material colors
 * implement:
     * is_motion_photo
     * is_hdr

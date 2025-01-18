@@ -1,8 +1,6 @@
 from pathlib import Path
 
-from media_analyzer import MediaAnalyzer
-from media_analyzer.data.anaylzer_config import AnalyzerSettings
-from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvider
+from media_analyzer import MediaAnalyzer, AnalyzerSettings, CaptionerProvider, LLMProvider
 
 config = AnalyzerSettings(
     media_languages=("eng",),

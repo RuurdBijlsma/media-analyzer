@@ -3,8 +3,7 @@ from pathlib import Path
 import numpy as np
 from scipy.spatial.distance import cosine
 
-from media_analyzer import MediaAnalyzer
-from media_analyzer.data.anaylzer_config import AnalyzerSettings
+from media_analyzer import MediaAnalyzer, AnalyzerSettings
 
 photo_filenames = ["cluster.jpg", "sunset.jpg", "tent.jpg"]
 photos = [Path(__file__).parents[1] / "tests/assets" / name for name in photo_filenames]
@@ -17,8 +16,8 @@ results = [analyzer.photo(photo) for photo in photos]
 image_embeddings = [np.array(result.frame_data[0].embedding) for result in results]
 
 
-def search(query_str: str):
-    query_embedding = analyzer.config.embedder.embed_text(query_str)
+def search(query_str: str) -> str:
+    query_embedding = analyzer.config.embedder.embed_text(query_str)  # pylint: disable=E1111
     similarities = [1 - cosine(query_embedding, embedding) for embedding in image_embeddings]
     most_similar_index = np.argmax(similarities)
     return photo_filenames[most_similar_index]
