@@ -8,15 +8,35 @@ captioning, optical character recognition (OCR), and facial recognition.
 
 - **GPS**: Gather GPS coordinates from exif, and reverse geocode to get the country, province and
   city.
-- **Image Classification**: Identify objects, scene, activities, animals, and events present in
+- **Exif**: Extract exif data/metadata from photos, videos, gifs, etc.
+- **Weather**: Get weather info at the time the photo/video was taken.
+    * temperature
+    * dewpoint
+    * relative humidity
+    * precipitation
+    * wind gust
+    * pressure
+    * sun hours
+    * condition
+* **Quality Detection**: Detect objectively measurable quality of images:
+  * Sharpness
+  * Noise
+  * Exposure
+  * Dynamic range
+  * Color clipping (white/black levels)
+  * A composite score is generated, so photos can be ranked by quality.
+- **Image Classification**: Identify objects, scene type, activities, animals, and events present in
   images.
 - **Image Captioning**: Generate descriptive captions for images using models like BLIP or
   LLM-based captioners.
+- **Embedding**: Generate clip embeddings for images and text. Can be used to cluster images or
+  search semantically through images.
 - **Optical Character Recognition (OCR)**: Extract text from images to identify documents, receipts,
   menus, and more.
+- **LLM**: Get detailed image summary, more indepth than just a caption, using an LLM. Can also be
+  used to generate a summary of a document shown in a photo or video.
 - **Facial Recognition**: Detect faces in images and provide details such as age, sex, bounding box,
-  and facial
-  landmarks. Includes an embedding of the face, which can be used for clustering.
+  and facial landmarks. Includes an embedding of the face, which can be used for clustering.
 - **Datetime Taken**: Photo and video files are messy and have unreliable datetime tags. This
   packages uses six different methods with varying priority to get the datetime a photo is taken,
   including the timezone if possible.
