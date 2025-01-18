@@ -18,3 +18,4 @@ logs
 *.safetensors
 postgres/*.deb
 test_img_out
+.coverage
