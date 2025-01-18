@@ -17,6 +17,7 @@ from media_analyzer.machine_learning.visual_llm.get_llm import get_llm_by_provid
     ],
 )
 def test_minicpm_visual_llm(assets_folder: Path, llm_provider: LLMProvider) -> None:
+    """Test the VisualLLM with MiniCPM and OpenAI."""
     if llm_provider == LLMProvider.OPENAI and os.environ.get("OPENAI_API_KEY") is None:
         # Only run test if OPENAI_API_KEY is set.
         pytest.skip("OPENAI_API_KEY is not set, so OpenAILLM test is skipped.")

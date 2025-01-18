@@ -1,15 +1,11 @@
-from PIL.Image import Image
-
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
-from media_analyzer.data.interfaces.visual_data import CaptionData, VisualData
-from media_analyzer.processing.pipeline.base_module import VisualModule
+from media_analyzer.data.interfaces.frame_data import FrameData
+from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
-class CaptionModule(VisualModule):
-    def process(self, data: VisualData, image: Image, config: FullAnalyzerConfig) -> CaptionData:
-        caption = config.captioner.caption(image)
+class CaptionModule(PipelineModule[FrameData]):
+    """Generate a caption from an image."""
 
-        return CaptionData(
-            **data.model_dump(),
-            caption=caption,
-        )
+    def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:
+        """Generate a caption from an image."""
+        data.caption = config.captioner.caption(data.image)

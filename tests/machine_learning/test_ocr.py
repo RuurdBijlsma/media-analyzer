@@ -7,6 +7,7 @@ from media_analyzer.machine_learning.ocr.resnet_tesseract_ocr import ResnetTesse
 
 
 def test_resnet_tesseract_ocr_text(assets_folder: Path, default_config: AnalyzerSettings) -> None:
+    """Test the getting text from an image with ResnetTesseractOCR."""
     image = Image.open(assets_folder / "ocr.jpg")
     ocr = ResnetTesseractOCR()
     has_text = ocr.has_legible_text(image)
@@ -17,6 +18,7 @@ def test_resnet_tesseract_ocr_text(assets_folder: Path, default_config: Analyzer
 
 
 def test_resnet_tesseract_ocr_boxes(assets_folder: Path, default_config: AnalyzerSettings) -> None:
+    """Test the getting text bounding boxes from an image with ResnetTesseractOCR."""
     image = Image.open(assets_folder / "ocr.jpg")
     ocr = ResnetTesseractOCR()
 

@@ -4,10 +4,11 @@ from exiftool import ExifToolHelper
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.interfaces.image_data import ExifData, ImageData
-from media_analyzer.processing.pipeline.base_module import FileModule
+from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
 def parse_duration(duration_str: str) -> float:
+    """Parse a duration string in the format 'HH:MM:SS.SSS'."""
     h, m, s = duration_str.split(":")
     return int(h) * 3600 + int(m) * 60 + float(s)
 
@@ -40,8 +41,11 @@ def structure_exiftool_dict(exiftool_dict: dict[str, Any]) -> dict[str, Any]:
     return nested_dict
 
 
-class ExifModule(FileModule):
-    def process(self, data: ImageData, _: FullAnalyzerConfig) -> ExifData:
+class ExifModule(PipelineModule[ImageData]):
+    """Extract EXIF data from an image using exiftool."""
+
+    def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:
+        """Extract EXIF data from an image."""
         with ExifToolHelper() as et:
             result = et.execute_json(str(data.path))
             if result is None or not isinstance(result, list) or not isinstance(result[0], dict):
@@ -81,8 +85,7 @@ class ExifModule(FileModule):
             height = exif_dict["Matroska"]["ImageHeight"]
             duration = parse_duration(exif_dict["Matroska"]["Duration"])
         assert width and height
-        return ExifData(
-            **data.model_dump(),
+        data.exif = ExifData(
             size_bytes=exif_dict["File"]["FileSize"],
             width=width,
             height=height,

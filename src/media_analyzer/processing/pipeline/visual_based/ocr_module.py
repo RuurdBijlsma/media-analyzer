@@ -1,27 +1,28 @@
 from typing import TYPE_CHECKING
 
-from PIL.Image import Image
-
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
-from media_analyzer.data.interfaces.visual_data import OCRData, VisualData
-from media_analyzer.processing.pipeline.base_module import VisualModule
+from media_analyzer.data.interfaces.frame_data import FrameData, OCRData
+from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 if TYPE_CHECKING:
     from media_analyzer.data.interfaces.ml_types import OCRBox
 
 
-class OCRModule(VisualModule):
-    def process(self, data: VisualData, image: Image, config: FullAnalyzerConfig) -> OCRData:
-        has_text = config.ocr.has_legible_text(image)
+class OCRModule(PipelineModule[FrameData]):
+    """Extract text from an image using OCR."""
+
+    def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:
+        """Extract text from an image using OCR."""
+        has_text = config.ocr.has_legible_text(data.image)
         extracted_text: str | None = None
         summary: str | None = None
         boxes: list[OCRBox] = []
         if has_text:
-            extracted_text = config.ocr.get_text(image, config.settings.media_languages)
+            extracted_text = config.ocr.get_text(data.image, config.settings.media_languages)
             if extracted_text.strip() == "":
                 has_text = False
                 extracted_text = None
-            boxes = config.ocr.get_boxes(image, config.settings.media_languages)
+            boxes = config.ocr.get_boxes(data.image, config.settings.media_languages)
 
         # Check if this could be a photo of a document
         if (
@@ -52,10 +53,9 @@ class OCRModule(VisualModule):
                 "origin or purpose."
             )
 
-            summary = config.llm.image_question(image, prompt)
+            summary = config.llm.image_question(data.image, prompt)
 
-        return OCRData(
-            **data.model_dump(),
+        data.ocr = OCRData(
             has_legible_text=has_text,
             ocr_text=extracted_text,
             document_summary=summary,

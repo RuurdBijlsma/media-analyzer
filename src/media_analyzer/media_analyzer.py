@@ -11,9 +11,12 @@ from media_analyzer.processing.pipeline.pipeline import run_metadata_pipeline
 
 
 class MediaAnalyzer:
+    """Analyze media using a machine learning models, file based analysis, and exif data."""
+
     config: FullAnalyzerConfig
 
     def __init__(self, config: AnalyzerSettings | None = None) -> None:
+        """Initialize the media analyzer with the given configuration."""
         if config is None:
             config = AnalyzerSettings()
         embedder = CLIPEmbedder()
@@ -27,8 +30,10 @@ class MediaAnalyzer:
         )
 
     def analyze(self, input_media: InputMedia) -> MediaAnalyzerOutput:
+        """Analyze the given photo or video."""
         image_data, frame_data = run_metadata_pipeline(input_media, self.config)
-        return MediaAnalyzerOutput(**image_data.model_dump(), frame_data=frame_data)
+        return MediaAnalyzerOutput(image_data=image_data, frame_data=frame_data)
 
     def photo(self, image_path: Path) -> MediaAnalyzerOutput:
+        """Analyze a photo."""
         return self.analyze(InputMedia(image_path, frames=[image_path]))

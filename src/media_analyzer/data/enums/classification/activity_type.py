@@ -2,6 +2,8 @@ from enum import StrEnum, auto
 
 
 class ActivityType(StrEnum):
+    """Activity types enum."""
+
     # Sports
     RUNNING = auto()
     SWIMMING = auto()

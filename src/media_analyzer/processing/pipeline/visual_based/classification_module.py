@@ -1,11 +1,10 @@
 import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 from numpy.typing import NDArray
-from PIL.Image import Image
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.enums.classification.activity_type import ActivityType
@@ -19,17 +18,17 @@ from media_analyzer.data.enums.classification.weather_condition import (
     WeatherCondition,
     weather_condition_descriptions,
 )
-from media_analyzer.data.interfaces.visual_data import (
+from media_analyzer.data.interfaces.frame_data import (
     ClassificationData,
-    EmbeddingData,
-    VisualData,
+    FrameData,
 )
 from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
-from media_analyzer.processing.pipeline.base_module import VisualModule
+from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
 @lru_cache
 def get_scenes() -> dict[str, str]:
+    """Get the scene types from the scenes.json file."""
     scenes_path = Path(__file__).parents[2] / "assets/scenes.json"
     with scenes_path.open(encoding="utf-8") as f:
         result = json.load(f)
@@ -37,7 +36,10 @@ def get_scenes() -> dict[str, str]:
     return result
 
 
-def classify_image_scene(image_embedding: NDArray[Any], classifier: BaseClassifier) -> tuple[SceneType, float]:
+def classify_image_scene(
+    image_embedding: NDArray[Any], classifier: BaseClassifier
+) -> tuple[SceneType, float]:
+    """Classify the scene of an image."""
     scenes = get_scenes()
     best_index, confidence = classifier.classify_image(
         image_embedding,
@@ -67,12 +69,14 @@ def binary_classifications(
     bool,
     bool,
 ]:
+    """Perform binary classifications on the image."""
     people_type = classifier.classify_to_enum_with_descriptions(
         image_embedding,
         "This image contains people or a person.",
         "There are no people in this image.",
         {
-            PeopleType.SELFIE: "This is a selfie where a person holds the camera, showing their face prominently.",
+            PeopleType.SELFIE: "This is a selfie where a person holds the camera, showing their "
+            "face prominently.",
             PeopleType.GROUP: "This is a group photo",
             PeopleType.PORTRAIT: "This is a portrait photo of a person or persons",
             PeopleType.CROWD: "This is a crowd of people",
@@ -81,7 +85,8 @@ def binary_classifications(
 
     animal_type = classifier.classify_to_enum(
         image_embedding,
-        "This photo shows an animal or a pet, such as a cat, dog, guinea pig, rabbit, hamster, rat, chicken, or bird.",
+        "This photo shows an animal or a pet, such as a cat, dog, guinea pig, rabbit, "
+        "hamster, rat, chicken, or bird.",
         "There is no pet or animal here.",
         AnimalType,
     )
@@ -96,12 +101,14 @@ def binary_classifications(
             DocumentType.BOOK_OR_MAGAZINE: "This is a book or a magazine.",
             DocumentType.RECEIPT: "This is a receipt or proof of payment.",
             DocumentType.SCREENSHOT: "This is a digital screenshot from a phone or a computer.",
-            DocumentType.TICKET: "This is an event ticket, with information about the event and or the ticket holder.",
+            DocumentType.TICKET: "This is an event ticket, with information about the event and "
+            "or the ticket holder.",
             DocumentType.IDENTITY: "This is an identity document, such as an ID card, "
             "passport, drivers license, or other identifiable "
             "card.",
             DocumentType.NOTES: "This is a person's notes, notebook, or homework.",
-            DocumentType.PAYMENT_METHOD: "This is a payment method, such as a credit card or debit card.",
+            DocumentType.PAYMENT_METHOD: "This is a payment method, such as a credit card or "
+            "debit card.",
             DocumentType.MENU: "This is a restaurant menu.",
             DocumentType.RECIPE: "This is a recipe to create a meal.",
         },
@@ -141,7 +148,8 @@ def binary_classifications(
     )
     is_landscape, _ = classifier.binary_classify_image(
         image_embedding,
-        "This is a landscape featuring natural scenery such as mountains, dunes, forests, or lakes.",
+        "This is a landscape featuring natural scenery such as mountains, dunes, "
+        "forests, or lakes.",
         "This is not a landscape or does not feature natural scenery.",
     )
     is_cityscape, _ = classifier.binary_classify_image(
@@ -151,7 +159,8 @@ def binary_classifications(
     )
     is_travel, _ = classifier.binary_classify_image(
         image_embedding,
-        "This photo was taken during travel, featuring landmarks, airports, campsites, or exotic locations..",
+        "This photo was taken during travel, featuring landmarks, airports, "
+        "campsites, or exotic locations..",
         "This photo was not taken during travel or does not suggest a travel context.",
     )
 
@@ -179,10 +188,14 @@ def binary_classifications(
     )
 
 
-class ClassificationModule(VisualModule):
+class ClassificationModule(PipelineModule[FrameData]):
+    """Classify an image based on its visual content."""
+
+    depends: ClassVar[set[str]] = {"EmbeddingModule"}
+
     # pylint: disable-next=R0914
-    def process(self, data: VisualData, _i: Image, config: FullAnalyzerConfig) -> ClassificationData:
-        assert isinstance(data, EmbeddingData)
+    def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:
+        """Classify an image based on its visual content."""
         (
             people_type,
             animal_type,
@@ -198,8 +211,7 @@ class ClassificationModule(VisualModule):
         ) = binary_classifications(np.array(data.embedding), config.classifier)
         scene, _conf = classify_image_scene(np.array(data.embedding), config.classifier)
 
-        return ClassificationData(
-            **data.model_dump(),
+        data.classification = ClassificationData(
             people_type=people_type,
             animal_type=animal_type,
             document_type=document_type,

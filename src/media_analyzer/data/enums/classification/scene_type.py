@@ -2,6 +2,8 @@ from enum import StrEnum, auto
 
 
 class SceneType(StrEnum):
+    """Scene types enum."""
+
     AIRFIELD = auto()
     AIRPLANE_CABIN = auto()
     AIRPORT_TERMINAL = auto()

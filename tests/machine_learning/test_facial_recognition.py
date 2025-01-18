@@ -10,6 +10,7 @@ from media_analyzer.machine_learning.facial_recognition.insight_facial_recogniti
 
 
 def test_insight_facial_detection(assets_folder: Path) -> None:
+    """Test the InsightFacialRecognition."""
     image = Image.open(assets_folder / "faces.webp")
     facial_recognition = InsightFacialRecognition()
 
@@ -20,6 +21,7 @@ def test_insight_facial_detection(assets_folder: Path) -> None:
 
 
 def test_insight_facial_recognition(assets_folder: Path) -> None:
+    """Test the InsightFacialRecognition."""
     # Load images and initialize facial recognition
     facial_recognition = InsightFacialRecognition()
     faces = [

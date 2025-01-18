@@ -6,6 +6,8 @@ from media_analyzer.data.interfaces.ml_types import OCRBox
 
 
 class OCRProtocol(Protocol):
+    """Protocol for OCR."""
+
     def has_legible_text(self, image: Image) -> bool:
         """Check if an image has legible text."""
 

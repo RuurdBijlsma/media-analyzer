@@ -48,4 +48,4 @@ jobs:
           exiftool -ver
 
       - name: Run tests
-        run: uv run pytest -m "not cuda" --cov=src
+        run: uv run pytest -m "not cuda" --cov=src --cov-fail-under=90 # todo: 100

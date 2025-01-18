@@ -20,6 +20,7 @@ def test_resnet_object_detection(
     image: str,
     objects: list[str],
 ) -> None:
+    """Test the ResnetObjectDetection."""
     detector = ResnetObjectDetection()
     pil_image = PIL.Image.open(assets_folder / image)
     detections = detector.detect_objects(pil_image)
