@@ -33,11 +33,11 @@ def get_model_and_tokenizer() -> tuple[PreTrainedModel, PreTrainedTokenizerFast]
 
 class MiniCPMLLM(BaseVisualLLM):
     def stream_chat(
-            self,
-            messages: list[ChatMessage],
-            convert_images: bool = True,
-            temperature: float = 0.7,
-            max_tokens: int = 500,  # noqa: ARG002
+        self,
+        messages: list[ChatMessage],
+        convert_images: bool = True,
+        temperature: float = 0.7,
+        max_tokens: int = 500,  # noqa: ARG002
     ) -> Generator[str, None, None]:
         if convert_images:
             for msg in messages:

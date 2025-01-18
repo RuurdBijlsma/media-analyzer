@@ -17,7 +17,7 @@ def test_media_analyzer_none_settings() -> None:
 
 @pytest.mark.parametrize(
     "photo_filename",
-    ["tent.jpg", "sunset.jpg", "ocr.jpg", "cluster.jpg", "cat.jpg", "face2_b.jpg"]
+    ["tent.jpg", "sunset.jpg", "ocr.jpg", "cluster.jpg", "cat.jpg", "face2_b.jpg"],
 )
 def test_media_analyzer(assets_folder: Path, default_config: AnalyzerSettings, photo_filename: str) -> None:
     analyzer = MediaAnalyzer(default_config)

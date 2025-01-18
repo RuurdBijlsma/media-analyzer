@@ -49,11 +49,11 @@ class OpenAILLM(MiniCPMLLM):
         self.client = OpenAI()
 
     def stream_chat(
-            self,
-            messages: list[ChatMessage],
-            convert_images: bool = True,  # noqa: ARG002
-            temperature: float = 0.7,
-            max_tokens: int = 500,
+        self,
+        messages: list[ChatMessage],
+        convert_images: bool = True,  # noqa: ARG002
+        temperature: float = 0.7,
+        max_tokens: int = 500,
     ) -> Generator[str, None, None]:  # pragma: no cover
         dict_messages = list(map(chat_to_dict, messages))
 

@@ -52,8 +52,8 @@ def classify_image_scene(image_embedding: NDArray[Any], classifier: BaseClassifi
 
 
 def binary_classifications(
-        image_embedding: NDArray[Any],
-        classifier: BaseClassifier,
+    image_embedding: NDArray[Any],
+    classifier: BaseClassifier,
 ) -> tuple[
     PeopleType | None,
     AnimalType | None,
@@ -98,8 +98,8 @@ def binary_classifications(
             DocumentType.SCREENSHOT: "This is a digital screenshot from a phone or a computer.",
             DocumentType.TICKET: "This is an event ticket, with information about the event and or the ticket holder.",
             DocumentType.IDENTITY: "This is an identity document, such as an ID card, "
-                                   "passport, drivers license, or other identifiable "
-                                   "card.",
+            "passport, drivers license, or other identifiable "
+            "card.",
             DocumentType.NOTES: "This is a person's notes, notebook, or homework.",
             DocumentType.PAYMENT_METHOD: "This is a payment method, such as a credit card or debit card.",
             DocumentType.MENU: "This is a restaurant menu.",

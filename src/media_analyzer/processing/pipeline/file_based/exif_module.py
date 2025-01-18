@@ -11,6 +11,7 @@ def parse_duration(duration_str: str) -> float:
     h, m, s = duration_str.split(":")
     return int(h) * 3600 + int(m) * 60 + float(s)
 
+
 def structure_exiftool_dict(exiftool_dict: dict[str, Any]) -> dict[str, Any]:
     """Exiftool keys are structured as 'File:FileName'.
 

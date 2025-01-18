@@ -4,7 +4,6 @@ from PIL import Image
 
 from media_analyzer.data.anaylzer_config import AnalyzerSettings
 from media_analyzer.machine_learning.ocr.resnet_tesseract_ocr import ResnetTesseractOCR
-from media_analyzer.machine_learning.utils import draw_bounding_box
 
 
 def test_resnet_tesseract_ocr_text(assets_folder: Path, default_config: AnalyzerSettings) -> None:
@@ -22,8 +21,6 @@ def test_resnet_tesseract_ocr_boxes(assets_folder: Path, default_config: Analyze
     ocr = ResnetTesseractOCR()
 
     boxes = ocr.get_boxes(image, default_config.media_languages)
-    for box in boxes:
-        draw_bounding_box(box, image, f"test_img_out/{box.text}_out_ocr.jpg")
     required_boxes_amount = 50
     assert len(boxes) > required_boxes_amount
     found_spaghetti = False

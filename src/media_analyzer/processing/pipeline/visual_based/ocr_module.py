@@ -25,10 +25,10 @@ class OCRModule(VisualModule):
 
         # Check if this could be a photo of a document
         if (
-                config.settings.enable_document_summary
-                and has_text
-                and extracted_text
-                and len(extracted_text) > config.settings.document_detection_threshold
+            config.settings.enable_document_summary
+            and has_text
+            and extracted_text
+            and len(extracted_text) > config.settings.document_detection_threshold
         ):  # pragma: no cover
             prompt = (
                 "Analyze the image and provide the following details:\n\n"
