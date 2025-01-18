@@ -1,4 +1,6 @@
-"""This module initializes the media analyzer package and imports necessary components."""
+"""
+Python package for analyzing video/image with machine learning methods,
+exif data, and other file based information."""
 
 from media_analyzer.data.anaylzer_config import AnalyzerSettings, FullAnalyzerConfig
 from media_analyzer.data.enums.classification.activity_type import ActivityType
@@ -9,11 +11,15 @@ from media_analyzer.data.enums.classification.object_type import ObjectType
 from media_analyzer.data.enums.classification.people_type import PeopleType
 from media_analyzer.data.enums.classification.scene_type import SceneType
 from media_analyzer.data.enums.classification.weather_condition import WeatherCondition
-from media_analyzer.data.enums.config_types import CaptionerProvider
+from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvider
 from media_analyzer.data.enums.face_sex import FaceSex
 from media_analyzer.data.interfaces.api_io import InputMedia, MediaAnalyzerOutput
-from media_analyzer.data.interfaces.frame_data import MeasuredQualityData
-from media_analyzer.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox
+from media_analyzer.data.interfaces.frame_data import MeasuredQualityData, FrameData, OCRData, \
+    ClassificationData
+from media_analyzer.data.interfaces.image_data import ImageData, ExifData, GpsData, TimeData, \
+    WeatherData, IntermediateTimeData
+from media_analyzer.data.interfaces.location_types import GeoLocation
+from media_analyzer.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox, BaseBoundingBox
 from media_analyzer.machine_learning.caption.blip_captioner import BlipCaptioner
 from media_analyzer.machine_learning.caption.captioner_protocol import CaptionerProtocol
 from media_analyzer.machine_learning.caption.get_captioner import get_captioner_by_provider
@@ -36,48 +42,116 @@ from media_analyzer.machine_learning.object_detection.resnet_object_detection im
 )
 from media_analyzer.machine_learning.ocr.ocr_protocol import OCRProtocol
 from media_analyzer.machine_learning.ocr.resnet_tesseract_ocr import ResnetTesseractOCR
-from media_analyzer.machine_learning.visual_llm.base_visual_llm import BaseVisualLLM
+from media_analyzer.machine_learning.visual_llm.base_visual_llm import BaseVisualLLM, ChatMessage, \
+    ChatRole
 from media_analyzer.machine_learning.visual_llm.get_llm import get_llm_by_provider
 from media_analyzer.machine_learning.visual_llm.mini_cpm_llm import MiniCPMLLM
 from media_analyzer.machine_learning.visual_llm.openai_llm import OpenAILLM
 from media_analyzer.media_analyzer import MediaAnalyzer
+from media_analyzer.processing.pipeline.file_based.data_url_module import DataUrlModule
+from media_analyzer.processing.pipeline.file_based.exif_module import ExifModule
+from media_analyzer.processing.pipeline.file_based.gps_module import GpsModule
+from media_analyzer.processing.pipeline.file_based.time_module import TimeModule
+from media_analyzer.processing.pipeline.file_based.weather_module import WeatherModule
+from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
+from media_analyzer.processing.pipeline.visual_based.caption_module import CaptionModule
+from media_analyzer.processing.pipeline.visual_based.classification_module import (
+    ClassificationModule,
+)
+from media_analyzer.processing.pipeline.visual_based.embedding_module import EmbeddingModule
+from media_analyzer.processing.pipeline.visual_based.faces_module import FacesModule
+from media_analyzer.processing.pipeline.visual_based.objects_module import ObjectsModule
+from media_analyzer.processing.pipeline.visual_based.ocr_module import OCRModule
+from media_analyzer.processing.pipeline.visual_based.quality_detection_module import (
+    QualityDetectionModule,
+)
+from media_analyzer.processing.pipeline.visual_based.summary_module import SummaryModule
 
 __all__ = [
-    "ActivityType",
-    "AnalyzerSettings",
-    "AnimalType",
-    "BaseClassifier",
-    "BaseVisualLLM",
-    "BlipCaptioner",
-    "CLIPClassifier",
-    "CLIPEmbedder",
-    "CaptionerProtocol",
-    "CaptionerProvider",
-    "DocumentType",
-    "EmbedderProtocol",
-    "EventType",
-    "FaceBox",
-    "FaceSex",
-    "FacialRecognitionProtocol",
-    "FullAnalyzerConfig",
-    "InputMedia",
-    "InsightFacialRecognition",
-    "LLMCaptioner",
-    "MeasuredQualityData",
+    # Main classes
     "MediaAnalyzer",
     "MediaAnalyzerOutput",
-    "MiniCPMLLM",
-    "OCRBox",
-    "OCRProtocol",
-    "ObjectBox",
-    "ObjectDetectionProtocol",
-    "ObjectType",
-    "OpenAILLM",
-    "PeopleType",
-    "ResnetObjectDetection",
-    "ResnetTesseractOCR",
-    "SceneType",
-    "WeatherCondition",
-    "get_captioner_by_provider",
+    "InputMedia",
+    "AnalyzerSettings",
+
+    # Output data classes
+    "ImageData",
+    "FrameData",
+    ## Image Data
+    "ExifData",
+    "GpsData",
+    "TimeData",
+    "WeatherData",
+    "IntermediateTimeData",
+    ## Frame Data
+    "OCRData",
+    "ClassificationData",
+    "MeasuredQualityData",
+
+    # Extra output dataclasses
+    "GeoLocation",
+    "ChatMessage",
+    "ChatRole",
+
+    # Providers
     "get_llm_by_provider",
+    "LLMProvider",
+    "get_captioner_by_provider",
+    "CaptionerProvider",
+
+    # Modules
+    "PipelineModule",
+    ## File-based Modules
+    "DataUrlModule",
+    "ExifModule",
+    "GpsModule",
+    "TimeModule",
+    "WeatherModule",
+    ## Visual-based Modules
+    "CaptionModule",
+    "ClassificationModule",
+    "EmbeddingModule",
+    "SummaryModule",
+    "FacesModule",
+    "OCRModule",
+    "ObjectsModule",
+    "QualityDetectionModule",
+
+    # Machine learning classes
+    "BaseClassifier",
+    "CLIPClassifier",
+    "CaptionerProtocol",
+    "BlipCaptioner",
+    "EmbedderProtocol",
+    "CLIPEmbedder",
+    "FacialRecognitionProtocol",
+    "InsightFacialRecognition",
+    "ObjectDetectionProtocol",
+    "ResnetObjectDetection",
+    "OCRProtocol",
+    "ResnetTesseractOCR",
+    "LLMCaptioner",
+    "BaseVisualLLM",
+    "MiniCPMLLM",
+    "OpenAILLM",
+
+    # Machine learning types
+    "BaseBoundingBox",
+    "OCRBox",
+    "ObjectBox",
+    "FaceBox",
+    "FaceSex",
+
+    # Classification enums
+    "DocumentType",
+    "EventType",
+    "AnimalType",
+    "ActivityType",
+    "WeatherCondition",
+    "ObjectType",
+    "PeopleType",
+    "SceneType",
+
+    # Somewhat useless
+    "FullAnalyzerConfig",
 ]
