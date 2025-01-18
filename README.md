@@ -6,13 +6,21 @@ captioning, optical character recognition (OCR), and facial recognition.
 
 ## Features
 
-- **Image Classification**: Identify objects, activities, animals, and events present in images.
-- **Image Captioning**: Generate descriptive captions for images using models like BLIP and
+- **GPS**: Gather GPS coordinates from exif, and reverse geocode to get the country, province and
+  city.
+- **Image Classification**: Identify objects, scene, activities, animals, and events present in
+  images.
+- **Image Captioning**: Generate descriptive captions for images using models like BLIP or
   LLM-based captioners.
 - **Optical Character Recognition (OCR)**: Extract text from images to identify documents, receipts,
   menus, and more.
-- **Facial Recognition**: Detect faces in images and provide details such as age, sex, and facial
-  landmarks.
+- **Facial Recognition**: Detect faces in images and provide details such as age, sex, bounding box,
+  and facial
+  landmarks. Includes an embedding of the face, which can be used for clustering.
+- **Datetime Taken**: Photo and video files are messy and have unreliable datetime tags. This
+  packages uses six different methods with varying priority to get the datetime a photo is taken,
+  including the timezone if possible.
+- **Data Url**: Generate data url for tiny preload thumbnail.
 
 ## Installation
 
@@ -46,7 +54,7 @@ print(result.image_data)
 print(result.frame_data)
 ```
 
-Configuration
+### Configuration
 
 The AnalyzerSettings class allows you to customize various aspects of the analysis:
 

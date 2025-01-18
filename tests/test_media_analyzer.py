@@ -41,8 +41,6 @@ def test_media_analyzer(
         result = analyzer.photo(assets_folder / photo_filename)
 
     assert len(result.frame_data) == 1
-    assert len(result.image_data.frames) == len(result.frame_data)
-    assert result.image_data.path.name == photo_filename
 
     assert result.image_data.exif is not None
     assert result.image_data.dataurl is not None
@@ -81,8 +79,6 @@ def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -
 
     frame_count = 2
     assert len(result.frame_data) == frame_count
-    assert len(result.image_data.frames) == len(result.frame_data)
-    assert result.image_data.path.name == "car.webm"
 
     assert result.image_data.exif is not None
     assert result.image_data.exif.matroska is not None

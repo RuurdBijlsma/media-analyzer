@@ -147,3 +147,22 @@ class ImageData:
     gps: GpsData | None = None
     time: TimeData | IntermediateTimeData | None = None
     weather: WeatherData | None = None
+
+
+@dataclass
+class ImageDataOutput:
+    """Comprehensive data for an image.
+
+    Attributes:
+        exif: Exif data of the image.
+        dataurl: The data URL representation of the image.
+        gps: GPS data associated with the image.
+        time: Time-related data for the image.
+        weather: Weather data at the time the image was taken.
+    """
+
+    exif: ExifData | None = None
+    dataurl: str | None = None
+    gps: GpsData | None = None
+    time: TimeData | IntermediateTimeData | None = None
+    weather: WeatherData | None = None

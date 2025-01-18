@@ -88,13 +88,11 @@ class MeasuredQualityData:
 
 
 @dataclass
-class FrameData:
+class FrameDataOutput:
     """Data for a frame.
 
     Attributes:
         index: The frame index.
-        path: The frame path.
-        image: The frame image.
         ocr: The OCR data.
         embedding: The embedding data.
         faces: The face boxes.
@@ -106,8 +104,23 @@ class FrameData:
     """
 
     index: int
-    path: Path
+    ocr: OCRData | None = None
+    embedding: list[float] | None = None
+    faces: list[FaceBox] | None = None
+    summary: str | None = None
+    caption: str | None = None
+    objects: list[ObjectBox] | None = None
+    classification: ClassificationData | None = None
+    measured_quality: MeasuredQualityData | None = None
+
+
+@dataclass
+class FrameData:
+    """Data for a frame, including an image for using during analysis."""
+
     image: Image
+    index: int
+    path: Path
     ocr: OCRData | None = None
     embedding: list[float] | None = None
     faces: list[FaceBox] | None = None

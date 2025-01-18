@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from media_analyzer.data.interfaces.frame_data import FrameData
-from media_analyzer.data.interfaces.image_data import ImageData
+from media_analyzer.data.interfaces.frame_data import FrameDataOutput
+from media_analyzer.data.interfaces.image_data import ImageDataOutput
 
 
 @dataclass
@@ -28,5 +28,5 @@ class MediaAnalyzerOutput:
         frame_data: Visual analysis for the frames given in the input.
     """
 
-    image_data: ImageData
-    frame_data: list[FrameData]
+    image_data: ImageDataOutput
+    frame_data: list[FrameDataOutput]

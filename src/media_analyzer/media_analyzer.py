@@ -2,6 +2,8 @@ from pathlib import Path
 
 from media_analyzer.data.anaylzer_config import AnalyzerSettings, FullAnalyzerConfig
 from media_analyzer.data.interfaces.api_io import InputMedia, MediaAnalyzerOutput
+from media_analyzer.data.interfaces.frame_data import FrameDataOutput
+from media_analyzer.data.interfaces.image_data import ImageDataOutput
 from media_analyzer.machine_learning.caption.get_captioner import get_captioner_by_provider
 from media_analyzer.machine_learning.classifier.clip_classifier import CLIPClassifier
 from media_analyzer.machine_learning.embedding.clip_embedder import CLIPEmbedder
@@ -32,7 +34,28 @@ class MediaAnalyzer:
     def analyze(self, input_media: InputMedia) -> MediaAnalyzerOutput:
         """Analyze the given photo or video."""
         image_data, frame_data = run_metadata_pipeline(input_media, self.config)
-        return MediaAnalyzerOutput(image_data=image_data, frame_data=frame_data)
+        image_data_output = ImageDataOutput(
+            exif=image_data.exif,
+            dataurl=image_data.dataurl,
+            gps=image_data.gps,
+            time=image_data.time,
+            weather=image_data.weather,
+        )
+        frame_output = [
+            FrameDataOutput(
+                index=frame.index,
+                ocr=frame.ocr,
+                embedding=frame.embedding,
+                faces=frame.faces,
+                summary=frame.summary,
+                caption=frame.caption,
+                objects=frame.objects,
+                classification=frame.classification,
+                measured_quality=frame.measured_quality,
+            )
+            for frame in frame_data
+        ]
+        return MediaAnalyzerOutput(image_data=image_data_output, frame_data=frame_output)
 
     def photo(self, image_path: Path) -> MediaAnalyzerOutput:
         """Analyze a photo."""

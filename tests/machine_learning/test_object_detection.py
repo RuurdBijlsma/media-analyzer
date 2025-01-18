@@ -11,7 +11,7 @@ from media_analyzer.machine_learning.object_detection.resnet_object_detection im
 @pytest.mark.parametrize(
     ("image", "objects"),
     [
-        ("cat.jpg", ["cat"]),
+        ("tent.jpg", ["car"]),
         ("cluster.jpg", ["laptop"]),
     ],
 )
