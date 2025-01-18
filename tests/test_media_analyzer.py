@@ -3,14 +3,22 @@ from pathlib import Path
 
 import pytest
 
-from media_analyzer.data.anaylzer_config import AnalyzerSettings
+from media_analyzer.data.anaylzer_config import AnalyzerSettings, FullAnalyzerConfig
 from media_analyzer.data.enums.classification.activity_type import ActivityType
 from media_analyzer.data.enums.classification.people_type import PeopleType
 from media_analyzer.data.enums.classification.scene_type import SceneType
 from media_analyzer.media_analyzer import MediaAnalyzer
 
 
-@pytest.mark.parametrize("photo_filename", ["tent.jpg", "sunset.jpg", "ocr.jpg", "cluster.jpg", "cat.jpg"])
+def test_media_analyzer_none_settings() -> None:
+    analyzer = MediaAnalyzer()
+    assert isinstance(analyzer.config, FullAnalyzerConfig)
+
+
+@pytest.mark.parametrize(
+    "photo_filename",
+    ["tent.jpg", "sunset.jpg", "ocr.jpg", "cluster.jpg", "cat.jpg", "face2_b.jpg"]
+)
 def test_media_analyzer(assets_folder: Path, default_config: AnalyzerSettings, photo_filename: str) -> None:
     analyzer = MediaAnalyzer(default_config)
     result = analyzer.photo(assets_folder / photo_filename)

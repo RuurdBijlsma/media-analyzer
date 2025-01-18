@@ -20,7 +20,7 @@ class WeatherModule(FileModule):
             data.datetime_utc + timedelta(minutes=30),
         )
         meteo_data = meteo_data.fetch()
-        if len(meteo_data) == 0:
+        if len(meteo_data) == 0:  # pragma: no cover
             return WeatherData(**data.model_dump())
         max_possible_rows = 2
         assert len(meteo_data) <= max_possible_rows

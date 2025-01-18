@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-import PIL
 from numpy.typing import NDArray
 from PIL.Image import Image
 
@@ -26,7 +25,6 @@ from media_analyzer.data.interfaces.visual_data import (
     VisualData,
 )
 from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
-from media_analyzer.machine_learning.classifier.clip_classifier import CLIPClassifier
 from media_analyzer.processing.pipeline.base_module import VisualModule
 
 
@@ -54,8 +52,8 @@ def classify_image_scene(image_embedding: NDArray[Any], classifier: BaseClassifi
 
 
 def binary_classifications(
-    image_embedding: NDArray[Any],
-    classifier: BaseClassifier,
+        image_embedding: NDArray[Any],
+        classifier: BaseClassifier,
 ) -> tuple[
     PeopleType | None,
     AnimalType | None,
@@ -100,8 +98,8 @@ def binary_classifications(
             DocumentType.SCREENSHOT: "This is a digital screenshot from a phone or a computer.",
             DocumentType.TICKET: "This is an event ticket, with information about the event and or the ticket holder.",
             DocumentType.IDENTITY: "This is an identity document, such as an ID card, "
-            "passport, drivers license, or other identifiable "
-            "card.",
+                                   "passport, drivers license, or other identifiable "
+                                   "card.",
             DocumentType.NOTES: "This is a person's notes, notebook, or homework.",
             DocumentType.PAYMENT_METHOD: "This is a payment method, such as a credit card or debit card.",
             DocumentType.MENU: "This is a restaurant menu.",
@@ -181,18 +179,6 @@ def binary_classifications(
     )
 
 
-def experiment() -> None:
-    classifier = CLIPClassifier()
-    with PIL.Image.open("media/images/1/IMG_20190717_172849.jpg") as img:
-        image_embedding = classifier.embedder.embed_image(img)
-
-        scene, conf = classify_image_scene(image_embedding, classifier)
-        print(scene, conf)
-
-        binary_dict = binary_classifications(image_embedding, classifier)
-        print(binary_dict)
-
-
 class ClassificationModule(VisualModule):
     def process(self, data: VisualData, _i: Image, config: FullAnalyzerConfig) -> ClassificationData:
         assert isinstance(data, EmbeddingData)
@@ -226,7 +212,3 @@ class ClassificationModule(VisualModule):
             is_travel=is_travel,
             scene_type=scene,
         )
-
-
-if __name__ == "__main__":
-    experiment()

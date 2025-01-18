@@ -1,8 +1,6 @@
-from collections import defaultdict
 from typing import Any
 
 from exiftool import ExifToolHelper
-from PIL.ExifTags import TAGS
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.interfaces.image_data import ExifData, ImageData
@@ -12,39 +10,6 @@ from media_analyzer.processing.pipeline.base_module import FileModule
 def parse_duration(duration_str: str) -> float:
     h, m, s = duration_str.split(":")
     return int(h) * 3600 + int(m) * 60 + float(s)
-
-
-def get_all_exif(exif_dict: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    all_exif: defaultdict[str, dict[str, Any]] = defaultdict(dict)
-
-    # Loop over the different IFD (Image File Directory) sections
-    for ifd, ifd_data in exif_dict.items():
-        if ifd == "0th":
-            section_name = "Image"
-        elif ifd == "Exif":
-            section_name = "EXIF"
-        elif ifd == "GPS":
-            section_name = "GPS"
-        elif ifd == "1st":
-            section_name = "Thumbnail"
-        else:
-            section_name = ifd
-
-        if not isinstance(ifd_data, dict):
-            continue
-        for tag, value in ifd_data.items():
-            # Convert the tag number to human-readable name if possible
-            tag_name = TAGS.get(tag, tag)
-            if isinstance(value, bytes):
-                try:
-                    value = value.decode("utf-8")  # noqa: PLW2901
-                except UnicodeDecodeError:
-                    # Ignore value if it can't be turned into string
-                    continue
-            all_exif[section_name][tag_name] = value
-
-    return dict(all_exif)
-
 
 def structure_exiftool_dict(exiftool_dict: dict[str, Any]) -> dict[str, Any]:
     """Exiftool keys are structured as 'File:FileName'.

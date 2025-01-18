@@ -31,7 +31,7 @@ def perform_clustering(
     cluster_selection_method: str = "eom",
     cluster_selection_epsilon: float = 0.0,
 ) -> list[int]:
-    # l2 normalize, so that euclidean metric will work similar to cosine metric would
+    # l2 normalize, so that Euclidean metric will work similar to cosine metric would
     #   cosine is not supported in hdbscan
     normalized = preprocessing.normalize(embeddings)
     clusterer = get_clusterer(

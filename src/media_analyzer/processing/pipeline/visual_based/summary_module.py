@@ -6,7 +6,7 @@ from media_analyzer.processing.pipeline.base_module import VisualModule
 
 
 class SummaryModule(VisualModule):
-    def process(self, data: VisualData, image: Image, config: FullAnalyzerConfig) -> SummaryData:
+    def process(self, data: VisualData, image: Image, config: FullAnalyzerConfig) -> SummaryData:  # pragma: no cover
         if not config.settings.enable_text_summary:
             return SummaryData(
                 **data.model_dump(),

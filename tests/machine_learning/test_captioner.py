@@ -19,6 +19,16 @@ def test_blip_captioner(
     assert isinstance(caption, str)
     min_caption_length = 3
     assert len(caption) > min_caption_length
+@pytest.mark.cuda
+def test_blip_captioner_conditional(
+    assets_folder: Path,
+) -> None:
+    image = Image.open(assets_folder / "sunset.jpg")
+    blip = BlipCaptioner()
+    caption = blip.caption(image, "A photo of ")
+    assert isinstance(caption, str)
+    min_caption_length = 3
+    assert len(caption) > min_caption_length
 
 
 @pytest.mark.parametrize(

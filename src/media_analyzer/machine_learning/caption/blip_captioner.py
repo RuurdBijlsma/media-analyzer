@@ -18,8 +18,8 @@ class BlipCaptioner(CaptionerProtocol):
     # dumbass blip captioner comes up with the word arafed or araffe sometimes.
     hallucinated_words: ClassVar[list[str]] = ["arafed", "araffe"]
 
-    def caption(self, image: Image) -> str:
-        caption = self.raw_caption(image)
+    def caption(self, image: Image, conditional: str | None = None) -> str:
+        caption = self.raw_caption(image, conditional)
         # Captions with apostrophe come out weird: "Person ' s"
         caption = caption.replace(" ' ", "'")
         if all(word not in caption for word in self.hallucinated_words):

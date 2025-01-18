@@ -10,7 +10,7 @@ from media_analyzer.machine_learning.visual_llm.base_visual_llm import ChatMessa
 from media_analyzer.machine_learning.visual_llm.mini_cpm_llm import MiniCPMLLM
 
 
-def to_base64_url(image: Image, max_size: int = 720) -> str:
+def to_base64_url(image: Image, max_size: int = 720) -> str: #pragma: no cover
     image.thumbnail((max_size, max_size))
     buffered = BytesIO()
     image.save(buffered, format="JPEG", optimize=True)
@@ -18,7 +18,7 @@ def to_base64_url(image: Image, max_size: int = 720) -> str:
     return f"data:image/jpeg;base64,{b64}"
 
 
-def chat_to_dict(chat: ChatMessage) -> dict[str, Any]:
+def chat_to_dict(chat: ChatMessage) -> dict[str, Any]: #pragma: no cover
     if len(chat.images) == 0:
         return {
             "role": str(chat.role),
@@ -42,7 +42,7 @@ class OpenAILLM(MiniCPMLLM):
     model_name: str
     client: OpenAI
 
-    def __init__(self, model_name: str = "gpt-4o-mini") -> None:
+    def __init__(self, model_name: str = "gpt-4o-mini") -> None: #pragma: no cover
         super().__init__()
         self.model_name = model_name
         self.client = OpenAI()
@@ -53,7 +53,7 @@ class OpenAILLM(MiniCPMLLM):
         convert_images: bool = True,  # noqa: ARG002
         temperature: float = 0.7,
         max_tokens: int = 500,
-    ) -> Generator[str, None, None]:
+    ) -> Generator[str, None, None]: #pragma: no cover
         dict_messages = list(map(chat_to_dict, messages))
 
         response = self.client.chat.completions.create(

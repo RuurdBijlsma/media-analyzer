@@ -88,6 +88,17 @@ lint.select = [
     "YTT", # https://docs.astral.sh/ruff/rules/#flake8-2020-ytt
 ]
 
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "if TYPE_CHECKING:",
+]
+
+[tool.coverage.coverage]
+fail_under = 100
+
 [tool.uv.sources]
 torch = [
     { index = "pytorch_gpu", marker = "sys_platform != 'darwin'" },

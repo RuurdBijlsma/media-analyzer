@@ -20,7 +20,7 @@ class CLIPClassifier(BaseClassifier):
         self.embedder = embedder
 
     @lru_cache
-    def cached_embed_text(self, text: str) -> NDArray[Any]:
+    def _cached_embed_text(self, text: str) -> NDArray[Any]:
         return self.embedder.embed_text(text)
 
     def classify_image(
@@ -28,7 +28,7 @@ class CLIPClassifier(BaseClassifier):
         image_embedding: NDArray[Any],
         classes: list[str],
     ) -> tuple[int, float]:
-        text_embeddings = [self.cached_embed_text(c) for c in classes]
+        text_embeddings = [self._cached_embed_text(c) for c in classes]
         similarities = cosine_similarity([image_embedding], text_embeddings)
         normalized: NDArray[Any] = softmax(similarities)
         best_index = np.argmax(normalized)
