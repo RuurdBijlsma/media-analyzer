@@ -1,3 +1,5 @@
+from typing import Any
+
 import networkx as nx
 import PIL.Image
 import pillow_avif  # noqa: F401
@@ -26,7 +28,7 @@ from media_analyzer.processing.pipeline.visual_based.quality_detection_module im
 from media_analyzer.processing.pipeline.visual_based.summary_module import SummaryModule
 from media_analyzer.processing.process_utils import pil_to_jpeg
 
-pipeline_classes = [
+pipeline_classes: list[type[PipelineModule[Any]]] = [
     DataUrlModule,
     ExifModule,
     GpsModule,
@@ -44,7 +46,14 @@ pipeline_classes = [
 name_to_pipeline = {cls.__name__: cls for cls in pipeline_classes}
 
 
-def topological_sort(modules: set[type[PipelineModule]]) -> list[str]:
+def strings_to_pipeline(strings: list[str]) -> list[type[PipelineModule[Any]]]:
+    """Pipeline module id to pipeline module class."""
+    return [name_to_pipeline[name] for name in strings]
+
+
+def topological_sort(
+    modules: set[type[PipelineModule[Any]]],
+) -> list[PipelineModule[Any]]:
     """Sort modules topologically based on their dependencies."""
     graph = nx.DiGraph()
     for module in modules:
@@ -53,7 +62,8 @@ def topological_sort(modules: set[type[PipelineModule]]) -> list[str]:
             graph.add_edge(module.__name__, dependency)
 
     try:
-        return reversed(list(nx.topological_sort(graph)))
+        module_ids: list[str] = list(reversed(list(nx.topological_sort(graph))))
+        return [module() for module in strings_to_pipeline(module_ids)]
     except nx.NetworkXUnfeasible as e:
         raise ValueError(
             "A cycle was detected in the dependency graph, and topological sorting is not possible."
@@ -67,12 +77,9 @@ def run_metadata_pipeline(
     """Run the metadata pipeline on the input media."""
     image_data = ImageData(path=input_media.path, frames=input_media.frames)
 
-    file_modules = [
-        name_to_pipeline[module_name]()
-        for module_name in topological_sort(
-            {name_to_pipeline[name] for name in config.settings.enabled_file_modules}
-        )
-    ]
+    file_modules = topological_sort(
+        {name_to_pipeline[name] for name in config.settings.enabled_file_modules}
+    )
     for image_module in file_modules:
         image_module.run(image_data, config)
 
@@ -82,12 +89,10 @@ def run_metadata_pipeline(
             jpeg_image = pil_to_jpeg(frame_image)
 
         frame_data = FrameData(index=i, path=frame_image_path, image=jpeg_image)
-        visual_modules = [
-            name_to_pipeline[module_name]()
-            for module_name in topological_sort(
-                {name_to_pipeline[name] for name in config.settings.enabled_visual_modules}
-            )
-        ]
+        visual_modules = topological_sort(
+            {name_to_pipeline[name] for name in config.settings.enabled_visual_modules}
+        )
+
         for visual_module in visual_modules:
             visual_module.run(frame_data, config)
         frame_datas.append(frame_data)

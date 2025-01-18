@@ -3,7 +3,7 @@ from media_analyzer.data.interfaces.frame_data import FrameData
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
-class SummaryModule(PipelineModule):
+class SummaryModule(PipelineModule[FrameData]):
     """Generate a summary from an image using a language model."""
 
     def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:  # pragma: no cover

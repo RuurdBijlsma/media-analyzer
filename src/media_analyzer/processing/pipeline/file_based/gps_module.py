@@ -9,7 +9,7 @@ from media_analyzer.data.interfaces.location_types import GeoLocation
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
-class GpsModule(PipelineModule):
+class GpsModule(PipelineModule[ImageData]):
     """Extract GPS data from an image."""
 
     depends: ClassVar[set[str]] = {"ExifModule"}

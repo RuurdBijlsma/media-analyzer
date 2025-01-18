@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from media_analyzer.data.interfaces.ml_types import OCRBox
 
 
-class OCRModule(PipelineModule):
+class OCRModule(PipelineModule[FrameData]):
     """Extract text from an image using OCR."""
 
     def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:

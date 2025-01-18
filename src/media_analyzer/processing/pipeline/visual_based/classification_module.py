@@ -188,7 +188,7 @@ def binary_classifications(
     )
 
 
-class ClassificationModule(PipelineModule):
+class ClassificationModule(PipelineModule[FrameData]):
     """Classify an image based on its visual content."""
 
     depends: ClassVar[set[str]] = {"EmbeddingModule"}

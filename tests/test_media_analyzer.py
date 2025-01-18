@@ -29,7 +29,7 @@ def test_media_analyzer(
     default_config: AnalyzerSettings,
     photo_filename: str,
     expect_gps: bool,
-    expect_gif: bool
+    expect_gif: bool,
 ) -> None:
     """Test the MediaAnalyzer functionality for images with and without GPS data."""
     mock_caption_text = "A mock caption."
@@ -55,10 +55,13 @@ def test_media_analyzer(
         assert result.image_data.gps is None
         assert result.image_data.weather is None
 
+    if expect_gif:
+        assert result.image_data.exif.gif is not None
+    else:
+        assert result.image_data.exif.gif is None
 
-def test_video_analysis(
-    assets_folder: Path, default_config: AnalyzerSettings
-) -> None:
+
+def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -> None:
     """Test the MediaAnalyzer functionality for a video."""
     mock_caption_text = "A mock caption."
     with patch(
@@ -66,15 +69,18 @@ def test_video_analysis(
     ) as mock_raw_caption:
         mock_raw_caption.return_value = mock_caption_text
         analyzer = MediaAnalyzer(default_config)
-        result = analyzer.analyze(InputMedia(
-            path=assets_folder / 'video' / 'car.webm',
-            frames=[
-                assets_folder / 'video' / 'frame1.jpg',
-                assets_folder / 'video' / 'frame2.jpg',
-            ]
-        ))
+        result = analyzer.analyze(
+            InputMedia(
+                path=assets_folder / "video" / "car.webm",
+                frames=[
+                    assets_folder / "video" / "frame1.jpg",
+                    assets_folder / "video" / "frame2.jpg",
+                ],
+            )
+        )
 
-    assert len(result.frame_data) == 2
+    frame_count = 2
+    assert len(result.frame_data) == frame_count
     assert len(result.image_data.frames) == len(result.frame_data)
     assert result.image_data.path.name == "car.webm"
 

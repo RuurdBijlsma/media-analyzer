@@ -17,7 +17,7 @@ def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
 
     def f1() -> tuple[datetime, str]:
         """Get the datetime from the EXIF DateTimeOriginal with OffsetTimeOriginal."""
-        assert data.exif.exif
+        assert data.exif and data.exif.exif
         datetime_taken = datetime.strptime(  # noqa: DTZ007
             data.exif.exif["DateTimeOriginal"],
             "%Y:%m:%d %H:%M:%S",
@@ -30,6 +30,7 @@ def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
 
     def f2() -> tuple[datetime, str]:
         """Get the datetime from the GPS data."""
+        assert data.gps and data.time
         assert data.gps.longitude and data.gps.latitude
         tz_name = timezone_finder.timezone_at(
             lng=data.gps.longitude,
@@ -43,7 +44,7 @@ def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
 
     def f3() -> tuple[datetime, str]:
         """Get the datetime from the EXIF DateTimeOriginal."""
-        assert data.exif.exif
+        assert data.exif and data.exif.exif
         result = datetime.strptime(  # noqa: DTZ007
             data.exif.exif["DateTimeOriginal"],
             "%Y:%m:%d %H:%M:%S",
@@ -52,7 +53,7 @@ def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
 
     def f4() -> tuple[datetime, str]:
         """Get the datetime from the EXIF CreateDate."""
-        assert data.exif.exif
+        assert data.exif and data.exif.exif
         result = datetime.strptime(  # noqa: DTZ007
             data.exif.exif["CreateDate"], "%Y:%m:%d %H:%M:%S"
         )
@@ -75,6 +76,7 @@ def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
 
     def f6() -> tuple[datetime, str]:
         """Get the datetime from the file modification date."""
+        assert data.exif
         assert data.exif.file
         assert "FileModifyDate" in data.exif.file
         result = datetime.strptime(
@@ -96,7 +98,7 @@ def get_timezone_info(
     date: datetime,
 ) -> tuple[datetime | None, str | None, timedelta | None]:
     """Gets timezone name and offset from latitude, longitude, and date."""
-    if not data.gps or not data.gps.latitude or not data.gps.longitude:
+    if not data.time or not data.gps or not data.gps.latitude or not data.gps.longitude:
         return None, None, None
 
     timezone_name = timezone_finder.timezone_at(
@@ -116,7 +118,7 @@ def get_timezone_info(
     return datetime_utc, timezone_name, timezone_offset
 
 
-class TimeModule(PipelineModule):
+class TimeModule(PipelineModule[ImageData]):
     """Extracts datetime from an image."""
 
     depends: ClassVar[set[str]] = {"ExifModule", "GpsModule"}

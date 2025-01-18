@@ -6,9 +6,11 @@ from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 embedder = CLIPEmbedder()
 
 
-class EmbeddingModule(PipelineModule):
+class EmbeddingModule(PipelineModule[FrameData]):
     """Embed an image using CLIP."""
 
     def process(self, data: FrameData, _: FullAnalyzerConfig) -> None:
         """Embed an image using CLIP."""
-        data.embedding = embedder.embed_image(data.image).tolist()
+        embedding = embedder.embed_image(data.image).tolist()
+        assert isinstance(embedding, list)
+        data.embedding = embedding  # type: ignore[assignment]

@@ -18,7 +18,7 @@ class PipelineModule(Generic[TData], ABC):
 
     run_times: list[float]
     id: str
-    depends: ClassVar[set[str]] = {}
+    depends: ClassVar[set[str]] = set()
 
     def __init__(self) -> None:
         """Initializes the PipelineModule."""

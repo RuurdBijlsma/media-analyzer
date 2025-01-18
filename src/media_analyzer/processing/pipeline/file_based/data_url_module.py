@@ -9,7 +9,7 @@ from media_analyzer.data.interfaces.image_data import ImageData
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
-class DataUrlModule(PipelineModule):
+class DataUrlModule(PipelineModule[ImageData]):
     """Convert an image to a data URL."""
 
     def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:

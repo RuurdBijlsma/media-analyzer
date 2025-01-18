@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from PIL import Image
+from PIL.Image import Image
 
 from media_analyzer.data.enums.classification.activity_type import ActivityType
 from media_analyzer.data.enums.classification.animal_type import AnimalType

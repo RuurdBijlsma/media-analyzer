@@ -8,7 +8,7 @@ from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 detector = ResnetObjectDetection()
 
 
-class ObjectsModule(PipelineModule):
+class ObjectsModule(PipelineModule[FrameData]):
     """Detect objects in an image."""
 
     def process(self, data: FrameData, _: FullAnalyzerConfig) -> None:

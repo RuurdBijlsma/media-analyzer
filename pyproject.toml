@@ -39,7 +39,13 @@ build-backend = "hatchling.build"
 [tool.ruff]
 line-length = 100
 exclude = ["scripts", "alembic"]
-lint.ignore = ['S101', 'INP001', 'T201', 'S311', 'TRY003', 'PT018', 'PLR0913', "B019", "COM812","D100"]
+lint.ignore = [
+    'S101', 'INP001',
+    'T201', 'S311',
+    'TRY003', 'PT018',
+    'PLR0913', "B019",
+    "COM812", "D100",
+]
 lint.select = [
     "A", # https://docs.astral.sh/ruff/rules/#flake8-builtins-a
     "ANN", # https://docs.astral.sh/ruff/rules/#flake8-annotations-ann
@@ -129,6 +135,7 @@ explicit = true
 [dependency-groups]
 dev = [
     "mypy>=1.14.1",
+    "pdoc>=15.0.1",
     "pylint>=3.3.3",
     "pyscan>=1.0.0",
     "pytest>=8.3.4",

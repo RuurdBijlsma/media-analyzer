@@ -111,7 +111,7 @@ def composite_quality_score(
     ) / total_weight
 
 
-class QualityDetectionModule(PipelineModule):
+class QualityDetectionModule(PipelineModule[FrameData]):
     """Detect image quality metrics."""
 
     def process(self, data: FrameData, _: FullAnalyzerConfig) -> None:

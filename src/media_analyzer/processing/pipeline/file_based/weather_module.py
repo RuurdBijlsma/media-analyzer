@@ -10,7 +10,7 @@ from media_analyzer.data.interfaces.image_data import ImageData, WeatherData
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
-class WeatherModule(PipelineModule):
+class WeatherModule(PipelineModule[ImageData]):
     """Extract weather data from the time and place an image was taken."""
 
     depends: ClassVar[set[str]] = {"GpsModule"}
@@ -19,6 +19,7 @@ class WeatherModule(PipelineModule):
         """Extract weather data from the time and place an image was taken."""
         if (
             not data.gps
+            or not data.time
             or not data.time.datetime_utc
             or not data.gps.latitude
             or not data.gps.longitude

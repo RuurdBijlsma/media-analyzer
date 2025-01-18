@@ -8,7 +8,7 @@ from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 facial_recognition = InsightFacialRecognition()
 
 
-class FacesModule(PipelineModule):
+class FacesModule(PipelineModule[FrameData]):
     """Get faces from an image."""
 
     def process(self, data: FrameData, _: FullAnalyzerConfig) -> None:

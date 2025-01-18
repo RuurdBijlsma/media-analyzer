@@ -41,7 +41,7 @@ def structure_exiftool_dict(exiftool_dict: dict[str, Any]) -> dict[str, Any]:
     return nested_dict
 
 
-class ExifModule(PipelineModule):
+class ExifModule(PipelineModule[ImageData]):
     """Extract EXIF data from an image using exiftool."""
 
     def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:

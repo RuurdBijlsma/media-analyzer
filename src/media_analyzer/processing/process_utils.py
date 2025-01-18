@@ -10,7 +10,7 @@ timezone_finder = TimezoneFinder()
 def pil_to_jpeg(pil_image: Image) -> Image:
     """Convert a PIL image to a JPEG image."""
     if pil_image.format == "GIF":
-        pil_image = pil_image.convert('RGB')
+        pil_image = pil_image.convert("RGB")
 
     # Weird conversion to jpg so pytesseract can handle the image
     img_byte_arr = io.BytesIO()
