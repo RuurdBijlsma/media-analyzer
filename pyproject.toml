@@ -1,6 +1,6 @@
 [project]
 name = "media-analyzer"
-version = "0.1.1"
+version = "0.1.2"
 description = "Analyze video/image with machine learning methods, exif data, and other file based information. "
 readme = "README.md"
 license = "MIT"
@@ -35,7 +35,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/RuurdBijlsma/media-analyzer"
 Repository = "https://github.com/RuurdBijlsma/media-analyzer"
-Documentation = "https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#MediaAnalyzer"
+Documentation = "https://ruurdbijlsma.github.io/media-analyzer"
 
 [build-system]
 requires = ["hatchling"]

@@ -18,13 +18,15 @@ captioning, optical character recognition (OCR), and facial recognition.
     * pressure
     * sun hours
     * condition
+
 * **Quality Detection**: Detect objectively measurable quality of images:
-  * Sharpness
-  * Noise
-  * Exposure
-  * Dynamic range
-  * Color clipping (white/black levels)
-  * A composite score is generated, so photos can be ranked by quality.
+    * Sharpness
+    * Noise
+    * Exposure
+    * Dynamic range
+    * Color clipping (white/black levels)
+    * A composite score is generated, so photos can be ranked by quality.
+
 - **Image Classification**: Identify objects, scene type, activities, animals, and events present in
   images.
 - **Image Captioning**: Generate descriptive captions for images using models like BLIP or
@@ -60,8 +62,9 @@ You must have the following in PATH.
 ## Examples
 
 Example output of the main analyze function can be viewed
-at [example_output.json](examples/example_output.json). Further example
-code is available at [/examples](/examples).
+at [example_output.json](https://github.com/RuurdBijlsma/media-analyzer/blob/main/examples/example_output.json).
+Further examplecode is available
+at [/examples](https://github.com/RuurdBijlsma/media-analyzer/tree/main/examples).
 
 ## Usage
 
@@ -129,8 +132,7 @@ The AnalyzerSettings class allows you to customize various aspects of the analys
     enabled_file_modules: List of file modules to enable (e.g., exif data, gps, weather detection).
     enabled_visual_modules: List of visual modules to enable (e.g., 'classification', 'captioning', 'ocr', 'facial_recognition').
 
-Full docs can be found
-at https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#MediaAnalyzer.
+Full docs can be found at https://ruurdbijlsma.github.io/media-analyzer.
 
 ## Attribution
 
