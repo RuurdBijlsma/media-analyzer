@@ -2,8 +2,9 @@ import json
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
-from media_analyzer import MediaAnalyzer, InputMedia
+from media_analyzer import InputMedia, MediaAnalyzer
 
 analyzer = MediaAnalyzer()
 video_file = Path(__file__).parents[1] / "tests/assets/video/car.webm"
@@ -16,7 +17,7 @@ result = analyzer.analyze(InputMedia(path=video_file, frames=frames))
 
 
 # Serialize result to json
-def custom_serializer(obj):
+def custom_serializer(obj: Any) -> str:
     if isinstance(obj, datetime):
         return obj.isoformat()
     raise TypeError(f"Type {type(obj)} not serializable")

@@ -13,7 +13,7 @@ result = analyzer.photo(media_file)
 
 print(result)
 
-# Resulting json:
+# Result (converted to json):
 # {
 #   "image_data": {
 #     "exif": {

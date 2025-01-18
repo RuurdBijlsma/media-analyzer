@@ -44,7 +44,7 @@ build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 100
-exclude = ["scripts", "alembic", "__init__.py"]
+exclude = ["scripts", "alembic", "__init__.py", "examples"]
 lint.ignore = [
     'S101', 'INP001',
     'T201', 'S311',
