@@ -6,13 +6,41 @@ captioning, optical character recognition (OCR), and facial recognition.
 
 ## Features
 
-- **Image Classification**: Identify objects, activities, animals, and events present in images.
-- **Image Captioning**: Generate descriptive captions for images using models like BLIP and
+- **GPS**: Gather GPS coordinates from exif, and reverse geocode to get the country, province and
+  city.
+- **Exif**: Extract exif data/metadata from photos, videos, gifs, etc.
+- **Weather**: Get weather info at the time the photo/video was taken.
+    * temperature
+    * dewpoint
+    * relative humidity
+    * precipitation
+    * wind gust
+    * pressure
+    * sun hours
+    * condition
+* **Quality Detection**: Detect objectively measurable quality of images:
+  * Sharpness
+  * Noise
+  * Exposure
+  * Dynamic range
+  * Color clipping (white/black levels)
+  * A composite score is generated, so photos can be ranked by quality.
+- **Image Classification**: Identify objects, scene type, activities, animals, and events present in
+  images.
+- **Image Captioning**: Generate descriptive captions for images using models like BLIP or
   LLM-based captioners.
+- **Embedding**: Generate clip embeddings for images and text. Can be used to cluster images or
+  search semantically through images.
 - **Optical Character Recognition (OCR)**: Extract text from images to identify documents, receipts,
   menus, and more.
-- **Facial Recognition**: Detect faces in images and provide details such as age, sex, and facial
-  landmarks.
+- **LLM**: Get detailed image summary, more indepth than just a caption, using an LLM. Can also be
+  used to generate a summary of a document shown in a photo or video.
+- **Facial Recognition**: Detect faces in images and provide details such as age, sex, bounding box,
+  and facial landmarks. Includes an embedding of the face, which can be used for clustering.
+- **Datetime Taken**: Photo and video files are messy and have unreliable datetime tags. This
+  packages uses six different methods with varying priority to get the datetime a photo is taken,
+  including the timezone if possible.
+- **Data Url**: Generate data url for tiny preload thumbnail.
 
 ## Installation
 
@@ -29,6 +57,12 @@ You must have the following in PATH.
 * ExifTool: https://exiftool.org/
 * Tesseract OCR: https://tesseract-ocr.github.io/tessdoc/Installation.html
 
+## Examples
+
+Example output of the main analyze function can be viewed
+at [example_output.json](examples/example_output.json). Further example
+code is available at [/examples](/examples).
+
 ## Usage
 
 Here's a basic example of how to use Media Analyzer:
@@ -41,12 +75,48 @@ analyzer = MediaAnalyzer()
 media_file = Path("image.jpg")
 result = analyzer.photo(media_file)
 
-# Access analysis results
-print(result.image_data)
-print(result.frame_data)
+print(result)
 ```
 
-Configuration
+### Disable analysis modules
+
+The analysis is done based on modules, the following modules are available and enabled by default:
+
+#### File-based Modules:
+
+* `"DataUrlModule"`
+* `"ExifModule"`
+* `"GpsModule"`
+* `"TimeModule"`
+* `"WeatherModule"`
+
+#### Visual Modules:
+
+* `"CaptionModule"`
+* `"ClassificationModule"`
+* `"EmbeddingModule"`
+* `"FacesModule"`
+* `"ObjectsModule"`
+* `"OCRModule"`
+* `"QualityDetectionModule"`
+* `"SummaryModule"`
+
+Modules can be turned off by changing the config provided to the MediaAnalyzer class:
+
+```python
+from media_analyzer import MediaAnalyzer, AnalyzerSettings
+from pathlib import Path
+
+config = AnalyzerSettings(
+    enabled_file_modules={"ExifModule"},  # Only do exif data analysis on file
+    enabled_visual_modules={"CaptionModule"},  # Only do caption module as visual module
+)
+analyzer = MediaAnalyzer(config=config)
+media_file = Path(__file__).parents[1] / "tests/assets/tent.jpg"
+result = analyzer.photo(media_file)
+```
+
+### Configuration
 
 The AnalyzerSettings class allows you to customize various aspects of the analysis:
 
@@ -61,3 +131,9 @@ The AnalyzerSettings class allows you to customize various aspects of the analys
 
 Full docs can be found
 at https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#MediaAnalyzer.
+
+## Attribution
+
+* Meteostat for weather info: https://dev.meteostat.net/python/
+* Reverse geocoding data from geonames: https://download.geonames.org/
+* ExifTool for exif and similar data: https://exiftool.org/

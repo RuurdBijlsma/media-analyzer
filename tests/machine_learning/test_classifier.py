@@ -18,10 +18,10 @@ def test_classifier(assets_folder: Path) -> None:
     classifier = CLIPClassifier(embedder)
     image = Image.open(assets_folder / "sunset.jpg")
     image_embedded = embedder.embed_image(image)
-    is_sunset, _ = classifier.binary_classify_image(image_embedded, "sunset", "cat")
+    is_sunset, _ = classifier.binary_classify_image(image_embedded, "sunset", "camping")
     assert is_sunset
 
-    image = Image.open(assets_folder / "cat.jpg")
+    image = Image.open(assets_folder / "tent.jpg")
     image_embedded = embedder.embed_image(image)
-    is_cat, _ = classifier.binary_classify_image(image_embedded, "cat", "sunset")
-    assert is_cat
+    is_camping, _ = classifier.binary_classify_image(image_embedded, "camping", "sunset")
+    assert is_camping

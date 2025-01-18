@@ -15,9 +15,9 @@ from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvide
 from media_analyzer.data.enums.face_sex import FaceSex
 from media_analyzer.data.interfaces.api_io import InputMedia, MediaAnalyzerOutput
 from media_analyzer.data.interfaces.frame_data import MeasuredQualityData, FrameData, OCRData, \
-    ClassificationData
+    ClassificationData, FrameDataOutput
 from media_analyzer.data.interfaces.image_data import ImageData, ExifData, GpsData, TimeData, \
-    WeatherData, IntermediateTimeData
+    WeatherData, IntermediateTimeData, ImageDataOutput
 from media_analyzer.data.interfaces.location_types import GeoLocation
 from media_analyzer.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox, BaseBoundingBox
 from media_analyzer.machine_learning.caption.blip_captioner import BlipCaptioner
@@ -75,8 +75,8 @@ __all__ = [
     "AnalyzerSettings",
 
     # Output data classes
-    "ImageData",
-    "FrameData",
+    "ImageDataOutput",
+    "FrameDataOutput",
     ## Image Data
     "ExifData",
     "GpsData",
@@ -154,4 +154,6 @@ __all__ = [
 
     # Somewhat useless
     "FullAnalyzerConfig",
+    "ImageData",
+    "FrameData",
 ]

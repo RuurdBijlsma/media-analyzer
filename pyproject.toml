@@ -1,6 +1,6 @@
 [project]
 name = "media-analyzer"
-version = "0.1.0"
+version = "0.1.1"
 description = "Analyze video/image with machine learning methods, exif data, and other file based information. "
 readme = "README.md"
 license = "MIT"
@@ -44,7 +44,7 @@ build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 100
-exclude = ["scripts", "alembic", "__init__.py"]
+exclude = ["scripts", "alembic", "__init__.py", "examples"]
 lint.ignore = [
     'S101', 'INP001',
     'T201', 'S311',
