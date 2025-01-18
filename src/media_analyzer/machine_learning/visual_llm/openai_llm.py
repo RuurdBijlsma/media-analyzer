@@ -12,6 +12,7 @@ from media_analyzer.machine_learning.visual_llm.mini_cpm_llm import MiniCPMLLM
 
 
 def to_base64_url(image: Image, max_size: int = 720) -> str:
+    """Convert an image to a base64 URL."""
     image.thumbnail((max_size, max_size))
     buffered = BytesIO()
     image.save(buffered, format="JPEG", optimize=True)
@@ -20,13 +21,16 @@ def to_base64_url(image: Image, max_size: int = 720) -> str:
 
 
 def chat_to_dict(chat: ChatMessage) -> dict[str, Any]:
+    """Convert a ChatMessage to a dictionary."""
     if len(chat.images) == 0:
         return {
             "role": str(chat.role),
             "content": chat.message,
         }
 
-    images = [{"type": "image_url", "image_url": {"url": to_base64_url(image)}} for image in chat.images]
+    images = [
+        {"type": "image_url", "image_url": {"url": to_base64_url(image)}} for image in chat.images
+    ]
     return {
         "role": "user",
         "content": [
@@ -40,10 +44,13 @@ def chat_to_dict(chat: ChatMessage) -> dict[str, Any]:
 
 
 class OpenAILLM(MiniCPMLLM):
+    """OpenAI LLM implementation."""
+
     model_name: str
     client: OpenAI
 
     def __init__(self, model_name: str = "gpt-4o-mini") -> None:
+        """Initialize the OpenAI LLM."""
         super().__init__()
         self.model_name = model_name
         self.client = OpenAI()
@@ -55,6 +62,7 @@ class OpenAILLM(MiniCPMLLM):
         temperature: float = 0.7,
         max_tokens: int = 500,
     ) -> Generator[str, None, None]:  # pragma: no cover
+        """OpenAI LLM chat that gives streaming output."""
         dict_messages = list(map(chat_to_dict, messages))
 
         response = self.client.chat.completions.create(

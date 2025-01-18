@@ -13,6 +13,7 @@ from media_analyzer.machine_learning.embedding.clip_embedder import CLIPEmbedder
 def setup_embedder_fixture(
     assets_folder: Path,
 ) -> tuple[CLIPEmbedder, list[Image.Image], NDArray[Any]]:
+    """Setup the CLIPEmbedder and images for testing."""
     embedder = CLIPEmbedder()
 
     # Load images and create embeddings
@@ -45,6 +46,7 @@ def test_clip_embedder(
     query: str,
     img_index: int,
 ) -> None:
+    """Test the CLIPEmbedder."""
     embedder, _, images_embedding = setup_embedder
 
     text_embedding = embedder.embed_text(query)

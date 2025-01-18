@@ -1,69 +1,85 @@
 import re
 from datetime import datetime, timedelta, timezone
+from typing import ClassVar
 
 import pytz
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
-from media_analyzer.data.interfaces.image_data import GpsData, ImageData, TimeData
-from media_analyzer.processing.pipeline.base_module import FileModule
-from media_analyzer.processing.post_processing.timezone_finder import timezone_finder
+from media_analyzer.data.interfaces.image_data import ImageData, TimeData
+from media_analyzer.processing.pipeline.pipeline_module import (
+    PipelineModule,
+)
+from media_analyzer.processing.process_utils import timezone_finder
 
 
-def get_local_datetime(image_info: GpsData) -> tuple[datetime, str]:
+def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
+    """Get the local datetime of an image."""
     def f1() -> tuple[datetime, str]:
-        assert image_info.exif
+        """Get the datetime from the EXIF DateTimeOriginal with OffsetTimeOriginal."""
+        assert data.exif.exif
         datetime_taken = datetime.strptime(  # noqa: DTZ007
-            image_info.exif["DateTimeOriginal"],
+            data.exif.exif["DateTimeOriginal"],
             "%Y:%m:%d %H:%M:%S",
         )
-        offset_time = image_info.exif["OffsetTimeOriginal"]
+        offset_time = data.exif.exif["OffsetTimeOriginal"]
         hours, minutes = map(int, offset_time.split(":"))
         offset = timedelta(hours=hours, minutes=minutes)
         result = datetime_taken.replace(tzinfo=timezone(offset))
         return result, "OffsetTime"
 
     def f2() -> tuple[datetime, str]:
-        assert image_info.longitude and image_info.latitude
+        """Get the datetime from the GPS data."""
+        assert data.gps.longitude and data.gps.latitude
         tz_name = timezone_finder.timezone_at(
-            lng=image_info.longitude,
-            lat=image_info.latitude,
+            lng=data.gps.longitude,
+            lat=data.gps.latitude,
         )
         assert tz_name is not None
-        assert image_info.datetime_utc
-        datetime_utc = image_info.datetime_utc.replace(tzinfo=pytz.utc)
+        assert data.gps.datetime_utc
+        datetime_utc = data.gps.datetime_utc.replace(tzinfo=pytz.utc)
         result = datetime_utc.astimezone(pytz.timezone(tz_name))
         return result, "GPS"
 
     def f3() -> tuple[datetime, str]:
-        assert image_info.exif
+        """Get the datetime from the EXIF DateTimeOriginal."""
+        assert data.exif.exif
         result = datetime.strptime(  # noqa: DTZ007
-            image_info.exif["DateTimeOriginal"],
+            data.exif.exif["DateTimeOriginal"],
             "%Y:%m:%d %H:%M:%S",
         )
         return result, "DateTimeOriginal"
 
     def f4() -> tuple[datetime, str]:
-        assert image_info.exif
-        result = datetime.strptime(image_info.exif["CreateDate"], "%Y:%m:%d %H:%M:%S")  # noqa: DTZ007
+        """Get the datetime from the EXIF CreateDate."""
+        assert data.exif.exif
+        result = datetime.strptime(  # noqa: DTZ007
+            data.exif.exif["CreateDate"],
+            "%Y:%m:%d %H:%M:%S"
+        )
         return result, "DateTimeOriginal"
 
     def f5() -> tuple[datetime, str]:
+        """Get the datetime from the filename."""
         # Use a regex to find the first 8 digits (YYYYMMDD) and the subsequent time (HHMMSS)
-        match = re.search(r"(\d{8})(\d{6})", image_info.path.name)
+        match = re.search(r"(\d{8})(\d{6})", data.path.name)
         if match:
             date_str = match.group(1)
             time_str = match.group(2)
             return (
-                datetime.strptime(f"{date_str} {time_str}", "%Y%m%d %H%M%S"),  # noqa: DTZ007
+                datetime.strptime(  # noqa: DTZ007
+                    f"{date_str} {time_str}",
+                    "%Y%m%d %H%M%S"
+                ),
                 "Filename",
             )
-        raise ValueError(f"Could not parse {image_info.path.name}")
+        raise ValueError(f"Could not parse {data.path.name}")
 
     def f6() -> tuple[datetime, str]:
-        assert image_info.file
-        assert "FileModifyDate" in image_info.file
+        """Get the datetime from the file modification date."""
+        assert data.exif.file
+        assert "FileModifyDate" in data.exif.file
         result = datetime.strptime(
-            image_info.file["FileModifyDate"],
+            data.exif.file["FileModifyDate"],
             "%Y:%m:%d %H:%M:%S%z",
         )
         return result, "ModificationDate"
@@ -73,20 +89,20 @@ def get_local_datetime(image_info: GpsData) -> tuple[datetime, str]:
             return fn()
         except (KeyError, AssertionError, ValueError):  # noqa: PERF203
             continue
-    raise ValueError(f"Could not parse datetime for {image_info.path.name}!")
+    raise ValueError(f"Could not parse datetime for {data.path.name}!")
 
 
 def get_timezone_info(
-    image_info: GpsData,
+    data: ImageData,
     date: datetime,
 ) -> tuple[datetime | None, str | None, timedelta | None]:
     """Gets timezone name and offset from latitude, longitude, and date."""
-    if not image_info.latitude or not image_info.longitude:
+    if not data.gps.latitude or not data.gps.longitude:
         return None, None, None
 
     timezone_name = timezone_finder.timezone_at(
-        lat=image_info.latitude,
-        lng=image_info.longitude,
+        lat=data.gps.latitude,
+        lng=data.gps.longitude,
     )
     if not timezone_name:
         return None, None, None
@@ -94,28 +110,27 @@ def get_timezone_info(
     tz_date = pytz.timezone(timezone_name).localize(date.replace(tzinfo=None))
     timezone_offset = tz_date.utcoffset()
 
-    datetime_utc = image_info.datetime_utc
+    datetime_utc = data.gps.datetime_utc
     if datetime_utc is None:
         datetime_utc = tz_date.astimezone(pytz.utc)
 
     return datetime_utc, timezone_name, timezone_offset
 
 
-class TimeModule(FileModule):
-    def process(self, data: ImageData, _: FullAnalyzerConfig) -> TimeData:
-        assert isinstance(data, GpsData)
+class TimeModule(PipelineModule):
+    """Extracts datetime from an image."""
+    depends: ClassVar[set[str]] = {"ExifModule", "GpsModule"}
+
+    def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:
+        """Extracts datetime from an image."""
         datetime_taken, datetime_source = get_local_datetime(data)
-        datetime_utc, timezone_name, timezone_offset = get_timezone_info(
-            data,
-            datetime_taken,
-        )
+        datetime_utc, timezone_name, timezone_offset = get_timezone_info(data, datetime_taken)
         if datetime_utc is not None:
             datetime_utc = datetime_utc.replace(tzinfo=None)
-        data.datetime_utc = datetime_utc
+        data.gps.datetime_utc = datetime_utc
         datetime_taken = datetime_taken.replace(tzinfo=None)
 
-        return TimeData(
-            **data.model_dump(),
+        data.time = TimeData(
             datetime_local=datetime_taken,
             datetime_source=datetime_source,
             timezone_name=timezone_name,

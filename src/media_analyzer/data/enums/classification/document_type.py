@@ -2,6 +2,7 @@ from enum import StrEnum, auto
 
 
 class DocumentType(StrEnum):
+    """Document types enum."""
     BOOK_OR_MAGAZINE = auto()
     RECEIPT = auto()
     SCREENSHOT = auto()

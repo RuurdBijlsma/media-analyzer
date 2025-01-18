@@ -7,6 +7,8 @@ from media_analyzer.machine_learning.visual_llm.get_llm import get_llm_by_provid
 
 
 class LLMCaptioner(CaptionerProtocol):
+    """Captioner implementation using a large language model (LLM)."""
+
     llm_provider: BaseVisualLLM
     prompt: str = (
         "You are a BLIP image captioning model. "
@@ -19,9 +21,15 @@ class LLMCaptioner(CaptionerProtocol):
     )
 
     def __init__(self, provider: LLMProvider) -> None:
+        """Initialize the LLM captioner."""
         self.llm_provider = get_llm_by_provider(provider)
 
     def caption(self, image: Image) -> str:
+        """Generate a caption for the given image.
+
+        Args:
+            image: The image to caption.
+        """
         caption = self.llm_provider.image_question(
             image=image,
             question=self.prompt,

@@ -1,31 +1,40 @@
 from datetime import datetime
+from typing import ClassVar
 
 import reverse_geocode
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
-from media_analyzer.data.interfaces.image_data import ExifData, GpsData, ImageData
+from media_analyzer.data.interfaces.image_data import GpsData, ImageData
 from media_analyzer.data.interfaces.location_types import GeoLocation
-from media_analyzer.processing.pipeline.base_module import FileModule
+from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
-class GpsModule(FileModule):
-    def process(self, data: ImageData, _: FullAnalyzerConfig) -> GpsData:
-        assert isinstance(data, ExifData)
-        if not data.composite or "GPSLatitude" not in data.composite or "GPSLongitude" not in data.composite:
-            return GpsData(**data.model_dump())
+class GpsModule(PipelineModule):
+    """Extract GPS data from an image."""
+    depends: ClassVar[set[str]] = {"ExifModule"}
 
-        lat = data.composite["GPSLatitude"]
-        lon = data.composite["GPSLongitude"]
+    def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:
+        """Extract GPS time and location data from an image, and reverse geocode."""
+        if (
+            data.exif is None
+            or not data.exif.composite
+            or "GPSLatitude" not in data.exif.composite
+            or "GPSLongitude" not in data.exif.composite
+        ):
+            return
+
+        lat = data.exif.composite["GPSLatitude"]
+        lon = data.exif.composite["GPSLongitude"]
         if not lat or not lon:
-            return GpsData(**data.model_dump())
+            return
 
-        alt = data.composite.get("GPSAltitude")
+        alt = data.exif.composite.get("GPSAltitude")
         gps_datetime: datetime | None = None
-        if "GPSDateTime" in data.composite:
+        if "GPSDateTime" in data.exif.composite:
             for date_fmt in ["%Y:%m:%d %H:%M:%S.%fZ", "%Y:%m:%d %H:%M:%SZ"]:
                 try:
                     gps_datetime = datetime.strptime(  # noqa: DTZ007
-                        data.composite["GPSDateTime"],
+                        data.exif.composite["GPSDateTime"],
                         date_fmt,
                     )
                     if gps_datetime is not None:
@@ -34,8 +43,7 @@ class GpsModule(FileModule):
                     pass
 
         coded = reverse_geocode.get((lat, lon))
-        return GpsData(
-            **data.model_dump(),
+        data.gps = GpsData(
             latitude=lat,
             longitude=lon,
             altitude=alt,

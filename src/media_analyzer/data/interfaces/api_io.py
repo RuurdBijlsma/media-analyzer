@@ -1,15 +1,30 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from media_analyzer.data.interfaces.image_data import WeatherData
-from media_analyzer.data.interfaces.visual_data import MediaAnalyzerFrame
+from media_analyzer.data.interfaces.frame_data import FrameData
+from media_analyzer.data.interfaces.image_data import ImageData
 
 
 @dataclass
 class InputMedia:
+    """Input for the media-analyzer package.
+
+    Attributes:
+        path: The path to the photo or video file.
+        frames: A list of frame paths. In case of a photo, one frame is supplied,
+            for a video you can generate multiple frames and submit them for analysis.
+    """
     path: Path
     frames: list[Path]
 
 
-class MediaAnalyzerOutput(WeatherData):
-    frame_data: list[MediaAnalyzerFrame]
+@dataclass
+class MediaAnalyzerOutput:
+    """Output of the media-analyzer package.
+
+    Attributes:
+        image_data: File based analysis.
+        frame_data: Visual analysis for the frames given in the input.
+    """
+    image_data: ImageData
+    frame_data: list[FrameData]

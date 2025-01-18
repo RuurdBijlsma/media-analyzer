@@ -20,6 +20,7 @@ def get_detector_model_and_processor() -> tuple[
     PreTrainedModel,
     ConvNextImageProcessor,
 ]:
+    """Retrieve and cache the detector model and processor."""
     model = AutoModelForImageClassification.from_pretrained(
         "miguelcarv/resnet-152-text-detector",
     )
@@ -31,7 +32,9 @@ def get_detector_model_and_processor() -> tuple[
 
 
 class ResnetTesseractOCR(OCRProtocol):
+    """OCR implementation using the ResNet model and Tesseract."""
     def has_legible_text(self, image: Image) -> bool:
+        """Check if an image has legible text."""
         resized_image = image.convert("RGB").resize((300, 300))
         model, processor = get_detector_model_and_processor()
         inputs = processor(resized_image, return_tensors="pt").pixel_values
@@ -45,6 +48,7 @@ class ResnetTesseractOCR(OCRProtocol):
         return has_legible_text
 
     def get_text(self, image: Image, languages: tuple[str, ...]) -> str:
+        """Extract text from an image using OCR."""
         extracted_text = pytesseract.image_to_string(
             image,
             lang="+".join(languages),
@@ -53,6 +57,7 @@ class ResnetTesseractOCR(OCRProtocol):
         return extracted_text
 
     def get_boxes(self, image: Image, languages: tuple[str, ...]) -> list[OCRBox]:
+        """Get bounding boxes of text."""
         ocr_data = pytesseract.image_to_data(
             image,
             lang="+".join(languages),

@@ -5,6 +5,14 @@ from media_analyzer.machine_learning.caption.llm_captioner import LLMCaptioner
 
 
 def get_captioner_by_provider(provider: CaptionerProvider) -> CaptionerProtocol:
+    """Get the captioner by the provider.
+
+    Args:
+        provider: The captioner provider.
+
+    Returns:
+        The captioner.
+    """
     return {
         CaptionerProvider.MINICPM: lambda: LLMCaptioner(LLMProvider.MINICPM),
         CaptionerProvider.OPENAI: lambda: LLMCaptioner(LLMProvider.OPENAI),

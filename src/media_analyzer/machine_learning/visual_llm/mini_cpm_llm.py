@@ -14,6 +14,7 @@ from media_analyzer.machine_learning.visual_llm.base_visual_llm import BaseVisua
 
 @lru_cache
 def get_model_and_tokenizer() -> tuple[PreTrainedModel, PreTrainedTokenizerFast]:
+    """Retrieve and cache the model and tokenizer."""
     with torch.no_grad():
         model = AutoModel.from_pretrained(
             "openbmb/MiniCPM-V-2_6-int4",
@@ -32,6 +33,7 @@ def get_model_and_tokenizer() -> tuple[PreTrainedModel, PreTrainedTokenizerFast]
 
 
 class MiniCPMLLM(BaseVisualLLM):
+    """Mini CPM LLM implementation."""
     def stream_chat(
         self,
         messages: list[ChatMessage],
@@ -39,12 +41,16 @@ class MiniCPMLLM(BaseVisualLLM):
         temperature: float = 0.7,
         max_tokens: int = 500,  # noqa: ARG002
     ) -> Generator[str, None, None]:
+        """Mini CPM LLM chat that gives streaming output."""
         if convert_images:
             for msg in messages:
                 msg.images = [image.convert(mode="RGB") for image in msg.images]
 
         model, tokenizer = get_model_and_tokenizer()
-        formatted_msgs = [{"role": msg.role.value.lower(), "content": [*msg.images, msg.message]} for msg in messages]
+        formatted_msgs = [
+            {"role": msg.role.value.lower(), "content": [*msg.images, msg.message]}
+            for msg in messages
+        ]
         result = model.chat(
             image=None,
             msgs=formatted_msgs,

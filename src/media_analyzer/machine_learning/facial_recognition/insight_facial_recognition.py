@@ -15,6 +15,7 @@ from media_analyzer.machine_learning.utils import coordinate_to_proportional
 
 @lru_cache
 def get_app() -> FaceAnalysis:
+    """Get the InsightFace app."""
     app = FaceAnalysis(
         root="~/.cache/insightface",
         providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
@@ -24,7 +25,10 @@ def get_app() -> FaceAnalysis:
 
 
 class InsightFacialRecognition(FacialRecognitionProtocol):
+    """Facial recognition implementation using the InsightFace model."""
+
     def get_faces(self, image: Image) -> list[FaceBox]:
+        """Detect and embed faces from an image."""
         cv_image = np.array(image)
         dims_in_image = 3
         if cv_image.shape[2] == dims_in_image:

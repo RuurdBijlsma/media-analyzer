@@ -20,6 +20,7 @@ def get_model_and_processor() -> tuple[
     DetrImageProcessor,
     PreTrainedModel,
 ]:
+    """Retrieve and cache the DETR model and processor."""
     processor = DetrImageProcessor.from_pretrained(
         "facebook/detr-resnet-50",
         revision="no_timm",
@@ -33,7 +34,9 @@ def get_model_and_processor() -> tuple[
 
 
 class ResnetObjectDetection(ObjectDetectionProtocol):
+    """Object detection implementation using the ResNet model."""
     def detect_objects(self, image: Image) -> list[ObjectBox]:
+        """Detect objects in an image."""
         # you can specify the revision tag if you don't want the timm dependency
         processor, model = get_model_and_processor()
 
@@ -50,13 +53,18 @@ class ResnetObjectDetection(ObjectDetectionProtocol):
         return [
             ObjectBox(
                 confidence=score.item(),
-                label=model.config.id2label[label.item()],
                 position=coordinate_to_proportional(
                     (float(box[0].item()), float(box[1].item())),
                     image,
                 ),
                 width=(box[2].item() - box[0].item()) / image.width,
                 height=(box[3].item() - box[1].item()) / image.height,
+                label=model.config.id2label[label.item()],
             )
-            for score, label, box in zip(results["scores"], results["labels"], results["boxes"], strict=False)
+            for score, label, box in zip(
+                results["scores"],
+                results["labels"],
+                results["boxes"],
+                strict=False
+            )
         ]

@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class WeatherCondition(Enum):
+    """An enumeration of weather conditions that can be classified in an image."""
     CLEAR = 1
     FAIR = 2
     CLOUDY = 3

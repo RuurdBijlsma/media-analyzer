@@ -10,4 +10,5 @@ llm_providers: dict[LLMProvider, type[BaseVisualLLM]] = {
 
 
 def get_llm_by_provider(provider: LLMProvider) -> BaseVisualLLM:
+    """Get the LLM by the provider."""
     return llm_providers[provider]()

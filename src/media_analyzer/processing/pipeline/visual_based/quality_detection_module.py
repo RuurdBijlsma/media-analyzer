@@ -1,16 +1,15 @@
 import cv2
 import numpy as np
 import numpy.typing as npt
-from PIL.Image import Image
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
-from media_analyzer.data.interfaces.visual_data import MediaAnalyzerFrame, VisualData
-from media_analyzer.processing.pipeline.base_module import VisualModule
+from media_analyzer.data.interfaces.frame_data import FrameData, MeasuredQualityData
+from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
 def sharpness_measurement(image: npt.NDArray[np.uint8]) -> float:
-    """
-    Measure image sharpness using Laplacian variance method.
+    """Measure image sharpness using Laplacian variance method.
+
     A higher variance indicates a sharper image.
     """
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -19,8 +18,8 @@ def sharpness_measurement(image: npt.NDArray[np.uint8]) -> float:
 
 
 def exposure_measurement(image: npt.NDArray[np.uint8]) -> tuple[float, float]:
-    """
-    Measure image exposure by analyzing brightness and contrast.
+    """Measure image exposure by analyzing brightness and contrast.
+
     - Check mean brightness (underexposed if too dark, overexposed if too bright).
     - Check contrast (low contrast may indicate poor exposure).
     """
@@ -32,11 +31,10 @@ def exposure_measurement(image: npt.NDArray[np.uint8]) -> tuple[float, float]:
 
 
 def noise_measurement(image: npt.NDArray[np.uint8]) -> int:
-    """
-    Detect noise in an image by comparing the original image with a blurred version.
+    """Detect noise in an image by comparing the original image with a blurred version.
+
     - Higher differences between the original and blurred image indicate more noise.
     """
-
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
     diff = cv2.absdiff(gray_image, blurred_image)
@@ -44,7 +42,7 @@ def noise_measurement(image: npt.NDArray[np.uint8]) -> int:
 
 
 def calculate_dynamic_range(image: npt.NDArray[np.uint8], sample_fraction: float = 0.1) -> float:
-    """Calculate the dynamic range of an image using a sample of the darkest and brightest pixels."""
+    """Calculate the dynamic range of an image by sampling the darkest and brightest pixels."""
     # Convert to grayscale if the image is in color
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # type: ignore[assignment]
 
@@ -64,9 +62,7 @@ def calculate_dynamic_range(image: npt.NDArray[np.uint8], sample_fraction: float
 
 
 def measure_clipping(image: npt.NDArray[np.uint8]) -> float:
-    """
-    Calculate the percentage of pixels that are clipped (either 0 or 255) in a grayscale image.
-    """
+    """Calculate the percentage of clipped pixels (either 0 or 255) in a grayscale image."""
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # type: ignore[assignment]
 
     # Count the number of clipped pixels (0 or 255)
@@ -87,32 +83,42 @@ def composite_quality_score(
     dynamic_range_weight: float = 1.0,
     clipping_weight: float = 1.0,
 ) -> float:
-    """Combine individual image quality metrics (sharpness, exposure, noise, dynamic range, clipping)
+    """Combine image quality metrics into single score.
+
+    Combine sharpness, exposure, noise, dynamic range and clipping
     into a single composite score from 0 to 1. Higher score indicates better image quality.
     Each score is weighted according to the specified weights.
     """
-    # Compute weighted scores directly
     sharpness_score = min(sharpness_measurement(image) / 2000.0, 1.0) * sharpness_weight
 
     mean_brightness, contrast = exposure_measurement(image)
-    exposure_score = ((1 - min(abs(mean_brightness - 160) / 160, 1)) + min(contrast / 100, 1.0)) / 2 * exposure_weight
+    exposure_score = (
+        ((1 - min(abs(mean_brightness - 160) / 160, 1)) + min(contrast / 100, 1.0))
+        / 2
+        * exposure_weight
+    )
 
     noise_score = max(1 - min(noise_measurement(image) / 200000000.0, 1.0), 0.0) * noise_weight
     dynamic_range_score = min(calculate_dynamic_range(image) / 100, 1.0) * dynamic_range_weight
     clipping_score = max(1 - measure_clipping(image) / 0.1, 0.0) * clipping_weight
 
     # Combine scores and normalize
-    total_weight = sharpness_weight + exposure_weight + noise_weight + dynamic_range_weight + clipping_weight
-    return (sharpness_score + exposure_score + noise_score + dynamic_range_score + clipping_score) / total_weight
+    total_weight = (
+        sharpness_weight + exposure_weight + noise_weight + dynamic_range_weight + clipping_weight
+    )
+    return (
+        sharpness_score + exposure_score + noise_score + dynamic_range_score + clipping_score
+    ) / total_weight
 
 
-class QualityDetectionModule(VisualModule):
-    def process(self, data: VisualData, image: Image, _: FullAnalyzerConfig) -> MediaAnalyzerFrame:
-        image_cv2: npt.NDArray[np.uint8] = np.array(image)
+class QualityDetectionModule(PipelineModule):
+    """Detect image quality metrics."""
+    def process(self, data: FrameData, _: FullAnalyzerConfig) -> None:
+        """Detect image quality metrics."""
+        image_cv2: npt.NDArray[np.uint8] = np.array(data.image)
         image_cv2 = cv2.cvtColor(image_cv2, cv2.COLOR_RGB2BGR)  # type: ignore[assignment]
         mean_brightness, contrast = exposure_measurement(image_cv2)
-        return MediaAnalyzerFrame(
-            **data.model_dump(),
+        data.measured_quality = MeasuredQualityData(
             measured_sharpness=sharpness_measurement(image_cv2),
             measured_noise=noise_measurement(image_cv2),
             measured_brightness=mean_brightness,

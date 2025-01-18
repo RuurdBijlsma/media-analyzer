@@ -1,17 +1,15 @@
-from PIL.Image import Image
-
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
-from media_analyzer.data.interfaces.visual_data import SummaryData, VisualData
-from media_analyzer.processing.pipeline.base_module import VisualModule
+from media_analyzer.data.interfaces.frame_data import FrameData
+from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
-class SummaryModule(VisualModule):
-    def process(self, data: VisualData, image: Image, config: FullAnalyzerConfig) -> SummaryData:  # pragma: no cover
+class SummaryModule(PipelineModule):
+    """Generate a summary from an image using a language model."""
+
+    def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:  # pragma: no cover
+        """Generate a summary from an image using a language model."""
         if not config.settings.enable_text_summary:
-            return SummaryData(
-                **data.model_dump(),
-                summary=None,
-            )
+            return
         prompt = (
             "Describe this image in a way that captures all essential details "
             "for a search database. Include the setting, key objects, actions, "
@@ -21,9 +19,4 @@ class SummaryModule(VisualModule):
             "interpretations or ambiguous terms."
         )
 
-        caption = config.llm.image_question(image, prompt)
-
-        return SummaryData(
-            **data.model_dump(),
-            summary=caption,
-        )
+        data.summary = config.llm.image_question(data.image, prompt)

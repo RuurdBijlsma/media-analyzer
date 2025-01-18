@@ -1,31 +1,48 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
-
-from pydantic import BaseModel
 
 from media_analyzer.data.enums.classification.weather_condition import WeatherCondition
 from media_analyzer.data.interfaces.location_types import GeoLocation
 
 
-class ImageData(BaseModel):
-    path: Path
-    frames: list[Path]
+@dataclass
+class ExifData:
+    """Exif Data of the image.
 
-
-class ExifData(ImageData):
+    Attributes:
+        width: The width of the image.
+        height: The height of the image.
+        duration: The duration of the media, if applicable.
+        size_bytes: The size of the file in bytes.
+        format: The format of the image.
+        is_motion_photo: Indicates if the image is a motion photo.
+        is_hdr: Indicates if the image is HDR.
+        is_night_sight: Indicates if the image was taken with night sight.
+        is_selfie: Indicates if the image is a selfie.
+        is_panorama: Indicates if the image is a panorama.
+        exif_tool: The output from ExifTool.
+        file: File-related information.
+        composite: Composite data.
+        exif: Exif metadata, if available.
+        xmp: XMP metadata, if available.
+        jfif: JFIF metadata, if available.
+        icc_profile: ICC profile data, if available.
+        gif: GIF-specific data, if available.
+        quicktime: QuickTime-specific data, if available.
+        matroska: Matroska-specific data, if available.
+    """
     width: int
     height: int
     duration: float | None
     size_bytes: int
     format: str
-    # frontend filters
     is_motion_photo: bool
     is_hdr: bool
     is_night_sight: bool
     is_selfie: bool
     is_panorama: bool
-    # exiftool output:
     exif_tool: dict[str, Any]
     file: dict[str, Any]
     composite: dict[str, Any]
@@ -38,11 +55,17 @@ class ExifData(ImageData):
     matroska: dict[str, Any] | None
 
 
-class DataUrlData(ExifData):
-    data_url: str
+@dataclass
+class GpsData:
+    """GPS Data related to the image.
 
-
-class GpsData(DataUrlData):
+    Attributes:
+        latitude: The latitude coordinate.
+        longitude: The longitude coordinate.
+        altitude: The altitude information.
+        datetime_utc: The UTC datetime of the GPS data.
+        location: The geolocation information.
+    """
     latitude: float | None = None
     longitude: float | None = None
     altitude: float | None = None
@@ -50,14 +73,37 @@ class GpsData(DataUrlData):
     location: GeoLocation | None = None
 
 
-class TimeData(GpsData):
+@dataclass
+class TimeData:
+    """Time-related data for the image.
+
+    Attributes:
+        datetime_local: The local datetime.
+        datetime_source: The source of the datetime information.
+        timezone_name: The name of the timezone.
+        timezone_offset: The offset of the timezone.
+    """
     datetime_local: datetime
     datetime_source: str
     timezone_name: str | None
     timezone_offset: timedelta | None
 
 
-class WeatherData(TimeData):
+@dataclass
+class WeatherData:
+    """Weather data from the time and place the image was taken.
+
+    Attributes:
+        weather_recorded_at: The datetime when the weather was recorded.
+        weather_temperature: The temperature at the time of recording.
+        weather_dewpoint: The dew point at the time of recording.
+        weather_relative_humidity: The relative humidity at the time of recording.
+        weather_precipitation: The precipitation level at the time of recording.
+        weather_wind_gust: The wind gust speed at the time of recording.
+        weather_pressure: The atmospheric pressure at the time of recording.
+        weather_sun_hours: The sun hours at the time of recording.
+        weather_condition: The weather condition at the time of recording.
+    """
     weather_recorded_at: datetime | None = None
     weather_temperature: float | None = None
     weather_dewpoint: float | None = None
@@ -67,3 +113,25 @@ class WeatherData(TimeData):
     weather_pressure: float | None = None
     weather_sun_hours: float | None = None
     weather_condition: WeatherCondition | None = None
+
+
+@dataclass
+class ImageData:
+    """Comprehensive data for an image.
+
+    Attributes:
+        path: The file system path to the image.
+        frames: A list of frame paths associated with the image.
+        exif: Exif data of the image.
+        dataurl: The data URL representation of the image.
+        gps: GPS data associated with the image.
+        time: Time-related data for the image.
+        weather: Weather data at the time the image was taken.
+    """
+    path: Path
+    frames: list[Path]
+    exif: ExifData | None = None
+    dataurl: str | None = None
+    gps: GpsData | None = None
+    time: TimeData | None = None
+    weather: WeatherData | None = None

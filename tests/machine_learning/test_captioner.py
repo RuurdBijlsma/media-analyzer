@@ -13,6 +13,7 @@ from media_analyzer.machine_learning.caption.llm_captioner import LLMCaptioner
 def test_blip_captioner(
     assets_folder: Path,
 ) -> None:
+    """Test the BlipCaptioner."""
     image = Image.open(assets_folder / "sunset.jpg")
     blip = BlipCaptioner()
     caption = blip.caption(image)
@@ -25,6 +26,7 @@ def test_blip_captioner(
 def test_blip_captioner_conditional(
     assets_folder: Path,
 ) -> None:
+    """Test the BlipCaptioner with a conditional caption."""
     image = Image.open(assets_folder / "sunset.jpg")
     blip = BlipCaptioner()
     caption = blip.caption(image, "A photo of ")
@@ -44,6 +46,7 @@ def test_minicpm_captioner(
     assets_folder: Path,
     llm_provider: LLMProvider,
 ) -> None:
+    """Test the LLMCaptioner with MiniCPM and OpenAI."""
     if llm_provider == LLMProvider.OPENAI and os.environ.get("OPENAI_API_KEY") is None:
         # Only run test if OPENAI_API_KEY is set.
         pytest.skip("OPENAI_API_KEY is not set, so OpenAI captioning test is skipped.")
