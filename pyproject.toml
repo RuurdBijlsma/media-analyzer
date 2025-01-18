@@ -1,8 +1,9 @@
 [project]
 name = "media-analyzer"
 version = "0.1.0"
-description = "Add your description here"
+description = "Analyze video/image with machine learning methods, exif data, and other file based information. "
 readme = "README.md"
+license = "MIT"
 authors = [
     { name = "Ruurd Bijlsma", email = "ruurd@bijlsma.dev" }
 ]
@@ -31,6 +32,11 @@ dependencies = [
     "types-tqdm>=4.67.0.20241221",
 ]
 
+[project.urls]
+Homepage = "https://github.com/RuurdBijlsma/media-analyzer"
+Repository = "https://github.com/RuurdBijlsma/media-analyzer"
+Documentation = "https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#MediaAnalyzer"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -38,7 +44,7 @@ build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 100
-exclude = ["scripts", "alembic"]
+exclude = ["scripts", "alembic", "__init__.py"]
 lint.ignore = [
     'S101', 'INP001',
     'T201', 'S311',
