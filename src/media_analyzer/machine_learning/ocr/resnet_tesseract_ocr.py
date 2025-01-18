@@ -33,6 +33,7 @@ def get_detector_model_and_processor() -> tuple[
 
 class ResnetTesseractOCR(OCRProtocol):
     """OCR implementation using the ResNet model and Tesseract."""
+
     def has_legible_text(self, image: Image) -> bool:
         """Check if an image has legible text."""
         resized_image = image.convert("RGB").resize((300, 300))

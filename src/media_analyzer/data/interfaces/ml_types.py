@@ -13,6 +13,7 @@ class BaseBoundingBox:
         height: The height of the bounding box.
         confidence: The confidence of the detected item (OCR/Object/Face).
     """
+
     # position, width, height are proportional to full image width/height
     position: tuple[float, float]
     width: float
@@ -27,6 +28,7 @@ class ObjectBox(BaseBoundingBox):
     Attributes:
         label: The label of the detected object.
     """
+
     label: str
 
 
@@ -37,6 +39,7 @@ class OCRBox(BaseBoundingBox):
     Attributes:
         text: The recognized text within the bounding box.
     """
+
     text: str
 
 
@@ -54,6 +57,7 @@ class FaceBox(BaseBoundingBox):
         eye_right: The position of the right eye.
         embedding: The facial embedding vector.
     """
+
     age: int
     sex: FaceSex
     mouth_left: tuple[float, float]

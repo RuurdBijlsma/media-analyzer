@@ -4,13 +4,14 @@ from typing import ClassVar
 import reverse_geocode
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
-from media_analyzer.data.interfaces.image_data import GpsData, ImageData
+from media_analyzer.data.interfaces.image_data import GpsData, ImageData, IntermediateTimeData
 from media_analyzer.data.interfaces.location_types import GeoLocation
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
 class GpsModule(PipelineModule):
     """Extract GPS data from an image."""
+
     depends: ClassVar[set[str]] = {"ExifModule"}
 
     def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:
@@ -43,11 +44,11 @@ class GpsModule(PipelineModule):
                     pass
 
         coded = reverse_geocode.get((lat, lon))
+        data.time = IntermediateTimeData(datetime_utc=gps_datetime)
         data.gps = GpsData(
             latitude=lat,
             longitude=lon,
             altitude=alt,
-            datetime_utc=gps_datetime,
             location=GeoLocation(
                 country=coded["country"],
                 province=coded.get("state"),

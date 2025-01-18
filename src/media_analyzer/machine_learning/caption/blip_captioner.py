@@ -15,8 +15,9 @@ def get_processor_and_model() -> tuple[BlipProcessor, BlipForConditionalGenerati
         A tuple containing the BlipProcessor and BlipForConditionalGeneration model.
     """
     processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-    model = (BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
-             .to("cuda"))
+    model = BlipForConditionalGeneration.from_pretrained(
+        "Salesforce/blip-image-captioning-large"
+    ).to("cuda")
     return processor, model
 
 
@@ -26,6 +27,7 @@ class BlipCaptioner(CaptionerProtocol):
     This class provides methods to generate captions for images, handling specific
     issues like hallucinated words and formatting errors.
     """
+
     # dumbass blip captioner comes up with the word arafed or araffe sometimes.
     hallucinated_words: ClassVar[list[str]] = ["arafed", "araffe"]
 

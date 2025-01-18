@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 class OCRModule(PipelineModule):
     """Extract text from an image using OCR."""
+
     def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:
         """Extract text from an image using OCR."""
         has_text = config.ocr.has_legible_text(data.image)
@@ -54,7 +55,7 @@ class OCRModule(PipelineModule):
 
             summary = config.llm.image_question(data.image, prompt)
 
-        data.ocr= OCRData(
+        data.ocr = OCRData(
             has_legible_text=has_text,
             ocr_text=extracted_text,
             document_summary=summary,

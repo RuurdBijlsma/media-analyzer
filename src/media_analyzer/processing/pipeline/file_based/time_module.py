@@ -14,6 +14,7 @@ from media_analyzer.processing.process_utils import timezone_finder
 
 def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
     """Get the local datetime of an image."""
+
     def f1() -> tuple[datetime, str]:
         """Get the datetime from the EXIF DateTimeOriginal with OffsetTimeOriginal."""
         assert data.exif.exif
@@ -35,8 +36,8 @@ def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
             lat=data.gps.latitude,
         )
         assert tz_name is not None
-        assert data.gps.datetime_utc
-        datetime_utc = data.gps.datetime_utc.replace(tzinfo=pytz.utc)
+        assert data.time.datetime_utc
+        datetime_utc = data.time.datetime_utc.replace(tzinfo=pytz.utc)
         result = datetime_utc.astimezone(pytz.timezone(tz_name))
         return result, "GPS"
 
@@ -53,8 +54,7 @@ def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
         """Get the datetime from the EXIF CreateDate."""
         assert data.exif.exif
         result = datetime.strptime(  # noqa: DTZ007
-            data.exif.exif["CreateDate"],
-            "%Y:%m:%d %H:%M:%S"
+            data.exif.exif["CreateDate"], "%Y:%m:%d %H:%M:%S"
         )
         return result, "DateTimeOriginal"
 
@@ -67,8 +67,7 @@ def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
             time_str = match.group(2)
             return (
                 datetime.strptime(  # noqa: DTZ007
-                    f"{date_str} {time_str}",
-                    "%Y%m%d %H%M%S"
+                    f"{date_str} {time_str}", "%Y%m%d %H%M%S"
                 ),
                 "Filename",
             )
@@ -87,7 +86,7 @@ def get_local_datetime(data: ImageData) -> tuple[datetime, str]:
     for fn in [f1, f2, f3, f4, f5, f6]:
         try:
             return fn()
-        except (KeyError, AssertionError, ValueError):  # noqa: PERF203
+        except (KeyError, AssertionError, ValueError, AttributeError):  # noqa: PERF203
             continue
     raise ValueError(f"Could not parse datetime for {data.path.name}!")
 
@@ -97,7 +96,7 @@ def get_timezone_info(
     date: datetime,
 ) -> tuple[datetime | None, str | None, timedelta | None]:
     """Gets timezone name and offset from latitude, longitude, and date."""
-    if not data.gps.latitude or not data.gps.longitude:
+    if not data.gps or not data.gps.latitude or not data.gps.longitude:
         return None, None, None
 
     timezone_name = timezone_finder.timezone_at(
@@ -110,7 +109,7 @@ def get_timezone_info(
     tz_date = pytz.timezone(timezone_name).localize(date.replace(tzinfo=None))
     timezone_offset = tz_date.utcoffset()
 
-    datetime_utc = data.gps.datetime_utc
+    datetime_utc = data.time.datetime_utc
     if datetime_utc is None:
         datetime_utc = tz_date.astimezone(pytz.utc)
 
@@ -119,6 +118,7 @@ def get_timezone_info(
 
 class TimeModule(PipelineModule):
     """Extracts datetime from an image."""
+
     depends: ClassVar[set[str]] = {"ExifModule", "GpsModule"}
 
     def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:
@@ -127,10 +127,10 @@ class TimeModule(PipelineModule):
         datetime_utc, timezone_name, timezone_offset = get_timezone_info(data, datetime_taken)
         if datetime_utc is not None:
             datetime_utc = datetime_utc.replace(tzinfo=None)
-        data.gps.datetime_utc = datetime_utc
         datetime_taken = datetime_taken.replace(tzinfo=None)
 
         data.time = TimeData(
+            datetime_utc=datetime_utc,
             datetime_local=datetime_taken,
             datetime_source=datetime_source,
             timezone_name=timezone_name,

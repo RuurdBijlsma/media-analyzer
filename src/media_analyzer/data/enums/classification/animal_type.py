@@ -3,6 +3,7 @@ from enum import StrEnum, auto
 
 class AnimalType(StrEnum):
     """Animal types enum."""
+
     CAT = auto()
     DOG = auto()
     HAMSTER = auto()

@@ -12,6 +12,7 @@ class GeoLocation:
         latitude: The latitude coordinate of the location.
         longitude: The longitude coordinate of the location.
     """
+
     country: str
     city: str
     province: str | None

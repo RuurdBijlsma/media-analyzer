@@ -1,4 +1,3 @@
-
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.interfaces.frame_data import FrameData
 from media_analyzer.machine_learning.facial_recognition.insight_facial_recognition import (
@@ -11,6 +10,7 @@ facial_recognition = InsightFacialRecognition()
 
 class FacesModule(PipelineModule):
     """Get faces from an image."""
+
     def process(self, data: FrameData, _: FullAnalyzerConfig) -> None:
         """Get faces from an image."""
         data.faces = facial_recognition.get_faces(data.image)

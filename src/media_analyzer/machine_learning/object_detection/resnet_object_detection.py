@@ -35,6 +35,7 @@ def get_model_and_processor() -> tuple[
 
 class ResnetObjectDetection(ObjectDetectionProtocol):
     """Object detection implementation using the ResNet model."""
+
     def detect_objects(self, image: Image) -> list[ObjectBox]:
         """Detect objects in an image."""
         # you can specify the revision tag if you don't want the timm dependency
@@ -62,9 +63,6 @@ class ResnetObjectDetection(ObjectDetectionProtocol):
                 label=model.config.id2label[label.item()],
             )
             for score, label, box in zip(
-                results["scores"],
-                results["labels"],
-                results["boxes"],
-                strict=False
+                results["scores"], results["labels"], results["boxes"], strict=False
             )
         ]

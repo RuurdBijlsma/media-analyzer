@@ -3,6 +3,7 @@ from enum import StrEnum, auto
 
 class EventType(StrEnum):
     """Event types enum."""
+
     # Personal Celebrations
     WEDDING = auto()
     BIRTHDAY = auto()

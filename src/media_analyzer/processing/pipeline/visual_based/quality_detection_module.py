@@ -113,6 +113,7 @@ def composite_quality_score(
 
 class QualityDetectionModule(PipelineModule):
     """Detect image quality metrics."""
+
     def process(self, data: FrameData, _: FullAnalyzerConfig) -> None:
         """Detect image quality metrics."""
         image_cv2: npt.NDArray[np.uint8] = np.array(data.image)

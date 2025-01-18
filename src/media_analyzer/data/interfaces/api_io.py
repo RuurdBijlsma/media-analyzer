@@ -14,6 +14,7 @@ class InputMedia:
         frames: A list of frame paths. In case of a photo, one frame is supplied,
             for a video you can generate multiple frames and submit them for analysis.
     """
+
     path: Path
     frames: list[Path]
 
@@ -26,5 +27,6 @@ class MediaAnalyzerOutput:
         image_data: File based analysis.
         frame_data: Visual analysis for the frames given in the input.
     """
+
     image_data: ImageData
     frame_data: list[FrameData]

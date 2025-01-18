@@ -6,6 +6,7 @@ from PIL.Image import Image
 
 class EmbedderProtocol(Protocol):
     """Embedder protocol."""
+
     def embed_text(self, text: str) -> NDArray[Any]:
         """Embed a text input and return a list of floats as the embedding."""
 

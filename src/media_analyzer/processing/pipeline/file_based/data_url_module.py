@@ -11,6 +11,7 @@ from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 class DataUrlModule(PipelineModule):
     """Convert an image to a data URL."""
+
     def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:
         """Convert an image to a data URL."""
         tiny_height = 6

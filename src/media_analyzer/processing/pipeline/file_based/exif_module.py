@@ -43,6 +43,7 @@ def structure_exiftool_dict(exiftool_dict: dict[str, Any]) -> dict[str, Any]:
 
 class ExifModule(PipelineModule):
     """Extract EXIF data from an image using exiftool."""
+
     def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:
         """Extract EXIF data from an image."""
         with ExifToolHelper() as et:

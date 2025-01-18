@@ -28,6 +28,7 @@ class AnalyzerSettings:
         enabled_file_modules: The set of modules used for file-based analysis.
         enabled_visual_modules: The set of modules for visual analysis.
     """
+
     media_languages: tuple[str, ...] = ("nld", "eng")
     captions_provider: CaptionerProvider = CaptionerProvider.BLIP
     llm_provider: LLMProvider = LLMProvider.MINICPM
@@ -35,15 +36,27 @@ class AnalyzerSettings:
     enable_document_summary: bool = False
     document_detection_threshold: int = 65
     face_detection_threshold: float = 0.7
-    enabled_file_modules: set[str] = field(default_factory=lambda: {
-        "DataUrlModule", "ExifModule", "GpsModule",
-        "TimeModule", "WeatherModule"
-    })
-    enabled_visual_modules: set[str] = field(default_factory=lambda: {
-        "CaptionModule", "ClassificationModule", "EmbeddingModule",
-        "FacesModule", "ObjectsModule", "OCRModule",
-        "QualityDetectionModule", "SummaryModule"
-    })
+    enabled_file_modules: set[str] = field(
+        default_factory=lambda: {
+            "DataUrlModule",
+            "ExifModule",
+            "GpsModule",
+            "TimeModule",
+            "WeatherModule",
+        }
+    )
+    enabled_visual_modules: set[str] = field(
+        default_factory=lambda: {
+            "CaptionModule",
+            "ClassificationModule",
+            "EmbeddingModule",
+            "FacesModule",
+            "ObjectsModule",
+            "OCRModule",
+            "QualityDetectionModule",
+            "SummaryModule",
+        }
+    )
 
 
 @dataclass
@@ -58,6 +71,7 @@ class FullAnalyzerConfig:
         embedder: The embedder implementation.
         settings: The analyzer settings.
     """
+
     llm: BaseVisualLLM
     captioner: CaptionerProtocol
     ocr: OCRProtocol

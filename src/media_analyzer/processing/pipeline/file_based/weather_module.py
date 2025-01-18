@@ -12,16 +12,22 @@ from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 class WeatherModule(PipelineModule):
     """Extract weather data from the time and place an image was taken."""
+
     depends: ClassVar[set[str]] = {"GpsModule"}
 
     def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:
         """Extract weather data from the time and place an image was taken."""
-        if not data.gps.datetime_utc or not data.gps.latitude or not data.gps.longitude:
+        if (
+            not data.gps
+            or not data.time.datetime_utc
+            or not data.gps.latitude
+            or not data.gps.longitude
+        ):
             return
         meteo_data = Hourly(
             Point(lat=data.gps.latitude, lon=data.gps.longitude),
-            data.gps.datetime_utc - timedelta(minutes=30),
-            data.gps.datetime_utc + timedelta(minutes=30),
+            data.time.datetime_utc - timedelta(minutes=30),
+            data.time.datetime_utc + timedelta(minutes=30),
         )
         meteo_data = meteo_data.fetch()
         if len(meteo_data) == 0:
@@ -29,9 +35,9 @@ class WeatherModule(PipelineModule):
         max_possible_rows = 2
         assert len(meteo_data) <= max_possible_rows
         weather = meteo_data.iloc[0]
-        weather_condition = None \
-            if math.isnan(weather.coco) \
-            else WeatherCondition(int(weather.coco))
+        weather_condition = (
+            None if math.isnan(weather.coco) else WeatherCondition(int(weather.coco))
+        )
         data.weather = WeatherData(
             weather_recorded_at=weather.name.to_pydatetime(),
             weather_temperature=None if math.isnan(weather.temp) else weather.temp,

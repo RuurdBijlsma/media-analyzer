@@ -33,6 +33,7 @@ class ExifData:
         quicktime: QuickTime-specific data, if available.
         matroska: Matroska-specific data, if available.
     """
+
     width: int
     height: int
     duration: float | None
@@ -63,14 +64,20 @@ class GpsData:
         latitude: The latitude coordinate.
         longitude: The longitude coordinate.
         altitude: The altitude information.
-        datetime_utc: The UTC datetime of the GPS data.
         location: The geolocation information.
     """
+
     latitude: float | None = None
     longitude: float | None = None
     altitude: float | None = None
-    datetime_utc: datetime | None = None
     location: GeoLocation | None = None
+
+
+@dataclass
+class IntermediateTimeData:
+    """Intermediate Time Data related to the image, storing just datetime_utc."""
+
+    datetime_utc: datetime | None = None
 
 
 @dataclass
@@ -82,11 +89,14 @@ class TimeData:
         datetime_source: The source of the datetime information.
         timezone_name: The name of the timezone.
         timezone_offset: The offset of the timezone.
+        datetime_utc: The UTC datetime based of the GPS data.
     """
+
     datetime_local: datetime
     datetime_source: str
     timezone_name: str | None
     timezone_offset: timedelta | None
+    datetime_utc: datetime | None = None
 
 
 @dataclass
@@ -104,6 +114,7 @@ class WeatherData:
         weather_sun_hours: The sun hours at the time of recording.
         weather_condition: The weather condition at the time of recording.
     """
+
     weather_recorded_at: datetime | None = None
     weather_temperature: float | None = None
     weather_dewpoint: float | None = None
@@ -128,10 +139,11 @@ class ImageData:
         time: Time-related data for the image.
         weather: Weather data at the time the image was taken.
     """
+
     path: Path
     frames: list[Path]
     exif: ExifData | None = None
     dataurl: str | None = None
     gps: GpsData | None = None
-    time: TimeData | None = None
+    time: TimeData | IntermediateTimeData | None = None
     weather: WeatherData | None = None

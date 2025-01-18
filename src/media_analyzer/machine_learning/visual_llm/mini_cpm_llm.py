@@ -34,6 +34,7 @@ def get_model_and_tokenizer() -> tuple[PreTrainedModel, PreTrainedTokenizerFast]
 
 class MiniCPMLLM(BaseVisualLLM):
     """Mini CPM LLM implementation."""
+
     def stream_chat(
         self,
         messages: list[ChatMessage],
