@@ -39,6 +39,7 @@ class AnalyzerSettings:
     def image_suffixes(self) -> tuple[str, ...]:
         return self.photo_suffixes + self.video_suffixes
 
+
 @dataclass
 class FullAnalyzerConfig:
     llm: BaseVisualLLM

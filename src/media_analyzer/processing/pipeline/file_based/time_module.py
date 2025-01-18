@@ -49,7 +49,7 @@ def get_local_datetime(image_info: GpsData) -> tuple[datetime, str]:
 
     def f5() -> tuple[datetime, str]:
         # Use a regex to find the first 8 digits (YYYYMMDD) and the subsequent time (HHMMSS)
-        match = re.search(r"(\d{8})(\d{6})", image_info.filename)
+        match = re.search(r"(\d{8})(\d{6})", image_info.path.name)
         if match:
             date_str = match.group(1)
             time_str = match.group(2)
@@ -57,7 +57,7 @@ def get_local_datetime(image_info: GpsData) -> tuple[datetime, str]:
                 datetime.strptime(f"{date_str} {time_str}", "%Y%m%d %H%M%S"),  # noqa: DTZ007
                 "Filename",
             )
-        raise ValueError(f"Could not parse {image_info.filename}")
+        raise ValueError(f"Could not parse {image_info.path.name}")
 
     def f6() -> tuple[datetime, str]:
         assert image_info.file
@@ -73,12 +73,12 @@ def get_local_datetime(image_info: GpsData) -> tuple[datetime, str]:
             return fn()
         except (KeyError, AssertionError, ValueError):  # noqa: PERF203
             continue
-    raise ValueError(f"Could not parse datetime for {image_info.filename}!")
+    raise ValueError(f"Could not parse datetime for {image_info.path.name}!")
 
 
 def get_timezone_info(
-        image_info: GpsData,
-        date: datetime,
+    image_info: GpsData,
+    date: datetime,
 ) -> tuple[datetime | None, str | None, timedelta | None]:
     """Gets timezone name and offset from latitude, longitude, and date."""
     if not image_info.latitude or not image_info.longitude:

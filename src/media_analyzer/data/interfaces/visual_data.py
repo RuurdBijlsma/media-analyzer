@@ -15,7 +15,7 @@ from media_analyzer.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox
 
 class VisualData(BaseModel):
     index: int
-    path:Path
+    path: Path
 
 
 class EmbeddingData(VisualData):

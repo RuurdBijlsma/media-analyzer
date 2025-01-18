@@ -10,5 +10,6 @@ class InputMedia:
     path: Path
     frames: list[Path]
 
+
 class MediaAnalyzerOutput(WeatherData):
     frame_data: list[MediaAnalyzerFrame]

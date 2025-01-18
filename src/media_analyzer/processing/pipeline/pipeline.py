@@ -54,8 +54,8 @@ visual_pipeline: list[VisualModule] = [
 
 
 def run_metadata_pipeline(
-        input_media: InputMedia,
-        config: FullAnalyzerConfig,
+    input_media: InputMedia,
+    config: FullAnalyzerConfig,
 ) -> tuple[WeatherData, list[MediaAnalyzerFrame]]:
     image_data = ImageData(path=input_media.path, frames=input_media.frames)
 

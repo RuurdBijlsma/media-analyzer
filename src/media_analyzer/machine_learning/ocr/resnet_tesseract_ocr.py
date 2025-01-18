@@ -45,7 +45,10 @@ class ResnetTesseractOCR(OCRProtocol):
         return has_legible_text
 
     def get_text(self, image: Image, languages: tuple[str, ...]) -> str:
-        extracted_text = pytesseract.image_to_string(image, lang=languages)
+        extracted_text = pytesseract.image_to_string(
+            image,
+            lang="+".join(languages),
+        )
         assert isinstance(extracted_text, str)
         return extracted_text
 

@@ -9,6 +9,7 @@ from media_analyzer.processing.pipeline.base_module import VisualModule
 if TYPE_CHECKING:
     from media_analyzer.data.interfaces.ml_types import OCRBox
 
+
 class OCRModule(VisualModule):
     def process(self, data: VisualData, image: Image, config: FullAnalyzerConfig) -> OCRData:
         has_text = config.ocr.has_legible_text(image)
