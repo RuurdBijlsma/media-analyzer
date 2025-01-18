@@ -9,8 +9,8 @@ from PIL import Image
 from media_analyzer.machine_learning.embedding.clip_embedder import CLIPEmbedder
 
 
-@pytest.fixture
-def setup_embedder(
+@pytest.fixture(name="setup_embedder")
+def setup_embedder_fixture(
     assets_folder: Path,
 ) -> tuple[CLIPEmbedder, list[Image.Image], NDArray[Any]]:
     embedder = CLIPEmbedder()

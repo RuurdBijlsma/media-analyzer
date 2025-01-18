@@ -46,7 +46,7 @@ class ExifModule(FileModule):
             result = et.execute_json(str(data.path))
             if result is None or not isinstance(result, list) or not isinstance(result[0], dict):
                 raise ValueError(
-                    f"Exiftool can't handle this file {data.relative_path}.",
+                    f"Exiftool can't handle this file {data.path}.",
                 )
             exif_dict = structure_exiftool_dict(result[0])
 

@@ -28,6 +28,8 @@ dependencies = [
     "torch>=2.5.1",
     "torchvision>=0.20.1",
     "transformers>=4.48.0",
+    "types-pytz>=2024.2.0.20241221",
+    "types-tqdm>=4.67.0.20241221",
 ]
 
 [build-system]
@@ -123,6 +125,10 @@ explicit = true
 
 [dependency-groups]
 dev = [
+    "mypy>=1.14.1",
+    "pyscan>=1.0.0",
     "pytest>=8.3.4",
     "pytest-cov>=6.0.0",
+    "types-python-dateutil>=2.9.0.20241206",
+    "types-pytz>=2024.2.0.20241221",
 ]

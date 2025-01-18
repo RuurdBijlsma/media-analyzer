@@ -48,4 +48,4 @@ jobs:
           tesseract --version
 
       - name: Run tests
-        run: uv run pytest -m "not cuda"
+        run: uv run pytest -m "not cuda" --cov=src

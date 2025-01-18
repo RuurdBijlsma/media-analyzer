@@ -91,39 +91,19 @@ def composite_quality_score(
     into a single composite score from 0 to 1. Higher score indicates better image quality.
     Each score is weighted according to the specified weights.
     """
-    # Measure sharpness (higher is better)
-    sharpness = sharpness_measurement(image)
-    sharpness_score = min(sharpness / 2000.0, 1.0)
+    # Compute weighted scores directly
+    sharpness_score = min(sharpness_measurement(image) / 2000.0, 1.0) * sharpness_weight
 
-    # Measure exposure
     mean_brightness, contrast = exposure_measurement(image)
-    brightness_score = 1 - min(abs(mean_brightness - 160) / 160, 1)  # (non-extreme brightness is better)
-    contrast_score = min(contrast / 100, 1.0)  # Higher contrast is better
+    exposure_score = ((1 - min(abs(mean_brightness - 160) / 160, 1)) + min(contrast / 100, 1.0)) / 2 * exposure_weight
 
-    # Measure noise (lower noise is better)
-    noise = noise_measurement(image)
-    noise_score = max(1 - min(noise / 200000000.0, 1.0), 0.0)
+    noise_score = max(1 - min(noise_measurement(image) / 200000000.0, 1.0), 0.0) * noise_weight
+    dynamic_range_score = min(calculate_dynamic_range(image) / 100, 1.0) * dynamic_range_weight
+    clipping_score = max(1 - measure_clipping(image) / 0.1, 0.0) * clipping_weight
 
-    # Measure dynamic range (higher is better)
-    dynamic_range = calculate_dynamic_range(image)
-    dynamic_range_score = min(dynamic_range / 100, 1.0)  # Normalize dynamic range score
-
-    # Measure clipping (lower is better)
-    clipping_percentage = measure_clipping(image)
-    clipping_score = max(1 - clipping_percentage / 0.1, 0.0)
-
-    # Compute weighted composite score
-    weighted_score = (
-        sharpness_weight * sharpness_score
-        + exposure_weight * (brightness_score + contrast_score) / 2
-        + noise_weight * noise_score
-        + dynamic_range_weight * dynamic_range_score
-        + clipping_weight * clipping_score
-    )
-
-    # Normalize the final score to be between 0 and 1 by dividing by the total weight
+    # Combine scores and normalize
     total_weight = sharpness_weight + exposure_weight + noise_weight + dynamic_range_weight + clipping_weight
-    return weighted_score / total_weight
+    return (sharpness_score + exposure_score + noise_score + dynamic_range_score + clipping_score) / total_weight
 
 
 class QualityDetectionModule(VisualModule):
