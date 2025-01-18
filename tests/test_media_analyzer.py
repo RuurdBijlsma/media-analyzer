@@ -21,8 +21,9 @@ def test_media_analyzer_none_settings() -> None:
     ["tent.jpg", "sunset.jpg", "ocr.jpg", "cluster.jpg", "cat.jpg", "face2_b.jpg"],
 )
 def test_media_analyzer(assets_folder: Path, default_config: AnalyzerSettings, photo_filename: str) -> None:
+    mock_caption_text = "A mock caption."
     with patch("media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption") as mock_raw_caption:
-        mock_raw_caption.return_value = "A mock caption."
+        mock_raw_caption.return_value = mock_caption_text
         analyzer = MediaAnalyzer(default_config)
         result = analyzer.photo(assets_folder / photo_filename)
 
@@ -50,6 +51,7 @@ def test_media_analyzer(assets_folder: Path, default_config: AnalyzerSettings, p
     # Assertions for the visual data
     assert len(result.frame_data) == 1
     frame_data = result.frame_data[0]
+    assert frame_data.caption == mock_caption_text
     assert isinstance(frame_data.index, int)
     assert isinstance(frame_data.activity_type, ActivityType | None)
     assert isinstance(frame_data.scene_type, SceneType | None)
