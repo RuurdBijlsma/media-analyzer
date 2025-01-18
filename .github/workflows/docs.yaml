@@ -4,12 +4,13 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  quality-checks:
+  build:
     runs-on: ubuntu-latest
 
     steps:
