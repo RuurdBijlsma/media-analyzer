@@ -35,11 +35,8 @@ jobs:
           src/**/*.py tests/**/*.py
         shell: pwsh
 
-      - name: Type check main app
-        run: uv run mypy -p app --strict --ignore-missing-imports
-
-      - name: Type check tests
-        run: uv run mypy -p tests --strict --ignore-missing-imports
+      - name: Type check with mypy
+        run: uv run mypy . --strict --ignore-missing-imports
 
       - name: Install Tesseract OCR
         run: |
