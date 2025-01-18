@@ -4,10 +4,9 @@ import numpy as np
 from PIL import Image
 from scipy.spatial.distance import cosine
 
-from app.machine_learning.facial_recognition.insight_facial_recognition import (
+from media_analyzer.machine_learning.facial_recognition.insight_facial_recognition import (
     InsightFacialRecognition,
 )
-from app.machine_learning.utils import draw_bounding_box
 
 
 def test_insight_facial_detection(assets_folder: Path) -> None:
@@ -21,27 +20,22 @@ def test_insight_facial_detection(assets_folder: Path) -> None:
 
 
 def test_insight_facial_recognition(assets_folder: Path) -> None:
-    img_1_a = Image.open(assets_folder / "face1_a.jpg")
-    img_1_b = Image.open(assets_folder / "face1_b.jpg")
-    img_2_a = Image.open(assets_folder / "face2_a.jpg")
-    img_2_b = Image.open(assets_folder / "face2_b.jpg")
+    # Load images and initialize facial recognition
     facial_recognition = InsightFacialRecognition()
+    faces = [
+        facial_recognition.get_faces(Image.open(assets_folder / file_name))[0]
+        for file_name in ["face1_a.jpg", "face1_b.jpg", "face2_a.jpg", "face2_b.jpg"]
+    ]
 
-    face1_a = facial_recognition.get_faces(img_1_a)[0]
-    face1_b = facial_recognition.get_faces(img_1_b)[0]
-    face2_a = facial_recognition.get_faces(img_2_a)[0]
-    face2_b = facial_recognition.get_faces(img_2_b)[0]
+    walter = faces[:2]
+    micheal = faces[2:]
 
-    walter = [face1_a, face1_b]
-    micheal = [face2_a, face2_b]
-    draw_bounding_box(face2_a, img_2_a, "test_img_out/face.jpg")
-
-    faces = [face1_a, face1_b, face2_a, face2_b]
+    # Compare faces and assert relationships
     for face in faces:
         other_faces = [f for f in faces if f != face]
-        distances = [cosine(face.embedding, other_face.embedding) for other_face in other_faces]
-        min_index = np.argmin(distances)
-        closest_face = other_faces[min_index]
+        closest_face = other_faces[
+            np.argmin([cosine(face.embedding, other_face.embedding) for other_face in other_faces])
+        ]
         if face in walter:
             assert closest_face in walter
         elif face in micheal:

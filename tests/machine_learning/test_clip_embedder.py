@@ -6,11 +6,11 @@ import pytest
 from numpy.typing import NDArray
 from PIL import Image
 
-from app.machine_learning.embedding.clip_embedder import CLIPEmbedder
+from media_analyzer.machine_learning.embedding.clip_embedder import CLIPEmbedder
 
 
-@pytest.fixture(scope="module")
-def setup_embedder(
+@pytest.fixture(name="setup_embedder")
+def setup_embedder_fixture(
     assets_folder: Path,
 ) -> tuple[CLIPEmbedder, list[Image.Image], NDArray[Any]]:
     embedder = CLIPEmbedder()
@@ -38,7 +38,9 @@ def setup_embedder(
 )
 def test_clip_embedder(
     setup_embedder: tuple[
-        CLIPEmbedder, list[Image.Image], NDArray[Any],
+        CLIPEmbedder,
+        list[Image.Image],
+        NDArray[Any],
     ],
     query: str,
     img_index: int,
