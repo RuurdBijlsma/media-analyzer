@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -20,8 +21,10 @@ def test_media_analyzer_none_settings() -> None:
     ["tent.jpg", "sunset.jpg", "ocr.jpg", "cluster.jpg", "cat.jpg", "face2_b.jpg"],
 )
 def test_media_analyzer(assets_folder: Path, default_config: AnalyzerSettings, photo_filename: str) -> None:
-    analyzer = MediaAnalyzer(default_config)
-    result = analyzer.photo(assets_folder / photo_filename)
+    with patch("media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption") as mock_raw_caption:
+        mock_raw_caption.return_value = "A mock caption."
+        analyzer = MediaAnalyzer(default_config)
+        result = analyzer.photo(assets_folder / photo_filename)
 
     assert isinstance(result.frames, list)
     assert isinstance(result.frame_data, list)
