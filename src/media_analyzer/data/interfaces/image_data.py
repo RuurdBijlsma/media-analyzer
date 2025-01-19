@@ -154,6 +154,7 @@ class ImageDataOutput:
     """Comprehensive data for an image.
 
     Attributes:
+        path: The file system path to the image.
         exif: Exif data of the image.
         dataurl: The data URL representation of the image.
         gps: GPS data associated with the image.
@@ -161,6 +162,7 @@ class ImageDataOutput:
         weather: Weather data at the time the image was taken.
     """
 
+    path: Path
     exif: ExifData | None = None
     dataurl: str | None = None
     gps: GpsData | None = None
