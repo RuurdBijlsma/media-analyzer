@@ -43,7 +43,6 @@ class MediaAnalyzer:
         )
         frame_output = [
             FrameDataOutput(
-                index=frame.index,
                 ocr=frame.ocr,
                 embedding=frame.embedding,
                 faces=frame.faces,

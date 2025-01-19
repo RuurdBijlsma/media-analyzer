@@ -84,11 +84,11 @@ def run_metadata_pipeline(
         image_module.run(image_data, config)
 
     frame_datas: list[FrameData] = []
-    for i, frame_image_path in enumerate(input_media.frames):
+    for frame_image_path in input_media.frames:
         with PIL.Image.open(frame_image_path) as frame_image:
             jpeg_image = pil_to_jpeg(frame_image)
 
-        frame_data = FrameData(index=i, path=frame_image_path, image=jpeg_image)
+        frame_data = FrameData(path=frame_image_path, image=jpeg_image)
         visual_modules = topological_sort(
             {name_to_pipeline[name] for name in config.settings.enabled_visual_modules}
         )

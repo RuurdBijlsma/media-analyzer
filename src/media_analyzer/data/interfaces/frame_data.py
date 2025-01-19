@@ -92,7 +92,6 @@ class FrameDataOutput:
     """Data for a frame.
 
     Attributes:
-        index: The frame index.
         ocr: The OCR data.
         embedding: The embedding data.
         faces: The face boxes.
@@ -103,7 +102,6 @@ class FrameDataOutput:
         measured_quality: The measured quality data.
     """
 
-    index: int
     ocr: OCRData | None = None
     embedding: list[float] | None = None
     faces: list[FaceBox] | None = None
@@ -119,7 +117,6 @@ class FrameData:
     """Data for a frame, including an image for using during analysis."""
 
     image: Image
-    index: int
     path: Path
     ocr: OCRData | None = None
     embedding: list[float] | None = None

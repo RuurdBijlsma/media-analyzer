@@ -83,7 +83,6 @@
   },
   "frame_data": [
     {
-      "index": 0,
       "ocr": {
         "has_legible_text": false,
         "ocr_text": null,
@@ -3261,7 +3260,6 @@
       }
     },
     {
-      "index": 1,
       "ocr": {
         "has_legible_text": false,
         "ocr_text": null,
