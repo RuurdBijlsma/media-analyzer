@@ -53,7 +53,7 @@ class GpsModule(PipelineModule[ImageData]):
                 country=coded["country"],
                 province=coded.get("state"),
                 city=coded["city"],
-                latitude=coded["latitude"],
-                longitude=coded["longitude"],
+                place_latitude=coded["latitude"],
+                place_longitude=coded["longitude"],
             ),
         )
