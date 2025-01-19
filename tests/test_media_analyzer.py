@@ -43,7 +43,7 @@ def test_media_analyzer(
     assert len(result.frame_data) == 1
 
     assert result.image_data.exif is not None
-    assert result.image_data.dataurl is not None
+    assert result.image_data.data_url is not None
     assert result.image_data.time is not None
 
     if expect_gps:
@@ -82,5 +82,5 @@ def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -
 
     assert result.image_data.exif is not None
     assert result.image_data.exif.matroska is not None
-    assert result.image_data.dataurl is not None
+    assert result.image_data.data_url is not None
     assert result.image_data.time is not None
