@@ -35,6 +35,7 @@ class MediaAnalyzer:
         """Analyze the given photo or video."""
         image_data, frame_data = run_metadata_pipeline(input_media, self.config)
         image_data_output = ImageDataOutput(
+            path=image_data.path,
             exif=image_data.exif,
             dataurl=image_data.dataurl,
             gps=image_data.gps,
