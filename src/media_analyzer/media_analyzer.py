@@ -37,7 +37,7 @@ class MediaAnalyzer:
         image_data_output = ImageDataOutput(
             path=image_data.path,
             exif=image_data.exif,
-            dataurl=image_data.dataurl,
+            data_url=image_data.data_url,
             gps=image_data.gps,
             time=image_data.time,
             weather=image_data.weather,

@@ -134,7 +134,7 @@ class ImageData:
         path: The file system path to the image.
         frames: A list of frame paths associated with the image.
         exif: Exif data of the image.
-        dataurl: The data URL representation of the image.
+        data_url: The data URL representation of the image.
         gps: GPS data associated with the image.
         time: Time-related data for the image.
         weather: Weather data at the time the image was taken.
@@ -143,7 +143,7 @@ class ImageData:
     path: Path
     frames: list[Path]
     exif: ExifData | None = None
-    dataurl: str | None = None
+    data_url: str | None = None
     gps: GpsData | None = None
     time: TimeData | IntermediateTimeData | None = None
     weather: WeatherData | None = None
@@ -156,7 +156,7 @@ class ImageDataOutput:
     Attributes:
         path: The file system path to the image.
         exif: Exif data of the image.
-        dataurl: The data URL representation of the image.
+        data_url: The data URL representation of the image.
         gps: GPS data associated with the image.
         time: Time-related data for the image.
         weather: Weather data at the time the image was taken.
@@ -164,7 +164,7 @@ class ImageDataOutput:
 
     path: Path
     exif: ExifData | None = None
-    dataurl: str | None = None
+    data_url: str | None = None
     gps: GpsData | None = None
     time: TimeData | IntermediateTimeData | None = None
     weather: WeatherData | None = None

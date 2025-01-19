@@ -24,4 +24,4 @@ class DataUrlModule(PipelineModule[ImageData]):
             )
             buffered = BytesIO()
             img.save(buffered, format="PNG")
-        data.dataurl = base64.b64encode(buffered.getvalue()).decode()
+        data.data_url = base64.b64encode(buffered.getvalue()).decode()
