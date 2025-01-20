@@ -7,6 +7,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
+from media_analyzer.data.enums.analyzer_module import AnalyzerModule, VisualModule
 from media_analyzer.data.enums.classification.activity_type import ActivityType
 from media_analyzer.data.enums.classification.animal_type import AnimalType
 from media_analyzer.data.enums.classification.document_type import DocumentType
@@ -191,7 +192,7 @@ def binary_classifications(
 class ClassificationModule(PipelineModule[FrameData]):
     """Classify an image based on its visual content."""
 
-    depends: ClassVar[set[str]] = {"EmbeddingModule"}
+    depends: ClassVar[set[AnalyzerModule]] = {VisualModule.EMBEDDING}
 
     # pylint: disable-next=R0914
     def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:

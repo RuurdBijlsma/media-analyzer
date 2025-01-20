@@ -4,13 +4,14 @@ import numpy as np
 from scipy.spatial.distance import cosine
 
 from media_analyzer import MediaAnalyzer, AnalyzerSettings
+from media_analyzer.data.enums.analyzer_module import VisualModule
 
 photo_filenames = ["cluster.jpg", "sunset.jpg", "tent.jpg"]
 photos = [Path(__file__).parents[1] / "tests/assets" / name for name in photo_filenames]
 
 analyzer = MediaAnalyzer(config=AnalyzerSettings(
     enabled_file_modules=set(),
-    enabled_visual_modules={"EmbeddingModule"},  # Only include embedding module
+    enabled_visual_modules={VisualModule.EMBEDDING},  # We only need embedding module
 ))
 results = [analyzer.photo(photo) for photo in photos]
 image_embeddings = [np.array(result.frame_data[0].embedding) for result in results]

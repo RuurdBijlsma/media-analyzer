@@ -127,6 +127,20 @@ class WeatherData:
 
 
 @dataclass
+class TagData:
+    """Tags, such as is_panorama, is_motion_photo, is_night_sight."""
+
+    is_panorama: bool
+    is_motion_photo: bool
+    is_night_sight: bool
+    is_hdr: bool
+    is_360: bool
+    is_burst: bool
+    is_timelapse: bool
+    is_slowmotion: bool
+
+
+@dataclass
 class ImageData:
     """Comprehensive data for an image.
 
@@ -147,6 +161,7 @@ class ImageData:
     gps: GpsData | None = None
     time: TimeData | IntermediateTimeData | None = None
     weather: WeatherData | None = None
+    tags: TagData | None = None
 
 
 @dataclass

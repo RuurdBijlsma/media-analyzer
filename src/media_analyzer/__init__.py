@@ -3,6 +3,7 @@ Python package for analyzing video/image with machine learning methods,
 exif data, and other file based information."""
 
 from media_analyzer.data.anaylzer_config import AnalyzerSettings, FullAnalyzerConfig
+from media_analyzer.data.enums.analyzer_module import VisualModule, FileModule, AnalyzerModule
 from media_analyzer.data.enums.classification.activity_type import ActivityType
 from media_analyzer.data.enums.classification.animal_type import AnimalType
 from media_analyzer.data.enums.classification.document_type import DocumentType
@@ -50,7 +51,7 @@ from media_analyzer.machine_learning.visual_llm.openai_llm import OpenAILLM
 from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.file_based.data_url_module import DataUrlModule
 from media_analyzer.processing.pipeline.file_based.exif_module import ExifModule
-from media_analyzer.processing.pipeline.file_based.gps_module import GpsModule
+from media_analyzer.processing.pipeline.file_based.gps_module import GPSModule
 from media_analyzer.processing.pipeline.file_based.time_module import TimeModule
 from media_analyzer.processing.pipeline.file_based.weather_module import WeatherModule
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
@@ -73,6 +74,9 @@ __all__ = [
     "MediaAnalyzerOutput",
     "InputMedia",
     "AnalyzerSettings",
+    "AnalyzerModule",
+    "FileModule",
+    "VisualModule",
 
     # Output data classes
     "ImageDataOutput",
@@ -104,7 +108,7 @@ __all__ = [
     ## File-based Modules
     "DataUrlModule",
     "ExifModule",
-    "GpsModule",
+    "GPSModule",
     "TimeModule",
     "WeatherModule",
     ## Visual-based Modules

@@ -7,3 +7,8 @@
     * is_night_sight
     * is_selfie
     * is_panorama
+* make modules an enum
+
+* average hue
+* average saturation
+* average lightness

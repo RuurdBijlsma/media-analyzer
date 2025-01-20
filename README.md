@@ -1,3 +1,5 @@
+from media_analyzer.data.enums.analyzer_module import VisualModulefrom media_analyzer.data.enums.analyzer_module import FileModule
+
 # Media Analyzer
 
 Media Analyzer is a Python library designed to analyze media files, providing insights into their
@@ -63,7 +65,7 @@ You must have the following in PATH.
 
 Example output of the main analyze function can be viewed
 at [example_output.json](https://github.com/RuurdBijlsma/media-analyzer/blob/main/examples/example_output.json).
-Further examplecode is available
+Further example code is available
 at [/examples](https://github.com/RuurdBijlsma/media-analyzer/tree/main/examples).
 
 ## Usage
@@ -85,7 +87,7 @@ print(result)
 
 The analysis is done based on modules, the following modules are available and enabled by default:
 
-#### File-based Modules:
+#### [File-based Modules](https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#FileModule):
 
 * `"DataUrlModule"`
 * `"ExifModule"`
@@ -93,7 +95,7 @@ The analysis is done based on modules, the following modules are available and e
 * `"TimeModule"`
 * `"WeatherModule"`
 
-#### Visual Modules:
+#### [Visual Modules](https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#VisualModule):
 
 * `"CaptionModule"`
 * `"ClassificationModule"`
@@ -107,12 +109,12 @@ The analysis is done based on modules, the following modules are available and e
 Modules can be turned off by changing the config provided to the MediaAnalyzer class:
 
 ```python
-from media_analyzer import MediaAnalyzer, AnalyzerSettings
+from media_analyzer import MediaAnalyzer, AnalyzerSettings, FileModule, VisualModule
 from pathlib import Path
 
 config = AnalyzerSettings(
-    enabled_file_modules={"ExifModule"},  # Only do exif data analysis on file
-    enabled_visual_modules={"CaptionModule"},  # Only do caption module as visual module
+  enabled_file_modules={FileModule.EXIF},  # Only do exif data analysis on file
+  enabled_visual_modules={VisualModule.CAPTION},  # Only do caption module as visual module
 )
 analyzer = MediaAnalyzer(config=config)
 media_file = Path(__file__).parents[1] / "tests/assets/tent.jpg"
