@@ -42,6 +42,7 @@ class ExifData:
     jfif: dict[str, Any] | None
     icc_profile: dict[str, Any] | None
     gif: dict[str, Any] | None
+    png: dict[str, Any] | None
     quicktime: dict[str, Any] | None
     matroska: dict[str, Any] | None
 
