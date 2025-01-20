@@ -12,7 +12,7 @@ from media_analyzer.data.interfaces.image_data import ImageData
 from media_analyzer.processing.pipeline.file_based.data_url_module import DataUrlModule
 from media_analyzer.processing.pipeline.file_based.exif_module import ExifModule
 from media_analyzer.processing.pipeline.file_based.gps_module import GPSModule
-from media_analyzer.processing.pipeline.file_based.tag_module import TagModule
+from media_analyzer.processing.pipeline.file_based.tags_module import TagsModule
 from media_analyzer.processing.pipeline.file_based.time_module import TimeModule
 from media_analyzer.processing.pipeline.file_based.weather_module import WeatherModule
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
@@ -34,7 +34,7 @@ pipeline_classes: list[type[PipelineModule[Any]]] = [
     DataUrlModule,
     ExifModule,
     GPSModule,
-    TagModule,
+    TagsModule,
     TimeModule,
     WeatherModule,
     CaptionModule,

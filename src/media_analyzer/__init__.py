@@ -17,7 +17,7 @@ from media_analyzer.data.enums.face_sex import FaceSex
 from media_analyzer.data.interfaces.api_io import InputMedia, MediaAnalyzerOutput
 from media_analyzer.data.interfaces.frame_data import MeasuredQualityData, FrameData, OCRData, \
     ClassificationData, FrameDataOutput
-from media_analyzer.data.interfaces.image_data import ImageData, ExifData, GpsData, TimeData, \
+from media_analyzer.data.interfaces.image_data import ImageData, ExifData, GPSData, TimeData, \
     WeatherData, IntermediateTimeData, ImageDataOutput
 from media_analyzer.data.interfaces.location_types import GeoLocation
 from media_analyzer.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox, BaseBoundingBox
@@ -83,7 +83,7 @@ __all__ = [
     "FrameDataOutput",
     ## Image Data
     "ExifData",
-    "GpsData",
+    "GPSData",
     "TimeData",
     "WeatherData",
     "IntermediateTimeData",

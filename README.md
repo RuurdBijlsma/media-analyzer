@@ -91,7 +91,7 @@ The analysis is done based on modules, the following modules are available and e
 
 * `"DataUrlModule"`
 * `"ExifModule"`
-* `"GpsModule"`
+* `"GPSModule"`
 * `"TimeModule"`
 * `"WeatherModule"`
 

@@ -57,7 +57,7 @@ class ExifData:
 
 
 @dataclass
-class GpsData:
+class GPSData:
     """GPS Data related to the image.
 
     Attributes:
@@ -158,7 +158,7 @@ class ImageData:
     frames: list[Path]
     exif: ExifData | None = None
     data_url: str | None = None
-    gps: GpsData | None = None
+    gps: GPSData | None = None
     time: TimeData | IntermediateTimeData | None = None
     weather: WeatherData | None = None
     tags: TagData | None = None
@@ -180,6 +180,6 @@ class ImageDataOutput:
     path: Path
     exif: ExifData | None = None
     data_url: str | None = None
-    gps: GpsData | None = None
+    gps: GPSData | None = None
     time: TimeData | IntermediateTimeData | None = None
     weather: WeatherData | None = None
