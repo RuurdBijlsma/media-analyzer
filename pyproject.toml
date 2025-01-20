@@ -1,6 +1,6 @@
 [project]
 name = "media-analyzer"
-version = "0.1.4"
+version = "0.2.0"
 description = "Analyze video/image with machine learning methods, exif data, and other file based information. "
 readme = "README.md"
 license = "MIT"
@@ -21,6 +21,7 @@ dependencies = [
     "pillow-avif-plugin>=1.4.6",
     "pyexiftool>=0.5.6",
     "pytesseract>=0.3.13",
+    "pytz>=2024.2",
     "reverse-geocode>=1.6.5",
     "scikit-learn>=1.6.1",
     "scipy>=1.15.1",

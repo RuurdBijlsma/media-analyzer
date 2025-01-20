@@ -5,6 +5,7 @@ from typing import ClassVar
 import pytz
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
+from media_analyzer.data.enums.analyzer_module import AnalyzerModule, FileModule
 from media_analyzer.data.interfaces.image_data import ImageData, TimeData
 from media_analyzer.processing.pipeline.pipeline_module import (
     PipelineModule,
@@ -121,7 +122,7 @@ def get_timezone_info(
 class TimeModule(PipelineModule[ImageData]):
     """Extracts datetime from an image."""
 
-    depends: ClassVar[set[str]] = {"ExifModule", "GpsModule"}
+    depends: ClassVar[set[AnalyzerModule]] = {FileModule.EXIF, FileModule.GPS}
 
     def process(self, data: ImageData, _: FullAnalyzerConfig) -> None:
         """Extracts datetime from an image."""

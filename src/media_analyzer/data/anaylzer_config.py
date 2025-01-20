@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+from media_analyzer.data.enums.analyzer_module import FileModule, VisualModule
 from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvider
 from media_analyzer.machine_learning.caption.captioner_protocol import CaptionerProtocol
 from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
@@ -36,25 +37,26 @@ class AnalyzerSettings:
     enable_document_summary: bool = False
     document_detection_threshold: int = 65
     face_detection_threshold: float = 0.7
-    enabled_file_modules: set[str] = field(
+    enabled_file_modules: set[FileModule] = field(
         default_factory=lambda: {
-            "DataUrlModule",
-            "ExifModule",
-            "GpsModule",
-            "TimeModule",
-            "WeatherModule",
+            FileModule.DATA_URL,
+            FileModule.EXIF,
+            FileModule.GPS,
+            FileModule.TAGS,
+            FileModule.TIME,
+            FileModule.WEATHER,
         }
     )
-    enabled_visual_modules: set[str] = field(
+    enabled_visual_modules: set[VisualModule] = field(
         default_factory=lambda: {
-            "CaptionModule",
-            "ClassificationModule",
-            "EmbeddingModule",
-            "FacesModule",
-            "ObjectsModule",
-            "OCRModule",
-            "QualityDetectionModule",
-            "SummaryModule",
+            VisualModule.CAPTION,
+            VisualModule.CLASSIFICATION,
+            VisualModule.EMBEDDING,
+            VisualModule.FACES,
+            VisualModule.OBJECTS,
+            VisualModule.OCR,
+            VisualModule.QUALITY_DETECTION,
+            VisualModule.SUMMARY,
         }
     )
 

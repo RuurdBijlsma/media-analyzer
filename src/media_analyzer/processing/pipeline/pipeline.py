@@ -5,12 +5,14 @@ import PIL.Image
 import pillow_avif  # noqa: F401
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
+from media_analyzer.data.enums.analyzer_module import AnalyzerModule, analyzer_module
 from media_analyzer.data.interfaces.api_io import InputMedia
 from media_analyzer.data.interfaces.frame_data import FrameData
 from media_analyzer.data.interfaces.image_data import ImageData
 from media_analyzer.processing.pipeline.file_based.data_url_module import DataUrlModule
 from media_analyzer.processing.pipeline.file_based.exif_module import ExifModule
-from media_analyzer.processing.pipeline.file_based.gps_module import GpsModule
+from media_analyzer.processing.pipeline.file_based.gps_module import GPSModule
+from media_analyzer.processing.pipeline.file_based.tags_module import TagsModule
 from media_analyzer.processing.pipeline.file_based.time_module import TimeModule
 from media_analyzer.processing.pipeline.file_based.weather_module import WeatherModule
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
@@ -31,7 +33,8 @@ from media_analyzer.processing.process_utils import pil_to_jpeg
 pipeline_classes: list[type[PipelineModule[Any]]] = [
     DataUrlModule,
     ExifModule,
-    GpsModule,
+    GPSModule,
+    TagsModule,
     TimeModule,
     WeatherModule,
     CaptionModule,
@@ -43,10 +46,12 @@ pipeline_classes: list[type[PipelineModule[Any]]] = [
     QualityDetectionModule,
     SummaryModule,
 ]
-name_to_pipeline = {cls.__name__: cls for cls in pipeline_classes}
+name_to_pipeline: dict[AnalyzerModule, type[PipelineModule[Any]]] = {
+    analyzer_module(cls.__name__): cls for cls in pipeline_classes
+}
 
 
-def strings_to_pipeline(strings: list[str]) -> list[type[PipelineModule[Any]]]:
+def enum_to_pipeline(strings: list[AnalyzerModule]) -> list[type[PipelineModule[Any]]]:
     """Pipeline module id to pipeline module class."""
     return [name_to_pipeline[name] for name in strings]
 
@@ -57,13 +62,13 @@ def topological_sort(
     """Sort modules topologically based on their dependencies."""
     graph = nx.DiGraph()
     for module in modules:
-        graph.add_node(module.__name__)
+        graph.add_node(analyzer_module(module.__name__))
         for dependency in module.depends:
-            graph.add_edge(module.__name__, dependency)
+            graph.add_edge(analyzer_module(module.__name__), dependency)
 
     try:
-        module_ids: list[str] = list(reversed(list(nx.topological_sort(graph))))
-        return [module() for module in strings_to_pipeline(module_ids)]
+        module_ids: list[AnalyzerModule] = list(reversed(list(nx.topological_sort(graph))))
+        return [module() for module in enum_to_pipeline(module_ids)]
     except nx.NetworkXUnfeasible as e:
         raise ValueError(
             "A cycle was detected in the dependency graph, and topological sorting is not possible."

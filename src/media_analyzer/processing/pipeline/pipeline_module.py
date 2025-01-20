@@ -9,6 +9,7 @@ from media_analyzer.data.interfaces.image_data import ImageData
 
 if TYPE_CHECKING:
     from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
+    from media_analyzer.data.enums.analyzer_module import AnalyzerModule
 
 TData = TypeVar("TData", ImageData, FrameData)
 
@@ -18,7 +19,7 @@ class PipelineModule(Generic[TData], ABC):
 
     run_times: list[float]
     id: str
-    depends: ClassVar[set[str]] = set()
+    depends: ClassVar[set[AnalyzerModule]] = set()
 
     def __init__(self) -> None:
         """Initializes the PipelineModule."""
