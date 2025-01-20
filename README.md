@@ -1,5 +1,3 @@
-from media_analyzer.data.enums.analyzer_module import VisualModulefrom media_analyzer.data.enums.analyzer_module import FileModule
-
 # Media Analyzer
 
 Media Analyzer is a Python library designed to analyze media files, providing insights into their
