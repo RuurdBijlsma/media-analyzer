@@ -7,7 +7,8 @@
     * is_night_sight
     * is_selfie
     * is_panorama
-* make modules an enum
+* get width/height from png
+* check if png has extra exif info to add to output
 
 * average hue
 * average saturation

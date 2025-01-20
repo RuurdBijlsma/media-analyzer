@@ -17,11 +17,6 @@ class ExifData:
         duration: The duration of the media, if applicable.
         size_bytes: The size of the file in bytes.
         format: The format of the image.
-        is_motion_photo: Indicates if the image is a motion photo.
-        is_hdr: Indicates if the image is HDR.
-        is_night_sight: Indicates if the image was taken with night sight.
-        is_selfie: Indicates if the image is a selfie.
-        is_panorama: Indicates if the image is a panorama.
         exif_tool: The output from ExifTool.
         file: File-related information.
         composite: Composite data.
@@ -39,11 +34,6 @@ class ExifData:
     duration: float | None
     size_bytes: int
     format: str
-    is_motion_photo: bool
-    is_hdr: bool
-    is_night_sight: bool
-    is_selfie: bool
-    is_panorama: bool
     exif_tool: dict[str, Any]
     file: dict[str, Any]
     composite: dict[str, Any]

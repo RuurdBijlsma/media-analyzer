@@ -84,3 +84,18 @@ def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -
     assert result.image_data.exif.matroska is not None
     assert result.image_data.data_url is not None
     assert result.image_data.time is not None
+
+
+def test_png_image(assets_folder: Path, default_config: AnalyzerSettings) -> None:
+    """Test the MediaAnalyzer functionality for a png image."""
+    mock_caption_text = "A mock caption."
+    with patch(
+        "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
+    ) as mock_raw_caption:
+        mock_raw_caption.return_value = mock_caption_text
+        analyzer = MediaAnalyzer(default_config)
+        result = analyzer.photo(assets_folder / "png_image.png")
+
+    assert result.image_data.exif is not None
+    assert result.image_data.data_url is not None
+    assert result.image_data.time is not None

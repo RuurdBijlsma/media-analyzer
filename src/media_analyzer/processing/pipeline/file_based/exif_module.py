@@ -101,9 +101,4 @@ class ExifModule(PipelineModule[ImageData]):
             gif=exif_dict.get("GIF"),
             quicktime=exif_dict.get("QuickTime"),
             matroska=exif_dict.get("Matroska"),
-            is_motion_photo=False,
-            is_hdr=False,
-            is_night_sight=False,
-            is_selfie=False,
-            is_panorama=False,
         )
