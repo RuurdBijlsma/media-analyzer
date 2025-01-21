@@ -87,6 +87,7 @@ class ExifModule(PipelineModule[ImageData]):
             width = exif_dict["Matroska"]["ImageWidth"]
             height = exif_dict["Matroska"]["ImageHeight"]
             duration = parse_duration(exif_dict["Matroska"]["Duration"])
+
         assert width and height
         data.exif = ExifData(
             size_bytes=exif_dict["File"]["FileSize"],
@@ -98,6 +99,7 @@ class ExifModule(PipelineModule[ImageData]):
             file=exif_dict["File"],
             exif=exif_dict.get("EXIF"),
             xmp=exif_dict.get("XMP"),
+            mpf=exif_dict.get("MPF"),
             jfif=exif_dict.get("JFIF"),
             icc_profile=exif_dict.get("ICC_Profile"),
             composite=exif_dict["Composite"],

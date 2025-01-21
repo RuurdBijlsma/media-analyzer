@@ -41,6 +41,7 @@ class MediaAnalyzer:
             gps=image_data.gps,
             time=image_data.time,
             weather=image_data.weather,
+            tags=image_data.tags,
         )
         frame_output = [
             FrameDataOutput(

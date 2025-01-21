@@ -22,6 +22,7 @@ class ExifData:
         composite: Composite data.
         exif: Exif metadata, if available.
         xmp: XMP metadata, if available.
+        mpf: Motion photo metadata, if available.
         jfif: JFIF metadata, if available.
         icc_profile: ICC profile data, if available.
         gif: GIF-specific data, if available.
@@ -39,6 +40,7 @@ class ExifData:
     composite: dict[str, Any]
     exif: dict[str, Any] | None
     xmp: dict[str, Any] | None
+    mpf: dict[str, Any] | None
     jfif: dict[str, Any] | None
     icc_profile: dict[str, Any] | None
     gif: dict[str, Any] | None
@@ -121,12 +123,15 @@ class WeatherData:
 class TagData:
     """Tags, such as is_panorama, is_motion_photo, is_night_sight."""
 
-    is_panorama: bool
+    use_panorama_viewer: bool
+    is_photosphere: bool
+    projection_type: str | None
     is_motion_photo: bool
+    motion_photo_presentation_timestamp: int | None
     is_night_sight: bool
     is_hdr: bool
-    is_360: bool
     is_burst: bool
+    burst_id: str | None
     is_timelapse: bool
     is_slowmotion: bool
 
@@ -174,3 +179,4 @@ class ImageDataOutput:
     gps: GPSData | None = None
     time: TimeData | IntermediateTimeData | None = None
     weather: WeatherData | None = None
+    tags: TagData | None = None
