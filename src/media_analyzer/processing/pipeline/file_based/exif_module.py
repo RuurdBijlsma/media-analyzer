@@ -76,6 +76,9 @@ class ExifModule(PipelineModule[ImageData]):
         if "GIF" in exif_dict:
             width = exif_dict["GIF"]["ImageWidth"]
             height = exif_dict["GIF"]["ImageHeight"]
+        if "PNG" in exif_dict:
+            width = exif_dict["PNG"]["ImageWidth"]
+            height = exif_dict["PNG"]["ImageHeight"]
         if "QuickTime" in exif_dict:
             duration = exif_dict["QuickTime"]["Duration"]
             width = exif_dict["QuickTime"]["ImageWidth"]
@@ -99,11 +102,7 @@ class ExifModule(PipelineModule[ImageData]):
             icc_profile=exif_dict.get("ICC_Profile"),
             composite=exif_dict["Composite"],
             gif=exif_dict.get("GIF"),
+            png=exif_dict.get("PNG"),
             quicktime=exif_dict.get("QuickTime"),
             matroska=exif_dict.get("Matroska"),
-            is_motion_photo=False,
-            is_hdr=False,
-            is_night_sight=False,
-            is_selfie=False,
-            is_panorama=False,
         )
