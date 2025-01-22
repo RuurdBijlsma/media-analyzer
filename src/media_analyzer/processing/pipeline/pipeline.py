@@ -89,6 +89,10 @@ def run_metadata_pipeline(
         image_module.run(image_data, config)
 
     frame_datas: list[FrameData] = []
+    if len(config.settings.enabled_visual_modules) == 0:
+        # Don't call pil_to_jpeg on frame path
+        return image_data, frame_datas
+
     for frame_image_path in input_media.frames:
         with PIL.Image.open(frame_image_path) as frame_image:
             jpeg_image = pil_to_jpeg(frame_image)
