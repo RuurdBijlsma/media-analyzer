@@ -90,7 +90,7 @@ def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -
 
 def test_png_image(assets_folder: Path, default_config: AnalyzerSettings) -> None:
     """Test the MediaAnalyzer functionality for a png image."""
-    default_config.enabled_file_modules = {FileModule.EXIF, FileModule.DATA_URL}
+    default_config.enabled_file_modules = {FileModule.EXIF, FileModule.DATA_URL, FileModule.TIME}
     default_config.enabled_visual_modules = set()
 
     analyzer = MediaAnalyzer(default_config)
@@ -187,4 +187,4 @@ def test_timelapse(assets_folder: Path, default_config: AnalyzerSettings) -> Non
     result = analyzer.photo(assets_folder / "timelapse.mp4")
 
     assert result.image_data.tags is not None
-    assert result.image_data.tags.is_slowmotion
+    assert result.image_data.tags.is_timelapse
