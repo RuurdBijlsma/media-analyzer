@@ -135,8 +135,8 @@ class TagData:
     is_timelapse: bool
     is_slowmotion: bool
     is_video: bool
-    capture_fps: float
-    video_fps: float
+    capture_fps: float | None
+    video_fps: float | None
 
 
 @dataclass

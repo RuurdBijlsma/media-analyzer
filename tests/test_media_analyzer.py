@@ -109,6 +109,7 @@ def test_photosphere(assets_folder: Path, default_config: AnalyzerSettings) -> N
     analyzer = MediaAnalyzer(default_config)
     result = analyzer.photo(assets_folder / "photosphere.jpg")
 
+    assert result.image_data.tags is not None
     assert result.image_data.tags.is_photosphere
     assert result.image_data.tags.use_panorama_viewer
     assert result.image_data.tags.projection_type == "equirectangular"
@@ -123,6 +124,7 @@ def test_night_sight(assets_folder: Path, default_config: AnalyzerSettings) -> N
     analyzer = MediaAnalyzer(default_config)
     result = analyzer.photo(assets_folder / "night_sight/PXL_20250104_170020532.NIGHT.jpg")
 
+    assert result.image_data.tags is not None
     assert result.image_data.tags.is_night_sight
     assert not result.image_data.tags.is_photosphere
     assert not result.image_data.tags.use_panorama_viewer
@@ -136,9 +138,10 @@ def test_burst(assets_folder: Path, default_config: AnalyzerSettings) -> None:
     analyzer = MediaAnalyzer(default_config)
     results = [analyzer.photo(p) for p in (assets_folder / "burst").iterdir()]
 
-    assert all(result.image_data.tags.is_burst for result in results)
     grouped = defaultdict(list)
     for result in results:
+        assert result.image_data.tags is not None
+        assert result.image_data.tags.is_burst
         grouped[result.image_data.tags.burst_id].append(result)
 
     print(grouped)
@@ -157,6 +160,7 @@ def test_motion(assets_folder: Path, default_config: AnalyzerSettings) -> None:
     analyzer = MediaAnalyzer(default_config)
     result = analyzer.photo(assets_folder / "motion/PXL_20250103_180944831.MP.jpg")
 
+    assert result.image_data.tags is not None
     assert result.image_data.tags.is_motion_photo
     assert isinstance(result.image_data.tags.motion_photo_presentation_timestamp, int)
 
@@ -169,6 +173,7 @@ def test_slowmotion(assets_folder: Path, default_config: AnalyzerSettings) -> No
     analyzer = MediaAnalyzer(default_config)
     result = analyzer.photo(assets_folder / "slowmotion.mp4")
 
+    assert result.image_data.tags is not None
     assert result.image_data.tags.is_slowmotion
     assert result.image_data.tags.capture_fps == pytest.approx(120)
 
@@ -181,4 +186,5 @@ def test_timelapse(assets_folder: Path, default_config: AnalyzerSettings) -> Non
     analyzer = MediaAnalyzer(default_config)
     result = analyzer.photo(assets_folder / "timelapse.mp4")
 
+    assert result.image_data.tags is not None
     assert result.image_data.tags.is_slowmotion
