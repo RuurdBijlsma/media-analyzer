@@ -23,20 +23,20 @@ def test_media_analyzer_none_settings() -> None:
         pytest.param("tent.jpg", True, False),
         pytest.param("sunset.jpg", True, False),
         pytest.param("ocr.jpg", False, False),
-        pytest.param("face2_b.jpg", False, False),
+        pytest.param("faces/face2_b.jpg", False, False),
     ],
 )
 def test_media_analyzer(
-        assets_folder: Path,
-        default_config: AnalyzerSettings,
-        photo_filename: str,
-        expect_gps: bool,
-        expect_gif: bool,
+    assets_folder: Path,
+    default_config: AnalyzerSettings,
+    photo_filename: str,
+    expect_gps: bool,
+    expect_gif: bool,
 ) -> None:
     """Test the MediaAnalyzer functionality for images with and without GPS data."""
     mock_caption_text = "A mock caption."
     with patch(
-            "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
+        "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
     ) as mock_raw_caption:
         mock_raw_caption.return_value = mock_caption_text
         analyzer = MediaAnalyzer(default_config)
@@ -65,7 +65,7 @@ def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -
     """Test the MediaAnalyzer functionality for a video."""
     mock_caption_text = "A mock caption."
     with patch(
-            "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
+        "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
     ) as mock_raw_caption:
         mock_raw_caption.return_value = mock_caption_text
         analyzer = MediaAnalyzer(default_config)
@@ -90,15 +90,11 @@ def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -
 
 def test_png_image(assets_folder: Path, default_config: AnalyzerSettings) -> None:
     """Test the MediaAnalyzer functionality for a png image."""
-    mock_caption_text = "A mock caption."
-    default_config.enabled_file_modules = {FileModule.EXIF}
+    default_config.enabled_file_modules = {FileModule.EXIF, FileModule.DATA_URL}
     default_config.enabled_visual_modules = set()
-    with patch(
-            "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
-    ) as mock_raw_caption:
-        mock_raw_caption.return_value = mock_caption_text
-        analyzer = MediaAnalyzer(default_config)
-        result = analyzer.photo(assets_folder / "png_image.png")
+
+    analyzer = MediaAnalyzer(default_config)
+    result = analyzer.photo(assets_folder / "png_image.png")
 
     assert result.image_data.exif is not None
     assert result.image_data.data_url is not None
@@ -109,17 +105,13 @@ def test_photosphere(assets_folder: Path, default_config: AnalyzerSettings) -> N
     """Test the MediaAnalyzer functionality for a photosphere."""
     default_config.enabled_file_modules = {FileModule.TAGS}
     default_config.enabled_visual_modules = set()
-    mock_caption_text = "A mock caption."
-    with patch(
-            "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
-    ) as mock_raw_caption:
-        mock_raw_caption.return_value = mock_caption_text
-        analyzer = MediaAnalyzer(default_config)
-        result = analyzer.photo(assets_folder / "photosphere.jpg")
+
+    analyzer = MediaAnalyzer(default_config)
+    result = analyzer.photo(assets_folder / "photosphere.jpg")
 
     assert result.image_data.tags.is_photosphere
     assert result.image_data.tags.use_panorama_viewer
-    assert result.image_data.tags.projection_type == 'equirectangular'
+    assert result.image_data.tags.projection_type == "equirectangular"
     assert not result.image_data.tags.is_night_sight
 
 
@@ -127,13 +119,9 @@ def test_night_sight(assets_folder: Path, default_config: AnalyzerSettings) -> N
     """Test the MediaAnalyzer functionality for a night sight photo."""
     default_config.enabled_file_modules = {FileModule.TAGS}
     default_config.enabled_visual_modules = set()
-    mock_caption_text = "A mock caption."
-    with patch(
-            "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
-    ) as mock_raw_caption:
-        mock_raw_caption.return_value = mock_caption_text
-        analyzer = MediaAnalyzer(default_config)
-        result = analyzer.photo(assets_folder / "PXL_20250104_170020532.NIGHT.jpg")
+
+    analyzer = MediaAnalyzer(default_config)
+    result = analyzer.photo(assets_folder / "night_sight/PXL_20250104_170020532.NIGHT.jpg")
 
     assert result.image_data.tags.is_night_sight
     assert not result.image_data.tags.is_photosphere
@@ -145,13 +133,8 @@ def test_burst(assets_folder: Path, default_config: AnalyzerSettings) -> None:
     default_config.enabled_file_modules = {FileModule.TAGS}
     default_config.enabled_visual_modules = set()
 
-    mock_caption_text = "A mock caption."
-    with patch(
-            "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
-    ) as mock_raw_caption:
-        mock_raw_caption.return_value = mock_caption_text
-        analyzer = MediaAnalyzer(default_config)
-        results = [analyzer.photo(p) for p in (assets_folder / "burst").iterdir()]
+    analyzer = MediaAnalyzer(default_config)
+    results = [analyzer.photo(p) for p in (assets_folder / "burst").iterdir()]
 
     assert all(result.image_data.tags.is_burst for result in results)
     grouped = defaultdict(list)
@@ -171,13 +154,31 @@ def test_motion(assets_folder: Path, default_config: AnalyzerSettings) -> None:
     default_config.enabled_file_modules = {FileModule.TAGS}
     default_config.enabled_visual_modules = set()
 
-    mock_caption_text = "A mock caption."
-    with patch(
-            "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
-    ) as mock_raw_caption:
-        mock_raw_caption.return_value = mock_caption_text
-        analyzer = MediaAnalyzer(default_config)
-        result = analyzer.photo(assets_folder / "motion/PXL_20250103_180944831.MP.jpg")
+    analyzer = MediaAnalyzer(default_config)
+    result = analyzer.photo(assets_folder / "motion/PXL_20250103_180944831.MP.jpg")
 
     assert result.image_data.tags.is_motion_photo
     assert isinstance(result.image_data.tags.motion_photo_presentation_timestamp, int)
+
+
+def test_slowmotion(assets_folder: Path, default_config: AnalyzerSettings) -> None:
+    """Test the MediaAnalyzer functionality for slowmotion video."""
+    default_config.enabled_file_modules = {FileModule.TAGS}
+    default_config.enabled_visual_modules = set()
+
+    analyzer = MediaAnalyzer(default_config)
+    result = analyzer.photo(assets_folder / "slowmotion.mp4")
+
+    assert result.image_data.tags.is_slowmotion
+    assert result.image_data.tags.capture_fps == pytest.approx(120)
+
+
+def test_timelapse(assets_folder: Path, default_config: AnalyzerSettings) -> None:
+    """Test the MediaAnalyzer functionality for slowmotion video."""
+    default_config.enabled_file_modules = {FileModule.TAGS}
+    default_config.enabled_visual_modules = set()
+
+    analyzer = MediaAnalyzer(default_config)
+    result = analyzer.photo(assets_folder / "timelapse.mp4")
+
+    assert result.image_data.tags.is_slowmotion

@@ -134,6 +134,9 @@ class TagData:
     burst_id: str | None
     is_timelapse: bool
     is_slowmotion: bool
+    is_video: bool
+    capture_fps: float
+    video_fps: float
 
 
 @dataclass
