@@ -205,3 +205,4 @@ def test_color_module(assets_folder: Path, default_config: AnalyzerSettings) -> 
     assert color.average_hue
     assert color.average_lightness
     assert color.average_saturation
+    assert isinstance(color.themes[0], dict)

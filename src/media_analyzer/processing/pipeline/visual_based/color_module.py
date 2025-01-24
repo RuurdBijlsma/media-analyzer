@@ -1,14 +1,20 @@
+from typing import Any
+
 import cv2
 import numpy as np
-from material_color_utilities import prominent_colors_from_image, theme_from_color, Variant, CustomColor, DynamicScheme, \
-    Hct
+import numpy.typing as npt
+from material_color_utilities import (
+    Variant,
+    prominent_colors_from_image,
+    theme_from_color,
+)
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.interfaces.frame_data import ColorData, FrameData
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
-def average_hue(hues: list[float]) -> float:
+def average_hue(hues: npt.NDArray[Any]) -> float:
     """Calculate the average hue (in degrees) from a list of hues."""
     # Convert hues to Cartesian coordinates
     radians = np.radians(hues)
@@ -20,7 +26,7 @@ def average_hue(hues: list[float]) -> float:
     avg_y = np.mean(y)
 
     # Compute the average hue
-    avg_hue = np.degrees(np.arctan2(avg_y, avg_x))
+    avg_hue: float = np.degrees(np.arctan2(avg_y, avg_x))
 
     # Ensure the result is in the range [0, 360]
     if avg_hue < 0:
@@ -42,7 +48,7 @@ class ColorModule(PipelineModule[FrameData]):
         saturation_channel = image_hsv[:, :, 1].flatten()
         lightness_channel = image_hsv[:, :, 2].flatten()
 
-        # Convert hue values from OpenCV's [0, 179] range to [0, 360] range, and calculate average hue
+        # Convert hue values from OpenCV's [0, 179] range to [0, 360] range, and calculate avg hue.
         average_hue_value = average_hue(hue_channel * 2)
         average_saturation_value = saturation_channel.mean()
         average_lightness_value = lightness_channel.mean()
@@ -53,7 +59,7 @@ class ColorModule(PipelineModule[FrameData]):
         print(average_hue_value)
 
         data.color = ColorData(
-            themes=themes,
+            themes=[theme.dict() for theme in themes],
             prominent_colors=prominent_colors,
             average_hue=average_hue_value,
             average_saturation=average_saturation_value,
