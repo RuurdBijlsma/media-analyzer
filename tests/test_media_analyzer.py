@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from exiftool.exceptions import ExifToolExecuteError
 
 from media_analyzer.data.anaylzer_config import AnalyzerSettings, FullAnalyzerConfig
 from media_analyzer.data.enums.analyzer_module import FileModule, VisualModule
@@ -206,3 +207,14 @@ def test_color_module(assets_folder: Path, default_config: AnalyzerSettings) -> 
     assert color.average_lightness
     assert color.average_saturation
     assert isinstance(color.themes[0], dict)
+
+
+def test_exif_invalid_image(assets_folder: Path, default_config: AnalyzerSettings) -> None:
+    """Test the MediaAnalyzer exif module for invalid jpeg file."""
+    default_config.enabled_file_modules = {FileModule.EXIF}
+    default_config.enabled_visual_modules = set()
+    analyzer = MediaAnalyzer(default_config)
+    with pytest.raises(ExifToolExecuteError):
+        analyzer.photo(assets_folder / "invalid_image.png")
+    with pytest.raises(ValueError, match="Media-analyzer does not support this file"):
+        analyzer.photo(assets_folder / "text_file.txt")

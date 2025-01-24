@@ -20,7 +20,7 @@ def structure_exiftool_dict(exiftool_dict: dict[str, Any]) -> dict[str, Any]:
     """
     del exiftool_dict["SourceFile"]
     del exiftool_dict["File:Directory"]
-    nested_dict = {}
+    nested_dict: dict[str, Any] = {}
 
     for key, value in exiftool_dict.items():
         if isinstance(value, str) and "(Binary data" in value and "use -b option" in value:
@@ -28,15 +28,14 @@ def structure_exiftool_dict(exiftool_dict: dict[str, Any]) -> dict[str, Any]:
 
         key_parts = key.split(":")
 
-        if len(key_parts) == 1:
-            nested_dict[key] = value
-        else:
-            current_level = nested_dict
-            for part in key_parts[:-1]:
-                if part not in current_level:
-                    current_level[part] = {}
-                current_level = current_level[part]
-            current_level[key_parts[-1]] = value
+        if len(key_parts) == 1:  # pragma: no cover
+            raise ValueError("Unexpected exiftool output")
+        current_level = nested_dict
+        for part in key_parts[:-1]:
+            if part not in current_level:
+                current_level[part] = {}
+            current_level = current_level[part]
+        current_level[key_parts[-1]] = value
 
     return nested_dict
 
@@ -48,11 +47,13 @@ class ExifModule(PipelineModule[ImageData]):
         """Extract EXIF data from an image."""
         with ExifToolHelper() as et:
             result = et.execute_json(str(data.path))
-            if result is None or not isinstance(result, list) or not isinstance(result[0], dict):
-                raise ValueError(
-                    f"Exiftool can't handle this file {data.path}.",
-                )
             exif_dict = structure_exiftool_dict(result[0])
+            if (
+                "Composite" not in exif_dict
+                or "File" not in exif_dict
+                or "ExifTool" not in exif_dict
+            ):
+                raise ValueError(f"Media-analyzer does not support this file {data.path}")
 
         if "EXIF" in exif_dict:
             alt_ref = exif_dict["EXIF"].get("GPSAltitudeRef")
