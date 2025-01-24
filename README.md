@@ -83,26 +83,12 @@ print(result)
 
 ### Disable analysis modules
 
-The analysis is done based on modules, the following modules are available and enabled by default:
+The analysis is done based on modules, the following modules are available and enabled by default (click the links to
+see the possible modules).
 
-#### [File-based Modules](https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#FileModule):
+#### [File-based Modules](https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#FileModule)
 
-* `"DataUrlModule"`
-* `"ExifModule"`
-* `"GPSModule"`
-* `"TimeModule"`
-* `"WeatherModule"`
-
-#### [Visual Modules](https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#VisualModule):
-
-* `"CaptionModule"`
-* `"ClassificationModule"`
-* `"EmbeddingModule"`
-* `"FacesModule"`
-* `"ObjectsModule"`
-* `"OCRModule"`
-* `"QualityDetectionModule"`
-* `"SummaryModule"`
+#### [Visual Modules](https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#VisualModule)
 
 Modules can be turned off by changing the config provided to the MediaAnalyzer class:
 
@@ -111,8 +97,8 @@ from media_analyzer import MediaAnalyzer, AnalyzerSettings, FileModule, VisualMo
 from pathlib import Path
 
 config = AnalyzerSettings(
-  enabled_file_modules={FileModule.EXIF},  # Only do exif data analysis on file
-  enabled_visual_modules={VisualModule.CAPTION},  # Only do caption module as visual module
+    enabled_file_modules={FileModule.EXIF},  # Only do exif data analysis on file
+    enabled_visual_modules={VisualModule.CAPTION},  # Only do caption module as visual module
 )
 analyzer = MediaAnalyzer(config=config)
 media_file = Path(__file__).parents[1] / "tests/assets/tent.jpg"
@@ -124,7 +110,9 @@ result = analyzer.photo(media_file)
 The AnalyzerSettings class allows you to customize various aspects of the analysis:
 
     media_languages: List of languages for OCR to consider.
+    theme_color_variant: The color variant used for the generated theme.
     captions_provider: The provider for image captioning (e.g., 'BLIP', 'LLM').
+    llm_provider: The provider for the large language model (LLM), which can be used for summaries and captions.
     enable_text_summary: Enable or disable text summarization.
     enable_document_summary: Enable or disable document summarization.
     document_detection_threshold: Confidence threshold for document detection.

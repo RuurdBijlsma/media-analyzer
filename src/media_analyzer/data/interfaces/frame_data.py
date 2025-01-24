@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from PIL.Image import Image
 
@@ -88,6 +89,25 @@ class MeasuredQualityData:
 
 
 @dataclass
+class ColorData:
+    """Color info, and theme generated based on image.
+
+    Attributes:
+        themes: Generated themes based of prominent colors in the image.
+        prominent_colors: Prominent colors extracted from the image.
+        average_hue: Average hue value in degrees.
+        average_saturation: Average saturation value [0 to 100].
+        average_lightness: Average lightness value [0 to 100].
+    """
+
+    themes: list[dict[str, Any]]
+    prominent_colors: list[str]
+    average_hue: float
+    average_saturation: float
+    average_lightness: float
+
+
+@dataclass
 class FrameDataOutput:
     """Data for a frame.
 
@@ -110,6 +130,7 @@ class FrameDataOutput:
     objects: list[ObjectBox] | None = None
     classification: ClassificationData | None = None
     measured_quality: MeasuredQualityData | None = None
+    color: ColorData | None = None
 
 
 @dataclass
@@ -126,3 +147,4 @@ class FrameData:
     objects: list[ObjectBox] | None = None
     classification: ClassificationData | None = None
     measured_quality: MeasuredQualityData | None = None
+    color: ColorData | None = None
