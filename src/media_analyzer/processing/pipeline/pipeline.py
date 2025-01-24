@@ -20,6 +20,7 @@ from media_analyzer.processing.pipeline.visual_based.caption_module import Capti
 from media_analyzer.processing.pipeline.visual_based.classification_module import (
     ClassificationModule,
 )
+from media_analyzer.processing.pipeline.visual_based.color_module import ColorModule
 from media_analyzer.processing.pipeline.visual_based.embedding_module import EmbeddingModule
 from media_analyzer.processing.pipeline.visual_based.faces_module import FacesModule
 from media_analyzer.processing.pipeline.visual_based.objects_module import ObjectsModule
@@ -45,6 +46,7 @@ pipeline_classes: list[type[PipelineModule[Any]]] = [
     OCRModule,
     QualityDetectionModule,
     SummaryModule,
+    ColorModule,
 ]
 name_to_pipeline: dict[AnalyzerModule, type[PipelineModule[Any]]] = {
     analyzer_module(cls.__name__): cls for cls in pipeline_classes

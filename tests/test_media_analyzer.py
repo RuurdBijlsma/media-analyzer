@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from media_analyzer.data.anaylzer_config import AnalyzerSettings, FullAnalyzerConfig
-from media_analyzer.data.enums.analyzer_module import FileModule
+from media_analyzer.data.enums.analyzer_module import FileModule, VisualModule
 from media_analyzer.data.interfaces.api_io import InputMedia
 from media_analyzer.media_analyzer import MediaAnalyzer
 
@@ -188,3 +188,20 @@ def test_timelapse(assets_folder: Path, default_config: AnalyzerSettings) -> Non
 
     assert result.image_data.tags is not None
     assert result.image_data.tags.is_timelapse
+
+
+def test_color_module(assets_folder: Path, default_config: AnalyzerSettings) -> None:
+    """Test the MediaAnalyzer functionality for slowmotion video."""
+    default_config.enabled_file_modules = set()
+    default_config.enabled_visual_modules = {VisualModule.COLOR}
+
+    analyzer = MediaAnalyzer(default_config)
+    result = analyzer.photo(assets_folder / "sunset.jpg")
+
+    assert result.frame_data[0].color
+    color = result.frame_data[0].color
+    assert len(color.prominent_colors) > 0
+    assert len(color.themes) == len(color.prominent_colors)
+    assert color.average_hue
+    assert color.average_lightness
+    assert color.average_saturation

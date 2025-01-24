@@ -1,10 +1,18 @@
 from dataclasses import dataclass, field
 
+from material_color_utilities import Variant
+
 from media_analyzer.data.enums.analyzer_module import FileModule, VisualModule
 from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvider
 from media_analyzer.machine_learning.caption.captioner_protocol import CaptionerProtocol
 from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
 from media_analyzer.machine_learning.embedding.embedder_protocol import EmbedderProtocol
+from media_analyzer.machine_learning.facial_recognition.facial_recognition_protocol import (
+    FacialRecognitionProtocol,
+)
+from media_analyzer.machine_learning.object_detection.object_detection_protocol import (
+    ObjectDetectionProtocol,
+)
 from media_analyzer.machine_learning.ocr.ocr_protocol import OCRProtocol
 from media_analyzer.machine_learning.visual_llm.base_visual_llm import BaseVisualLLM
 
@@ -19,6 +27,7 @@ class AnalyzerSettings:
 
     Attributes:
         media_languages: The languages used for OCR.
+        theme_color_variant: The color variant used for the generated theme.
         captions_provider: The provider to be used for generating captions.
         llm_provider: The provider for the large language model (LLM),
             which can be used for summaries and captions.
@@ -31,6 +40,7 @@ class AnalyzerSettings:
     """
 
     media_languages: tuple[str, ...] = ("nld", "eng")
+    theme_color_variant: Variant = Variant.VIBRANT
     captions_provider: CaptionerProvider = CaptionerProvider.BLIP
     llm_provider: LLMProvider = LLMProvider.MINICPM
     enable_text_summary: bool = False
@@ -57,6 +67,7 @@ class AnalyzerSettings:
             VisualModule.OCR,
             VisualModule.QUALITY_DETECTION,
             VisualModule.SUMMARY,
+            VisualModule.COLOR,
         }
     )
 
@@ -79,4 +90,6 @@ class FullAnalyzerConfig:
     ocr: OCRProtocol
     classifier: BaseClassifier
     embedder: EmbedderProtocol
+    object_detector: ObjectDetectionProtocol
+    facial_recognition: FacialRecognitionProtocol
     settings: AnalyzerSettings

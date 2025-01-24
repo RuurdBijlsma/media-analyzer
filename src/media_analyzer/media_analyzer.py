@@ -7,6 +7,12 @@ from media_analyzer.data.interfaces.image_data import ImageDataOutput
 from media_analyzer.machine_learning.caption.get_captioner import get_captioner_by_provider
 from media_analyzer.machine_learning.classifier.clip_classifier import CLIPClassifier
 from media_analyzer.machine_learning.embedding.clip_embedder import CLIPEmbedder
+from media_analyzer.machine_learning.facial_recognition.insight_facial_recognition import (
+    InsightFacialRecognition,
+)
+from media_analyzer.machine_learning.object_detection.resnet_object_detection import (
+    ResnetObjectDetection,
+)
 from media_analyzer.machine_learning.ocr.resnet_tesseract_ocr import ResnetTesseractOCR
 from media_analyzer.machine_learning.visual_llm.get_llm import get_llm_by_provider
 from media_analyzer.processing.pipeline.pipeline import run_metadata_pipeline
@@ -26,6 +32,8 @@ class MediaAnalyzer:
             llm=get_llm_by_provider(config.llm_provider),
             captioner=get_captioner_by_provider(config.captions_provider),
             ocr=ResnetTesseractOCR(),
+            object_detector=ResnetObjectDetection(),
+            facial_recognition=InsightFacialRecognition(),
             embedder=embedder,
             classifier=CLIPClassifier(embedder),
             settings=config,
@@ -53,6 +61,7 @@ class MediaAnalyzer:
                 objects=frame.objects,
                 classification=frame.classification,
                 measured_quality=frame.measured_quality,
+                color=frame.color,
             )
             for frame in frame_data
         ]

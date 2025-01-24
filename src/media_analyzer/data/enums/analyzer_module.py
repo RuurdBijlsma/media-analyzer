@@ -23,6 +23,7 @@ class VisualModule(StrEnum):
     OCR = "OCRModule"
     QUALITY_DETECTION = "QualityDetectionModule"
     SUMMARY = "SummaryModule"
+    COLOR = "ColorModule"
 
 
 AnalyzerModule = FileModule | VisualModule
