@@ -16,9 +16,9 @@ from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvide
 from media_analyzer.data.enums.face_sex import FaceSex
 from media_analyzer.data.interfaces.api_io import InputMedia, MediaAnalyzerOutput
 from media_analyzer.data.interfaces.frame_data import MeasuredQualityData, FrameData, OCRData, \
-    ClassificationData, FrameDataOutput
+    ClassificationData, FrameDataOutput, ColorData
 from media_analyzer.data.interfaces.image_data import ImageData, ExifData, GPSData, TimeData, \
-    WeatherData, IntermediateTimeData, ImageDataOutput
+    WeatherData, IntermediateTimeData, ImageDataOutput, TagData
 from media_analyzer.data.interfaces.location_types import GeoLocation
 from media_analyzer.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox, BaseBoundingBox
 from media_analyzer.machine_learning.caption.blip_captioner import BlipCaptioner
@@ -52,6 +52,7 @@ from media_analyzer.media_analyzer import MediaAnalyzer
 from media_analyzer.processing.pipeline.file_based.data_url_module import DataUrlModule
 from media_analyzer.processing.pipeline.file_based.exif_module import ExifModule
 from media_analyzer.processing.pipeline.file_based.gps_module import GPSModule
+from media_analyzer.processing.pipeline.file_based.tags_module import TagsModule
 from media_analyzer.processing.pipeline.file_based.time_module import TimeModule
 from media_analyzer.processing.pipeline.file_based.weather_module import WeatherModule
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
@@ -59,6 +60,7 @@ from media_analyzer.processing.pipeline.visual_based.caption_module import Capti
 from media_analyzer.processing.pipeline.visual_based.classification_module import (
     ClassificationModule,
 )
+from media_analyzer.processing.pipeline.visual_based.color_module import ColorModule
 from media_analyzer.processing.pipeline.visual_based.embedding_module import EmbeddingModule
 from media_analyzer.processing.pipeline.visual_based.faces_module import FacesModule
 from media_analyzer.processing.pipeline.visual_based.objects_module import ObjectsModule
@@ -87,10 +89,12 @@ __all__ = [
     "TimeData",
     "WeatherData",
     "IntermediateTimeData",
+    "TagData",
     ## Frame Data
     "OCRData",
     "ClassificationData",
     "MeasuredQualityData",
+    "ColorData",
 
     # Extra output dataclasses
     "GeoLocation",
@@ -111,6 +115,7 @@ __all__ = [
     "GPSModule",
     "TimeModule",
     "WeatherModule",
+    "TagsModule",
     ## Visual-based Modules
     "CaptionModule",
     "ClassificationModule",
@@ -120,6 +125,7 @@ __all__ = [
     "OCRModule",
     "ObjectsModule",
     "QualityDetectionModule",
+    "ColorModule",
 
     # Machine learning classes
     "BaseClassifier",
