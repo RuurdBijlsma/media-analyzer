@@ -56,8 +56,6 @@ class ColorModule(PipelineModule[FrameData]):
         prominent_colors = prominent_colors_from_image(data.image)[0:3]
         themes = [theme_from_color(color, variant=Variant.VIBRANT) for color in prominent_colors]
 
-        print(average_hue_value)
-
         data.color = ColorData(
             themes=[theme.dict() for theme in themes],
             prominent_colors=prominent_colors,
