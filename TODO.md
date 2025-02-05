@@ -1,7 +1,2 @@
 # TODO
-
-* Material colors
-
-* average hue
-* average saturation
-* average lightness
+* Use llama.cpp for llm stuff (also for clip if possible)

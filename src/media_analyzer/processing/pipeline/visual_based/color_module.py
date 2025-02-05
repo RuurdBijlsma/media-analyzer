@@ -26,7 +26,7 @@ def average_hue(hues: npt.NDArray[Any]) -> float:
     avg_y = np.mean(y)
 
     # Compute the average hue
-    avg_hue: float = np.degrees(np.arctan2(avg_y, avg_x))
+    avg_hue = float(np.degrees(np.arctan2(avg_y, avg_x)))
 
     # Ensure the result is in the range [0, 360]
     if avg_hue < 0:
@@ -50,13 +50,11 @@ class ColorModule(PipelineModule[FrameData]):
 
         # Convert hue values from OpenCV's [0, 179] range to [0, 360] range, and calculate avg hue.
         average_hue_value = average_hue(hue_channel * 2)
-        average_saturation_value = saturation_channel.mean()
-        average_lightness_value = lightness_channel.mean()
+        average_saturation_value = float(saturation_channel.mean())
+        average_lightness_value = float(lightness_channel.mean())
 
         prominent_colors = prominent_colors_from_image(data.image)[0:3]
         themes = [theme_from_color(color, variant=Variant.VIBRANT) for color in prominent_colors]
-
-        print(average_hue_value)
 
         data.color = ColorData(
             themes=[theme.dict() for theme in themes],

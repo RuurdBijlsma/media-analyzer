@@ -43,6 +43,8 @@ captioning, optical character recognition (OCR), and facial recognition.
   packages uses six different methods with varying priority to get the datetime a photo is taken,
   including the timezone if possible.
 - **Data Url**: Generate data url for tiny preload thumbnail.
+- **Special type detection**: Detect slow motion, night sight, motion photos, and more.
+- **Color Analysis**: Get prominent colors from an image, with theme colors based off the colors.
 
 ## Installation
 
@@ -83,7 +85,8 @@ print(result)
 
 ### Disable analysis modules
 
-The analysis is done based on modules, the following modules are available and enabled by default (click the links to
+The analysis is done based on modules, the following modules are available and enabled by default (
+click the links to
 see the possible modules).
 
 #### [File-based Modules](https://ruurdbijlsma.github.io/media-analyzer/media_analyzer.html#FileModule)
