@@ -15,6 +15,7 @@ dependencies = [
     "material-color-utilities>=0.2.0",
     "meteostat>=1.6.8",
     "networkx>=3.4.2",
+    "onnxruntime>=1.20.1",
     "onnxruntime-gpu>=1.20.1",
     "openai>=1.59.8",
     "opencv-python>=4.11.0.86",
