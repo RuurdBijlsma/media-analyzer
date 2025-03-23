@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, TypedDict
 
 from PIL.Image import Image
 
@@ -88,6 +88,21 @@ class MeasuredQualityData:
     quality_score: float
 
 
+class RGBChannels(TypedDict):
+    """Types for channels used in ColorHistogram."""
+
+    red: list[int]
+    green: list[int]
+    blue: list[int]
+
+
+class ColorHistogram(TypedDict):
+    """Types for histogram dict in ColorData."""
+
+    bins: int
+    channels: RGBChannels
+
+
 @dataclass
 class ColorData:
     """Color info, and theme generated based on image.
@@ -105,6 +120,7 @@ class ColorData:
     average_hue: float
     average_saturation: float
     average_lightness: float
+    histogram: ColorHistogram
 
 
 @dataclass

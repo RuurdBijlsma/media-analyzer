@@ -1,6 +1,6 @@
 import io
 
-import PIL
+import PIL.Image
 from PIL.Image import Image
 from timezonefinder import TimezoneFinder
 

@@ -10,7 +10,7 @@ from material_color_utilities import (
 )
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
-from media_analyzer.data.interfaces.frame_data import ColorData, FrameData
+from media_analyzer.data.interfaces.frame_data import ColorData, ColorHistogram, FrameData
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
 
@@ -38,8 +38,9 @@ def average_hue(hues: npt.NDArray[Any]) -> float:
 class ColorModule(PipelineModule[FrameData]):
     """Get Color info from an image."""
 
-    def process(self, data: FrameData, _: FullAnalyzerConfig) -> None:
+    def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:
         """Get Color info from an image."""
+        del config
         cv_image = np.array(data.image)
         image_hsv = cv2.cvtColor(cv_image, cv2.COLOR_RGB2HSV)
 
@@ -56,10 +57,27 @@ class ColorModule(PipelineModule[FrameData]):
         prominent_colors = prominent_colors_from_image(data.image)[0:3]
         themes = [theme_from_color(color, variant=Variant.VIBRANT) for color in prominent_colors]
 
+        # Calculate color histograms for each channel
+        histogram_bins = 256
+        red_hist = cv2.calcHist([cv_image], [0], None, [histogram_bins], [0, 256]).flatten()
+        green_hist = cv2.calcHist([cv_image], [1], None, [histogram_bins], [0, 256]).flatten()
+        blue_hist = cv2.calcHist([cv_image], [2], None, [histogram_bins], [0, 256]).flatten()
+
+        # Convert histogram values from floats to ints
+        red_ints = [int(x) for x in red_hist]
+        green_ints = [int(x) for x in green_hist]
+        blue_ints = [int(x) for x in blue_hist]
+
+        histogram: ColorHistogram = {
+            "bins": histogram_bins,
+            "channels": {"red": red_ints, "green": green_ints, "blue": blue_ints},
+        }
+
         data.color = ColorData(
             themes=[theme.dict() for theme in themes],
             prominent_colors=prominent_colors,
             average_hue=average_hue_value,
             average_saturation=average_saturation_value,
             average_lightness=average_lightness_value,
+            histogram=histogram,
         )
