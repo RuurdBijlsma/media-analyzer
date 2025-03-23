@@ -130,3 +130,10 @@ Full docs can be found at https://ruurdbijlsma.github.io/media-analyzer.
 * Meteostat for weather info: https://dev.meteostat.net/python/
 * Reverse geocoding data from geonames: https://download.geonames.org/
 * ExifTool for exif and similar data: https://exiftool.org/
+
+## How to publish a release
+
+* Merge to main
+* Create tag `git tag 0.3.1`
+* Push tag `git push --tags`
+* Wait for GitHub action.
