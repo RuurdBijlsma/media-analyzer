@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 import numpy.typing as npt
 from material_color_utilities import (
-    Variant,
     prominent_colors_from_image,
     theme_from_color,
 )
@@ -54,11 +53,14 @@ class ColorModule(PipelineModule[FrameData]):
         average_lightness_value = float(lightness_channel.mean())
 
         prominent_colors = prominent_colors_from_image(data.image)[0:3]
-        themes = [theme_from_color(
-            color,
-            variant=config.settings.theme_color_variant,
-            contrast_level=config.settings.theme_contrast_level,
-        ) for color in prominent_colors]
+        themes = [
+            theme_from_color(
+                color,
+                variant=config.settings.theme_color_variant,
+                contrast_level=config.settings.theme_contrast_level,
+            )
+            for color in prominent_colors
+        ]
 
         # Calculate color histograms for each channel
         histogram_bins = 256
