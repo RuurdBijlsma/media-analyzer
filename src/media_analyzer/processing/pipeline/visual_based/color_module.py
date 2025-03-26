@@ -40,7 +40,6 @@ class ColorModule(PipelineModule[FrameData]):
 
     def process(self, data: FrameData, config: FullAnalyzerConfig) -> None:
         """Get Color info from an image."""
-        del config
         cv_image = np.array(data.image)
         image_hsv = cv2.cvtColor(cv_image, cv2.COLOR_RGB2HSV)
 
@@ -55,7 +54,11 @@ class ColorModule(PipelineModule[FrameData]):
         average_lightness_value = float(lightness_channel.mean())
 
         prominent_colors = prominent_colors_from_image(data.image)[0:3]
-        themes = [theme_from_color(color, variant=Variant.VIBRANT) for color in prominent_colors]
+        themes = [theme_from_color(
+            color,
+            variant=config.settings.theme_color_variant,
+            contrast_level=config.settings.theme_contrast_level,
+        ) for color in prominent_colors]
 
         # Calculate color histograms for each channel
         histogram_bins = 256

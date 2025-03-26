@@ -28,6 +28,7 @@ class AnalyzerSettings:
     Attributes:
         media_languages: The languages used for OCR.
         theme_color_variant: The color variant used for the generated theme.
+        theme_contrast_level: The contrast level used for the generated theme.
         captions_provider: The provider to be used for generating captions.
         llm_provider: The provider for the large language model (LLM),
             which can be used for summaries and captions.
@@ -40,6 +41,7 @@ class AnalyzerSettings:
     """
 
     media_languages: tuple[str, ...] = ("nld", "eng")
+    theme_contrast_level: float = 0.2
     theme_color_variant: Variant = Variant.VIBRANT
     captions_provider: CaptionerProvider = CaptionerProvider.BLIP
     llm_provider: LLMProvider = LLMProvider.MINICPM
