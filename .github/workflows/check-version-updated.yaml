@@ -14,16 +14,6 @@ jobs:
         with:
           fetch-depth: 0  # Needed to fetch full history
 
-      - name: Debug main branch file
-        run: |
-          echo "Contents of pyproject.toml in main branch:"
-          git show origin/main:pyproject.toml || echo "File not found in main branch."
-
-      - name: Debug PR branch file
-        run: |
-          echo "Contents of pyproject.toml in PR branch:"
-          cat pyproject.toml || echo "File not found in PR branch."
-
       - name: Compare pyproject.toml version with main
         run: |
           echo "Fetching main branch..."
