@@ -58,7 +58,7 @@ class MediaAnalyzer:
                 embedding=frame.embedding,
                 faces=frame.faces,
                 summary=frame.summary,
-                caption=frame.caption,
+                caption_data=frame.caption_data,
                 objects=frame.objects,
                 classification=frame.classification,
                 measured_quality=frame.measured_quality,

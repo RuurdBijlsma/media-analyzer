@@ -1,51 +1,41 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any, TypedDict, Optional
 
 from PIL.Image import Image
 
-from media_analyzer.data.enums.classification.activity_type import ActivityType
-from media_analyzer.data.enums.classification.animal_type import AnimalType
-from media_analyzer.data.enums.classification.document_type import DocumentType
-from media_analyzer.data.enums.classification.event_type import EventType
-from media_analyzer.data.enums.classification.object_type import ObjectType
-from media_analyzer.data.enums.classification.people_type import PeopleType
-from media_analyzer.data.enums.classification.scene_type import SceneType
-from media_analyzer.data.enums.classification.weather_condition import WeatherCondition
 from media_analyzer.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox
 
 
 @dataclass
-class ClassificationData:
-    """Classification data for a frame.
-
-    Attributes:
-        scene_type: The type of scene.
-        people_type: The type of people in the scene.
-        animal_type: The type of animal in the scene.
-        document_type: The type of document in the scene.
-        object_type: The type of object in the scene.
-        activity_type: The type of activity in the scene.
-        event_type: The type of event in the scene.
-        weather_condition: The weather condition in the scene.
-        is_outside: Whether the scene is outside.
-        is_landscape: Whether the scene is a landscape.
-        is_cityscape: Whether the scene is a cityscape.
-        is_travel: Whether the scene is a travel scene.
-    """
-
-    scene_type: SceneType
-    people_type: PeopleType | None
-    animal_type: AnimalType | None
-    document_type: DocumentType | None
-    object_type: ObjectType | None
-    activity_type: ActivityType | None
-    event_type: EventType | None
-    weather_condition: WeatherCondition | None
-    is_outside: bool
-    is_landscape: bool
-    is_cityscape: bool
-    is_travel: bool
+class CaptionData:
+    """A model to store structured information about an image."""
+    default_caption: str
+    main_subject: str
+    is_indoor: bool
+    contains_pets: bool
+    is_food_or_drink: bool
+    contains_vehicle: bool
+    setting: str
+    is_event: bool
+    contains_landmarks: bool
+    is_document: bool
+    contains_people: bool
+    is_landscape: Optional[bool] = None
+    is_cityscape: Optional[bool] = None
+    pet_type: Optional[str] = None
+    contains_animals: Optional[bool] = None
+    animal_type: Optional[str] = None
+    food_or_drink_type: Optional[str] = None
+    vehicle_type: Optional[str] = None
+    event_type: Optional[str] = None
+    landmark_name: Optional[str] = None
+    document_type: Optional[str] = None
+    people_count: Optional[int] = None
+    people_mood: Optional[str] = None
+    photo_type: Optional[str] = None
+    is_activity: Optional[bool] = None
+    activity_description: Optional[str] = None
 
 
 @dataclass
@@ -132,7 +122,7 @@ class FrameDataOutput:
         embedding: The embedding data.
         faces: The face boxes.
         summary: The frame summary.
-        caption: The frame caption.
+        caption_data: Info extracted using caption instructions.
         objects: The object boxes.
         classification: The classification data.
         measured_quality: The measured quality data.
@@ -142,9 +132,8 @@ class FrameDataOutput:
     embedding: list[float] | None = None
     faces: list[FaceBox] | None = None
     summary: str | None = None
-    caption: str | None = None
+    caption_data: CaptionData | None = None
     objects: list[ObjectBox] | None = None
-    classification: ClassificationData | None = None
     measured_quality: MeasuredQualityData | None = None
     color: ColorData | None = None
 
@@ -159,8 +148,7 @@ class FrameData:
     embedding: list[float] | None = None
     faces: list[FaceBox] | None = None
     summary: str | None = None
-    caption: str | None = None
+    caption_data: CaptionData | None = None
     objects: list[ObjectBox] | None = None
-    classification: ClassificationData | None = None
     measured_quality: MeasuredQualityData | None = None
     color: ColorData | None = None

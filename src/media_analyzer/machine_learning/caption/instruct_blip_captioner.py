@@ -2,20 +2,15 @@ from functools import lru_cache
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
-from typing import ClassVar, Protocol
+from typing import ClassVar, Protocol, Optional, Literal
 
 import torch
 from PIL.Image import Image
 from transformers import InstructBlipForConditionalGeneration, InstructBlipProcessor
 import PIL
 
-
-# --- 1. Define the Protocol (for type hinting and structure) ---
-# This is your 'CaptionerProtocol' so the code is self-contained.
-class CaptionerProtocol(Protocol):
-    """A protocol defining the interface for captioning models."""
-
-    def caption(self, image: Image, instruction: str | None = None) -> str: ...
+from media_analyzer.data.interfaces.frame_data import CaptionData
+from media_analyzer.machine_learning.caption.captioner_protocol import CaptionerProtocol
 
 
 # --- 2. Adapt the Model Loader for InstructBLIP ---
@@ -120,96 +115,4 @@ class InstructBlipCaptioner(CaptionerProtocol):
         return caption
 
 
-# --- Example Usage ---
-if __name__ == '__main__':
-    captioner = InstructBlipCaptioner()
 
-
-    def question_image(path: Path):
-        image = PIL.Image.open(path)
-
-        def ask_question(question: str) -> str:
-            # --- Use Case 3: Detailed description ---
-            answer = captioner.caption(image, instruction=question)
-            print(f"Instruction: '{question}'")
-            print(f"\t{answer}")
-            return answer
-
-        # --- Use Case 1: Default, high-quality caption ---
-        print("\n--- Generating default caption ---")
-        print(f"\t{captioner.caption(image)}")
-
-        ask_question('Question: What is the single main subject of this photo? Answer:')
-
-        in_or_outdoors = ask_question('Question: Is this photo taken indoors or outdoors? Answer:')
-        if "outdoor" in in_or_outdoors.lower():
-            ask_question(
-                "Question: Is this a landscape featuring natural scenery such as mountains, dunes, forests, lakes, etc.? yes or no. Answer:")
-            ask_question(
-                "Question: Is this a cityscape showing urban buildings, streets, skylines, etc.? yes or no. Answer:")
-
-        has_pet = ask_question(
-            'Question: Does this photo contain one or more pets? yes or no. Answer:')
-        if "no" in has_pet.lower():
-            has_animals = ask_question(
-                'Question: Does this photo contain one or more live animals? yes or no. Answer:')
-            if "yes" in has_animals.lower():
-                ask_question("Question: What animal is shown in this photo? Answer:")
-
-        elif "yes" in has_pet.lower():
-            ask_question(
-                'Question: What kind of pet is shown in this photo? Answer:')
-
-        is_food = ask_question('Question: Is this a photo of food or drink? yes or no. Answer:')
-        if is_food.lower() == "yes":
-            ask_question("Question: What kind of food is this? Answer:")
-
-        has_vehicle = ask_question(
-            'Question: Is there a vehicle shown prominently in this photo? yes or no. Answer:')
-        if "yes" in has_vehicle.lower():
-            ask_question(
-                'Question: What type of vehicle is in this image (e.g., car, boat, bicycle)? Answer:')
-
-        ask_question(
-            'Question: What is the setting of this photo? Answer:')
-        is_event = ask_question(
-            'Question: Does this photo appear to be from a specific event (e.g., birthday party, wedding, concert, holiday)? Answer yes or no. Answer:')
-        if "yes" in is_event.lower():
-            ask_question("Question: What event is depicted in this photo? Answer:")
-
-        is_document = ask_question(
-            'Question: Is this a photo of a document, like a passport, receipt, ticket, book, magazine, notes, payment card, id card, menu, or recipe? Answer yes or no. Answer:')
-        if "yes" in is_document.lower():
-            ask_question(
-                'Question: What kind of document is this? Answer:')
-
-        has_people = ask_question(
-            'Question: Does this photo contain one or more people? Answer yes or no. Answer:')
-        if "yes" in has_people.lower():
-            ask_question(
-                'Question: How many people are in this photo? Answer with a number. Answer:')
-
-            ask_question(
-                'Question: What is the overall mood of the people in this photo? Are they happy, sad, serious, or neutral? Answer:')
-
-            ask_question(
-                "Question: What kind of photo is this, choose one of: (selfie, group photo, crowd, portrait, other). Answer:")
-
-            is_activity = ask_question(
-                "Question: Is an activity being performed in this photo? Answer:")
-            if "yes" in is_activity.lower():
-                ask_question(
-                    "Question: What activity is being performed in this photo? Answer:")
-
-
-    # Loop over images in assets folder
-    assets_folder = Path(__file__).parents[4] / "tests/assets/caption_test"
-    if assets_folder.exists():
-        print(f"Found assets folder: '{assets_folder}'")
-    files = [
-        assets_folder / f for f in listdir(assets_folder)
-        if isfile(join(assets_folder, f)) and (f.endswith(".jpg"))
-    ]
-    for file in files:
-        print(f"\n\n\nFile {file}")
-        question_image(file)
