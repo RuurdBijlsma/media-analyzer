@@ -61,6 +61,46 @@ def test_media_analyzer(
     else:
         assert result.image_data.exif.gif is None
 
+@pytest.mark.parametrize(
+    ("photo_filename", "expect_gps", "expect_gif"),
+    [
+        pytest.param("cat_bee.gif", False, True),
+        pytest.param("tent.jpg", True, False),
+        pytest.param("sunset.jpg", True, False),
+        pytest.param("ocr.jpg", False, False),
+        pytest.param("faces/face2_b.jpg", False, False),
+    ],
+)
+def test_media_analyzer_visual_only(
+    assets_folder: Path,
+    photo_filename: str,
+    expect_gps: bool,
+    expect_gif: bool,
+) -> None:
+    """Test the MediaAnalyzer functionality for images with and without GPS data."""
+    mock_caption_text = "A mock caption."
+    with patch(
+        "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
+    ) as mock_raw_caption:
+        mock_raw_caption.return_value = mock_caption_text
+        config = AnalyzerSettings(
+            enabled_file_modules=set(),
+        )
+        analyzer = MediaAnalyzer(config)
+        result = analyzer.photo(assets_folder / photo_filename)
+
+    assert len(result.frame_data) == 1
+
+    assert result.image_data.exif is None
+    assert result.image_data.data_url is None
+    assert result.image_data.time is None
+    assert result.image_data.gps is None
+    assert result.image_data.weather is None
+    assert result.image_data.exif.gif is None
+    frame = result.frame_data[0]
+    assert frame is not None
+    assert len(frame.embedding) > 500
+
 
 def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -> None:
     """Test the MediaAnalyzer functionality for a video."""

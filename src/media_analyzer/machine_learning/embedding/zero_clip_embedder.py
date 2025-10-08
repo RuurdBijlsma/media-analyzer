@@ -23,7 +23,7 @@ def get_model_and_processor() -> tuple[PreTrainedModel, CLIPProcessor]:
     return model, processor
 
 
-class CLIPEmbedder(EmbedderProtocol):
+class ZeroCLIPEmbedder(EmbedderProtocol):
     """Embedder implementation using the CLIP model."""
 
     def embed_text(self, text: str) -> NDArray[np.float32]:

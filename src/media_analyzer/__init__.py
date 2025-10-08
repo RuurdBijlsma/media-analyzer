@@ -27,8 +27,9 @@ from media_analyzer.machine_learning.caption.get_captioner import get_captioner_
 from media_analyzer.machine_learning.caption.llm_captioner import LLMCaptioner
 from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
 from media_analyzer.machine_learning.classifier.clip_classifier import CLIPClassifier
-from media_analyzer.machine_learning.embedding.clip_embedder import CLIPEmbedder
 from media_analyzer.machine_learning.embedding.embedder_protocol import EmbedderProtocol
+from media_analyzer.machine_learning.embedding.open_clip_embedder import OpenCLIPEmbedder
+from media_analyzer.machine_learning.embedding.zero_clip_embedder import ZeroCLIPEmbedder
 from media_analyzer.machine_learning.facial_recognition.facial_recognition_protocol import (
     FacialRecognitionProtocol,
 )
@@ -133,7 +134,8 @@ __all__ = [
     "CaptionerProtocol",
     "BlipCaptioner",
     "EmbedderProtocol",
-    "CLIPEmbedder",
+    "ZeroCLIPEmbedder",
+    "OpenCLIPEmbedder",
     "FacialRecognitionProtocol",
     "InsightFacialRecognition",
     "ObjectDetectionProtocol",

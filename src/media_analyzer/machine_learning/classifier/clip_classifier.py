@@ -7,8 +7,8 @@ from scipy.special import softmax
 from sklearn.metrics.pairwise import cosine_similarity
 
 from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
-from media_analyzer.machine_learning.embedding.clip_embedder import CLIPEmbedder
 from media_analyzer.machine_learning.embedding.embedder_protocol import EmbedderProtocol
+from media_analyzer.machine_learning.embedding.open_clip_embedder import OpenCLIPEmbedder
 
 
 class CLIPClassifier(BaseClassifier):
@@ -23,7 +23,7 @@ class CLIPClassifier(BaseClassifier):
             embedder: The embedder to use for text embedding.
         """
         if embedder is None:
-            embedder = CLIPEmbedder()
+            embedder = OpenCLIPEmbedder()
         self.embedder = embedder
 
     @lru_cache
