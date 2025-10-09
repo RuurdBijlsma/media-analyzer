@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from material_color_utilities import Variant
 
 from media_analyzer.data.enums.analyzer_module import FileModule, VisualModule
-from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvider, EmbedderProvider
+from media_analyzer.data.enums.config_types import CaptionerProvider, EmbedderProvider, LLMProvider
 from media_analyzer.machine_learning.caption.captioner_protocol import CaptionerProtocol
 from media_analyzer.machine_learning.embedding.embedder_protocol import EmbedderProtocol
 from media_analyzer.machine_learning.facial_recognition.facial_recognition_protocol import (

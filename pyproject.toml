@@ -1,6 +1,6 @@
 [project]
 name = "media-analyzer"
-version = "0.3.7"
+version = "0.4.0"
 description = "Analyze video/image with machine learning methods, exif data, and other file based information. "
 readme = "README.md"
 license = "MIT"
@@ -57,6 +57,7 @@ lint.ignore = [
     "COM812", "D100",
     "EM101", "EM102",
     "FBT002", "FBT001",
+    "PLR0915", "C901"
 ]
 lint.select = ["ALL"]
 

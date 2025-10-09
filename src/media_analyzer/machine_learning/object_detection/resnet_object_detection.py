@@ -47,7 +47,7 @@ class ResnetObjectDetection(ObjectDetectionProtocol):
         target_sizes = torch.tensor([image.size[::-1]])
         results = processor.post_process_object_detection(
             outputs,
-            target_sizes=target_sizes,
+            target_sizes=target_sizes,  # type: ignore[arg-type]
             threshold=0.8,
         )[0]
 
@@ -60,7 +60,7 @@ class ResnetObjectDetection(ObjectDetectionProtocol):
                 ),
                 width=(box[2].item() - box[0].item()) / image.width,
                 height=(box[3].item() - box[1].item()) / image.height,
-                label=model.config.id2label[label.item()],
+                label=model.config.id2label[label.item()],  # type: ignore[index]
             )
             for score, label, box in zip(
                 results["scores"], results["labels"], results["boxes"], strict=False

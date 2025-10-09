@@ -37,9 +37,10 @@ class WeatherModule(PipelineModule[ImageData]):
         max_possible_rows = 2
         assert len(meteo_data) <= max_possible_rows
         weather = meteo_data.iloc[0]
-        weather_condition = (
-            None if math.isnan(weather.coco) else WeatherCondition(int(weather.coco))
-        )
+        try:
+            weather_condition = WeatherCondition(int(weather.coco))
+        except (ValueError, TypeError):
+            weather_condition = None
         data.weather = WeatherData(
             weather_recorded_at=weather.name.to_pydatetime(),
             weather_temperature=None if math.isnan(weather.temp) else weather.temp,

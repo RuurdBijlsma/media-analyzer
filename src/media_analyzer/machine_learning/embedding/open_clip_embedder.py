@@ -1,20 +1,19 @@
 from functools import lru_cache
-from typing import Any, Callable, Protocol
 
-import PIL.Image
 import numpy as np
+import PIL.Image
 import torch
-import torch.nn.functional as F
+import torch.nn.functional as F  # noqa: N812
 from numpy.typing import NDArray
-from open_clip import create_model_and_transforms, get_tokenizer
-from PIL import Image
+from open_clip import CLIP, SimpleTokenizer, create_model_and_transforms, get_tokenizer
+from torchvision.transforms import Compose
+
 from media_analyzer.machine_learning.embedding.embedder_protocol import EmbedderProtocol
 
 
 @lru_cache
-def get_open_clip_assets() -> tuple[Any, Callable, Any, str]:
-    """
-    Retrieve and cache the OpenCLIP model, preprocessor, tokenizer, and device.
+def get_open_clip_assets() -> tuple[CLIP, Compose, SimpleTokenizer, str]:
+    """Retrieve and cache the OpenCLIP model, preprocessor, tokenizer, and device.
 
     This function ensures that the heavyweight model is only loaded from disk
     and moved to the GPU once, the first time it's called.
@@ -26,14 +25,12 @@ def get_open_clip_assets() -> tuple[Any, Callable, Any, str]:
     print(f"Loading OpenCLIP ViT-H-14 model on device: '{device}'")
 
     model, _, preprocess = create_model_and_transforms(
-        'ViT-H-14',
-        pretrained='laion2b_s32b_b79k',
-        device=device
+        "ViT-H-14", pretrained="laion2b_s32b_b79k", device=device
     )
     # Put the model in evaluation mode
     model.eval()
 
-    tokenizer = get_tokenizer('ViT-H-14')
+    tokenizer = get_tokenizer("ViT-H-14")
 
     print("Model loaded successfully.")
     return model, preprocess, tokenizer, device
@@ -111,57 +108,3 @@ class OpenCLIPEmbedder(EmbedderProtocol):
 
         # Move to CPU and convert to NumPy array
         return image_features.cpu().numpy()
-
-
-# --- 4. Example Usage (to test and demonstrate the new class) ---
-if __name__ == '__main__':
-    import requests
-    from io import BytesIO
-
-    # Instantiate our embedder
-    embedder = OpenCLIPEmbedder()
-
-    # --- Prepare Inputs (Image and Text) ---
-    try:
-        url = "https://images.unsplash.com/photo-1554629947-334ff61d85dc"
-        response = requests.get(url)
-        response.raise_for_status()
-        image = Image.open(BytesIO(response.content)).convert("RGB")
-        print("\nImage downloaded and opened successfully.")
-    except requests.exceptions.RequestException as e:
-        print(f"Failed to download image: {e}")
-        exit()
-
-    text_descriptions = [
-        "A photograph of a dog on the beach.",
-        "A drawing of a city at night.",
-        "A picture of a snowy mountain peak under a blue sky.",
-        "A close-up of a flower."
-    ]
-
-    # --- Generate Embeddings using the class methods ---
-    print("\nGenerating embeddings...")
-    image_embedding = embedder.embed_image(image)
-    text_embeddings = embedder.embed_texts(text_descriptions)
-
-    print(f"Image embedding shape: {image_embedding.shape}")
-    print(f"Text embeddings shape: {text_embeddings.shape}")
-
-    # --- Calculate Similarity ---
-    # Since embeddings are normalized, dot product is equivalent to cosine similarity
-    # We add a dimension to the image_embedding to perform matrix multiplication
-    similarity = image_embedding.reshape(1, -1) @ text_embeddings.T
-
-    # Convert similarity scores to probabilities using softmax
-    probabilities = torch.tensor(similarity).softmax(dim=-1).numpy()
-
-    print("\n--- Similarity Scores ---")
-    for i, description in enumerate(text_descriptions):
-        print(f"{description:<50} Similarity: {similarity[0][i]:.4f}")
-
-    print("\n--- Probabilities ---")
-    for i, description in enumerate(text_descriptions):
-        print(f"{description:<50} Probability: {probabilities[0][i]:.4f}")
-
-    best_match_index = probabilities.argmax()
-    print(f"\nBest match: '{text_descriptions[best_match_index]}'")

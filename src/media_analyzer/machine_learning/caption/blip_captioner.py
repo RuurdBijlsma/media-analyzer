@@ -68,6 +68,8 @@ class BlipCaptioner(CaptionerProtocol):
         else:
             inputs = processor(rgb_image, instruction, return_tensors="pt").to("cuda")
         out = model.generate(**inputs)
-        caption = processor.decode(out[0], skip_special_tokens=True)
+        caption = processor.decode(  # type: ignore[no-untyped-call]
+            out[0], skip_special_tokens=True
+        )
         assert isinstance(caption, str)
         return caption

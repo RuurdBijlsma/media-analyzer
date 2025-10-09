@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, TypedDict, Optional
+from typing import Any, TypedDict
 
 from PIL.Image import Image
 
@@ -10,6 +10,7 @@ from media_analyzer.data.interfaces.ml_types import FaceBox, ObjectBox, OCRBox
 @dataclass
 class CaptionData:
     """A model to store structured information about an image."""
+
     default_caption: str
     main_subject: str
     is_indoor: bool
@@ -21,21 +22,21 @@ class CaptionData:
     contains_landmarks: bool
     is_document: bool
     contains_people: bool
-    is_landscape: Optional[bool] = None
-    is_cityscape: Optional[bool] = None
-    pet_type: Optional[str] = None
-    contains_animals: Optional[bool] = None
-    animal_type: Optional[str] = None
-    food_or_drink_type: Optional[str] = None
-    vehicle_type: Optional[str] = None
-    event_type: Optional[str] = None
-    landmark_name: Optional[str] = None
-    document_type: Optional[str] = None
-    people_count: Optional[int] = None
-    people_mood: Optional[str] = None
-    photo_type: Optional[str] = None
-    is_activity: Optional[bool] = None
-    activity_description: Optional[str] = None
+    is_landscape: bool | None = None
+    is_cityscape: bool | None = None
+    pet_type: str | None = None
+    contains_animals: bool | None = None
+    animal_type: str | None = None
+    food_or_drink_type: str | None = None
+    vehicle_type: str | None = None
+    event_type: str | None = None
+    landmark_name: str | None = None
+    document_type: str | None = None
+    people_count: int | None = None
+    people_mood: str | None = None
+    photo_type: str | None = None
+    is_activity: bool | None = None
+    activity_description: str | None = None
 
 
 @dataclass

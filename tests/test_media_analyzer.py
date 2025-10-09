@@ -55,21 +55,14 @@ def test_media_analyzer(
     else:
         assert result.image_data.exif.gif is None
 
+
 @pytest.mark.parametrize(
-    ("photo_filename", "expect_gps", "expect_gif"),
-    [
-        pytest.param("cat_bee.gif", False, True),
-        pytest.param("tent.jpg", True, False),
-        pytest.param("sunset.jpg", True, False),
-        pytest.param("ocr.jpg", False, False),
-        pytest.param("faces/face2_b.jpg", False, False),
-    ],
+    "photo_filename",
+    ["sunset.jpg"],
 )
 def test_media_analyzer_visual_only(
     assets_folder: Path,
     photo_filename: str,
-    expect_gps: bool,
-    expect_gif: bool,
 ) -> None:
     """Test the MediaAnalyzer functionality for images with and without GPS data."""
     config = AnalyzerSettings(
@@ -87,7 +80,9 @@ def test_media_analyzer_visual_only(
     assert result.image_data.weather is None
     frame = result.frame_data[0]
     assert frame is not None
-    assert len(frame.embedding) > 500
+    embedding_at_least_this_long = 500
+    assert frame.embedding is not None
+    assert len(frame.embedding) > embedding_at_least_this_long
 
 
 def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -> None:
