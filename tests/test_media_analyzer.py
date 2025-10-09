@@ -1,6 +1,5 @@
 from collections import defaultdict
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 from exiftool.exceptions import ExifToolExecuteError
@@ -35,13 +34,8 @@ def test_media_analyzer(
     expect_gif: bool,
 ) -> None:
     """Test the MediaAnalyzer functionality for images with and without GPS data."""
-    mock_caption_text = "A mock caption."
-    with patch(
-        "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
-    ) as mock_raw_caption:
-        mock_raw_caption.return_value = mock_caption_text
-        analyzer = MediaAnalyzer(default_config)
-        result = analyzer.photo(assets_folder / photo_filename)
+    analyzer = MediaAnalyzer(default_config)
+    result = analyzer.photo(assets_folder / photo_filename)
 
     assert len(result.frame_data) == 1
 
@@ -78,16 +72,11 @@ def test_media_analyzer_visual_only(
     expect_gif: bool,
 ) -> None:
     """Test the MediaAnalyzer functionality for images with and without GPS data."""
-    mock_caption_text = "A mock caption."
-    with patch(
-        "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
-    ) as mock_raw_caption:
-        mock_raw_caption.return_value = mock_caption_text
-        config = AnalyzerSettings(
-            enabled_file_modules=set(),
-        )
-        analyzer = MediaAnalyzer(config)
-        result = analyzer.photo(assets_folder / photo_filename)
+    config = AnalyzerSettings(
+        enabled_file_modules=set(),
+    )
+    analyzer = MediaAnalyzer(config)
+    result = analyzer.photo(assets_folder / photo_filename)
 
     assert len(result.frame_data) == 1
 
@@ -96,7 +85,6 @@ def test_media_analyzer_visual_only(
     assert result.image_data.time is None
     assert result.image_data.gps is None
     assert result.image_data.weather is None
-    assert result.image_data.exif.gif is None
     frame = result.frame_data[0]
     assert frame is not None
     assert len(frame.embedding) > 500
@@ -104,21 +92,16 @@ def test_media_analyzer_visual_only(
 
 def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -> None:
     """Test the MediaAnalyzer functionality for a video."""
-    mock_caption_text = "A mock caption."
-    with patch(
-        "media_analyzer.machine_learning.caption.blip_captioner.BlipCaptioner.raw_caption"
-    ) as mock_raw_caption:
-        mock_raw_caption.return_value = mock_caption_text
-        analyzer = MediaAnalyzer(default_config)
-        result = analyzer.analyze(
-            InputMedia(
-                path=assets_folder / "video" / "car.webm",
-                frames=[
-                    assets_folder / "video" / "frame1.jpg",
-                    assets_folder / "video" / "frame2.jpg",
-                ],
-            )
+    analyzer = MediaAnalyzer(default_config)
+    result = analyzer.analyze(
+        InputMedia(
+            path=assets_folder / "video" / "car.webm",
+            frames=[
+                assets_folder / "video" / "frame1.jpg",
+                assets_folder / "video" / "frame2.jpg",
+            ],
         )
+    )
 
     frame_count = 2
     assert len(result.frame_data) == frame_count

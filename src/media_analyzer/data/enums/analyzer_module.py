@@ -16,7 +16,6 @@ class VisualModule(StrEnum):
     """Enum for selecting visual based analyzer modules."""
 
     CAPTION = "CaptionModule"
-    CLASSIFICATION = "ClassificationModule"
     EMBEDDING = "EmbeddingModule"
     FACES = "FacesModule"
     OBJECTS = "ObjectsModule"

@@ -16,7 +16,7 @@ def analyze_image(captioner: CaptionerProtocol, image: Image) -> CaptionData:
     def ask(question: str) -> str:
         return captioner.caption(image, instruction=question)
 
-    # --- Use Case 1: Default, high-quality caption ---
+    # --- Use Case 1: Default caption ---
     default_caption = captioner.caption(image)
 
     # --- Ask all questions and gather raw answers ---
@@ -105,7 +105,7 @@ def analyze_image(captioner: CaptionerProtocol, image: Image) -> CaptionData:
             activity_description = ask(
                 "Question: What activity is being performed in this photo? Answer:")
 
-    # --- Populate the Pydantic model ---
+    # --- Populate the model ---
     analysis_data = CaptionData(
         default_caption=default_caption,
         main_subject=main_subject,

@@ -124,7 +124,6 @@ class FrameDataOutput:
         summary: The frame summary.
         caption_data: Info extracted using caption instructions.
         objects: The object boxes.
-        classification: The classification data.
         measured_quality: The measured quality data.
     """
 

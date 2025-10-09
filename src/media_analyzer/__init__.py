@@ -4,19 +4,11 @@ exif data, and other file based information."""
 
 from media_analyzer.data.anaylzer_config import AnalyzerSettings, FullAnalyzerConfig
 from media_analyzer.data.enums.analyzer_module import VisualModule, FileModule, AnalyzerModule
-from media_analyzer.data.enums.classification.activity_type import ActivityType
-from media_analyzer.data.enums.classification.animal_type import AnimalType
-from media_analyzer.data.enums.classification.document_type import DocumentType
-from media_analyzer.data.enums.classification.event_type import EventType
-from media_analyzer.data.enums.classification.object_type import ObjectType
-from media_analyzer.data.enums.classification.people_type import PeopleType
-from media_analyzer.data.enums.classification.scene_type import SceneType
-from media_analyzer.data.enums.classification.weather_condition import WeatherCondition
 from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvider
 from media_analyzer.data.enums.face_sex import FaceSex
 from media_analyzer.data.interfaces.api_io import InputMedia, MediaAnalyzerOutput
 from media_analyzer.data.interfaces.frame_data import MeasuredQualityData, FrameData, OCRData, \
-    ClassificationData, FrameDataOutput, ColorData
+    FrameDataOutput, ColorData, CaptionData, ColorHistogram
 from media_analyzer.data.interfaces.image_data import ImageData, ExifData, GPSData, TimeData, \
     WeatherData, IntermediateTimeData, ImageDataOutput, TagData
 from media_analyzer.data.interfaces.location_types import GeoLocation
@@ -25,8 +17,6 @@ from media_analyzer.machine_learning.caption.blip_captioner import BlipCaptioner
 from media_analyzer.machine_learning.caption.captioner_protocol import CaptionerProtocol
 from media_analyzer.machine_learning.caption.get_captioner import get_captioner_by_provider
 from media_analyzer.machine_learning.caption.llm_captioner import LLMCaptioner
-from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
-from media_analyzer.machine_learning.classifier.clip_classifier import CLIPClassifier
 from media_analyzer.machine_learning.embedding.embedder_protocol import EmbedderProtocol
 from media_analyzer.machine_learning.embedding.open_clip_embedder import OpenCLIPEmbedder
 from media_analyzer.machine_learning.embedding.zero_clip_embedder import ZeroCLIPEmbedder
@@ -58,9 +48,6 @@ from media_analyzer.processing.pipeline.file_based.time_module import TimeModule
 from media_analyzer.processing.pipeline.file_based.weather_module import WeatherModule
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 from media_analyzer.processing.pipeline.visual_based.caption_module import CaptionModule
-from media_analyzer.processing.pipeline.visual_based.classification_module import (
-    ClassificationModule,
-)
 from media_analyzer.processing.pipeline.visual_based.color_module import ColorModule
 from media_analyzer.processing.pipeline.visual_based.embedding_module import EmbeddingModule
 from media_analyzer.processing.pipeline.visual_based.faces_module import FacesModule
@@ -93,9 +80,10 @@ __all__ = [
     "TagData",
     ## Frame Data
     "OCRData",
-    "ClassificationData",
+    "CaptionData",
     "MeasuredQualityData",
     "ColorData",
+    "ColorHistogram",
 
     # Extra output dataclasses
     "GeoLocation",
@@ -119,7 +107,6 @@ __all__ = [
     "TagsModule",
     ## Visual-based Modules
     "CaptionModule",
-    "ClassificationModule",
     "EmbeddingModule",
     "SummaryModule",
     "FacesModule",
@@ -129,8 +116,6 @@ __all__ = [
     "ColorModule",
 
     # Machine learning classes
-    "BaseClassifier",
-    "CLIPClassifier",
     "CaptionerProtocol",
     "BlipCaptioner",
     "EmbedderProtocol",
@@ -153,16 +138,6 @@ __all__ = [
     "ObjectBox",
     "FaceBox",
     "FaceSex",
-
-    # Classification enums
-    "DocumentType",
-    "EventType",
-    "AnimalType",
-    "ActivityType",
-    "WeatherCondition",
-    "ObjectType",
-    "PeopleType",
-    "SceneType",
 
     # Somewhat useless
     "FullAnalyzerConfig",

@@ -5,7 +5,6 @@ from media_analyzer.data.interfaces.api_io import InputMedia, MediaAnalyzerOutpu
 from media_analyzer.data.interfaces.frame_data import FrameDataOutput
 from media_analyzer.data.interfaces.image_data import ImageDataOutput
 from media_analyzer.machine_learning.caption.get_captioner import get_captioner_by_provider
-from media_analyzer.machine_learning.classifier.clip_classifier import CLIPClassifier
 from media_analyzer.machine_learning.embedding.get_embedder import get_embedder_by_provider
 from media_analyzer.machine_learning.embedding.open_clip_embedder import OpenCLIPEmbedder
 from media_analyzer.machine_learning.facial_recognition.insight_facial_recognition import (
@@ -36,7 +35,6 @@ class MediaAnalyzer:
             object_detector=ResnetObjectDetection(),
             facial_recognition=InsightFacialRecognition(),
             embedder=embedder,
-            classifier=CLIPClassifier(embedder),
             settings=config,
         )
 
@@ -60,7 +58,6 @@ class MediaAnalyzer:
                 summary=frame.summary,
                 caption_data=frame.caption_data,
                 objects=frame.objects,
-                classification=frame.classification,
                 measured_quality=frame.measured_quality,
                 color=frame.color,
             )

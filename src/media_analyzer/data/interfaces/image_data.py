@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from media_analyzer.data.enums.classification.weather_condition import WeatherCondition
+from media_analyzer.data.enums.weather_condition import WeatherCondition
 from media_analyzer.data.interfaces.location_types import GeoLocation
 
 

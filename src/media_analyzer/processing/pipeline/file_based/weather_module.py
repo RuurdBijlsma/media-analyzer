@@ -6,7 +6,7 @@ from meteostat import Hourly, Point
 
 from media_analyzer.data.anaylzer_config import FullAnalyzerConfig
 from media_analyzer.data.enums.analyzer_module import AnalyzerModule, FileModule
-from media_analyzer.data.enums.classification.weather_condition import WeatherCondition
+from media_analyzer.data.enums.weather_condition import WeatherCondition
 from media_analyzer.data.interfaces.image_data import ImageData, WeatherData
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 
