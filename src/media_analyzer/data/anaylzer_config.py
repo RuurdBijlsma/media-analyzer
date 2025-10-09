@@ -42,7 +42,7 @@ class AnalyzerSettings:
     media_languages: tuple[str, ...] = ("nld", "eng")
     theme_contrast_level: float = 0.2
     theme_color_variant: Variant = Variant.VIBRANT
-    captions_provider: CaptionerProvider = CaptionerProvider.BLIP
+    captions_provider: CaptionerProvider = CaptionerProvider.BLIP_INSTRUCT
     llm_provider: LLMProvider = LLMProvider.MINICPM
     embedder_provider: EmbedderProvider = EmbedderProvider.OPEN_CLIP
     enable_text_summary: bool = False

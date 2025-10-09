@@ -18,6 +18,7 @@ class LLMProvider(StrEnum):
 class CaptionerProvider(StrEnum):
     """Captioner providers enum."""
 
+    BLIP_INSTRUCT = auto()
     MINICPM = auto()
     OPENAI = auto()
     BLIP = auto()

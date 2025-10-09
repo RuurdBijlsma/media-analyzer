@@ -84,8 +84,6 @@ def analyze_image(captioner: CaptionerProtocol, image: Image) -> CaptionData:
     people_count = None
     people_mood = None
     photo_type = None
-    is_activity = None
-    activity_description = None
     if "yes" in has_people_raw.lower():
         people_count_raw = ask(
             'Question: How many people are in this photo? Answer with a number. Answer:')
@@ -99,11 +97,13 @@ def analyze_image(captioner: CaptionerProtocol, image: Image) -> CaptionData:
             'Question: What is the overall mood of the people in this photo? Are they happy, sad, serious, or neutral? Answer:')
         photo_type = ask(
             "Question: What kind of photo is this, choose one of: (selfie, group photo, crowd, portrait, other). Answer:")
-        is_activity_raw = ask("Question: Is an activity being performed in this photo? Answer:")
-        is_activity = "yes" in is_activity_raw.lower()
-        if is_activity:
-            activity_description = ask(
-                "Question: What activity is being performed in this photo? Answer:")
+
+    activity_description = None
+    is_activity_raw = ask("Question: Is an activity being performed in this photo? Answer:")
+    is_activity = "yes" in is_activity_raw.lower()
+    if is_activity:
+        activity_description = ask(
+            "Question: What activity is being performed in this photo? Answer:")
 
     # --- Populate the model ---
     analysis_data = CaptionData(
