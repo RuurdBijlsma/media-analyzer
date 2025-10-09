@@ -1,6 +1,5 @@
-import math
 from datetime import timedelta
-from typing import ClassVar, Any
+from typing import Any, ClassVar
 
 from meteostat import Hourly, Point
 
@@ -38,7 +37,7 @@ class WeatherModule(PipelineModule[ImageData]):
         assert len(meteo_data) <= max_possible_rows
         weather = meteo_data.iloc[0]
 
-        def panda_number(field: Any) -> int | None:
+        def panda_number(field: Any) -> int | None:  # noqa: ANN401
             try:
                 return int(field)
             except (ValueError, TypeError):
