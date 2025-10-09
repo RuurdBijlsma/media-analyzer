@@ -55,6 +55,7 @@ def setup_open_embedder_fixture(
         ),  # Index 1 corresponds to cluster_img
     ],
 )
+@pytest.mark.cuda
 def test_zero_clip_embedder(
     setup_zero_embedder: tuple[
         ZeroCLIPEmbedder,
@@ -85,6 +86,7 @@ def test_zero_clip_embedder(
         ),  # Index 1 corresponds to cluster_img
     ],
 )
+@pytest.mark.cuda
 def test_open_clip_embedder(
     setup_open_embedder: tuple[
         OpenCLIPEmbedder,

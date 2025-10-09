@@ -28,13 +28,13 @@ def test_media_analyzer_none_settings() -> None:
 )
 def test_media_analyzer(
     assets_folder: Path,
-    default_config: AnalyzerSettings,
+    non_cuda_config: AnalyzerSettings,
     photo_filename: str,
     expect_gps: bool,
     expect_gif: bool,
 ) -> None:
     """Test the MediaAnalyzer functionality for images with and without GPS data."""
-    analyzer = MediaAnalyzer(default_config)
+    analyzer = MediaAnalyzer(non_cuda_config)
     result = analyzer.photo(assets_folder / photo_filename)
 
     assert len(result.frame_data) == 1
@@ -60,6 +60,7 @@ def test_media_analyzer(
     "photo_filename",
     ["sunset.jpg"],
 )
+@pytest.mark.cuda
 def test_media_analyzer_visual_only(
     assets_folder: Path,
     photo_filename: str,
@@ -85,9 +86,9 @@ def test_media_analyzer_visual_only(
     assert len(frame.embedding) > embedding_at_least_this_long
 
 
-def test_video_analysis(assets_folder: Path, default_config: AnalyzerSettings) -> None:
+def test_video_analysis(assets_folder: Path, non_cuda_config: AnalyzerSettings) -> None:
     """Test the MediaAnalyzer functionality for a video."""
-    analyzer = MediaAnalyzer(default_config)
+    analyzer = MediaAnalyzer(non_cuda_config)
     result = analyzer.analyze(
         InputMedia(
             path=assets_folder / "video" / "car.webm",
