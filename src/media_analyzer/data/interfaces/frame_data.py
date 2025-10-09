@@ -22,10 +22,11 @@ class CaptionData:
     contains_landmarks: bool
     is_document: bool
     contains_people: bool
-    is_landscape: bool | None = None
-    is_cityscape: bool | None = None
+    is_landscape: bool
+    is_cityscape: bool
+    contains_animals: bool
+    is_activity: bool
     pet_type: str | None = None
-    contains_animals: bool | None = None
     animal_type: str | None = None
     food_or_drink_type: str | None = None
     vehicle_type: str | None = None
@@ -35,7 +36,6 @@ class CaptionData:
     people_count: int | None = None
     people_mood: str | None = None
     photo_type: str | None = None
-    is_activity: bool | None = None
     activity_description: str | None = None
 
 
