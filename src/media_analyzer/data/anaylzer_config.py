@@ -3,9 +3,8 @@ from dataclasses import dataclass, field
 from material_color_utilities import Variant
 
 from media_analyzer.data.enums.analyzer_module import FileModule, VisualModule
-from media_analyzer.data.enums.config_types import CaptionerProvider, LLMProvider
+from media_analyzer.data.enums.config_types import CaptionerProvider, EmbedderProvider, LLMProvider
 from media_analyzer.machine_learning.caption.captioner_protocol import CaptionerProtocol
-from media_analyzer.machine_learning.classifier.base_classifier import BaseClassifier
 from media_analyzer.machine_learning.embedding.embedder_protocol import EmbedderProtocol
 from media_analyzer.machine_learning.facial_recognition.facial_recognition_protocol import (
     FacialRecognitionProtocol,
@@ -43,8 +42,9 @@ class AnalyzerSettings:
     media_languages: tuple[str, ...] = ("nld", "eng")
     theme_contrast_level: float = 0.2
     theme_color_variant: Variant = Variant.VIBRANT
-    captions_provider: CaptionerProvider = CaptionerProvider.BLIP
+    captions_provider: CaptionerProvider = CaptionerProvider.BLIP_INSTRUCT
     llm_provider: LLMProvider = LLMProvider.MINICPM
+    embedder_provider: EmbedderProvider = EmbedderProvider.OPEN_CLIP
     enable_text_summary: bool = False
     enable_document_summary: bool = False
     document_detection_threshold: int = 65
@@ -62,7 +62,6 @@ class AnalyzerSettings:
     enabled_visual_modules: set[VisualModule] = field(
         default_factory=lambda: {
             VisualModule.CAPTION,
-            VisualModule.CLASSIFICATION,
             VisualModule.EMBEDDING,
             VisualModule.FACES,
             VisualModule.OBJECTS,
@@ -82,7 +81,6 @@ class FullAnalyzerConfig:
         llm: The language model.
         captioner: The captioning model.
         ocr: The OCR implementation.
-        classifier: The classifier.
         embedder: The embedder implementation.
         settings: The analyzer settings.
     """
@@ -90,7 +88,6 @@ class FullAnalyzerConfig:
     llm: BaseVisualLLM
     captioner: CaptionerProtocol
     ocr: OCRProtocol
-    classifier: BaseClassifier
     embedder: EmbedderProtocol
     object_detector: ObjectDetectionProtocol
     facial_recognition: FacialRecognitionProtocol

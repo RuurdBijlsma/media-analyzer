@@ -5,8 +5,7 @@ from media_analyzer.data.interfaces.api_io import InputMedia, MediaAnalyzerOutpu
 from media_analyzer.data.interfaces.frame_data import FrameDataOutput
 from media_analyzer.data.interfaces.image_data import ImageDataOutput
 from media_analyzer.machine_learning.caption.get_captioner import get_captioner_by_provider
-from media_analyzer.machine_learning.classifier.clip_classifier import CLIPClassifier
-from media_analyzer.machine_learning.embedding.clip_embedder import CLIPEmbedder
+from media_analyzer.machine_learning.embedding.get_embedder import get_embedder_by_provider
 from media_analyzer.machine_learning.facial_recognition.insight_facial_recognition import (
     InsightFacialRecognition,
 )
@@ -27,7 +26,7 @@ class MediaAnalyzer:
         """Initialize the media analyzer with the given configuration."""
         if config is None:
             config = AnalyzerSettings()
-        embedder = CLIPEmbedder()
+        embedder = get_embedder_by_provider(config.embedder_provider)
         self.config = FullAnalyzerConfig(
             llm=get_llm_by_provider(config.llm_provider),
             captioner=get_captioner_by_provider(config.captions_provider),
@@ -35,7 +34,6 @@ class MediaAnalyzer:
             object_detector=ResnetObjectDetection(),
             facial_recognition=InsightFacialRecognition(),
             embedder=embedder,
-            classifier=CLIPClassifier(embedder),
             settings=config,
         )
 
@@ -57,9 +55,8 @@ class MediaAnalyzer:
                 embedding=frame.embedding,
                 faces=frame.faces,
                 summary=frame.summary,
-                caption=frame.caption,
+                caption_data=frame.caption_data,
                 objects=frame.objects,
-                classification=frame.classification,
                 measured_quality=frame.measured_quality,
                 color=frame.color,
             )

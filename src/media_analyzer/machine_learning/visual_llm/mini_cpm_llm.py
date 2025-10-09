@@ -25,7 +25,7 @@ def get_model_and_tokenizer() -> tuple[PreTrainedModel, PreTrainedTokenizerFast]
             model.to(torch.device("cuda"))
         elif torch.backends.mps.is_available():  # pragma: no cover
             model.to(torch.device("mps"))
-    tokenizer = AutoTokenizer.from_pretrained(
+    tokenizer = AutoTokenizer.from_pretrained(  # type: ignore[no-untyped-call]
         "openbmb/MiniCPM-V-2_6-int4",
         trust_remote_code=True,
     )
@@ -52,7 +52,7 @@ class MiniCPMLLM(BaseVisualLLM):
             {"role": msg.role.value.lower(), "content": [*msg.images, msg.message]}
             for msg in messages
         ]
-        result = model.chat(
+        result = model.chat(  # type: ignore[operator]
             image=None,
             msgs=formatted_msgs,
             tokenizer=tokenizer,

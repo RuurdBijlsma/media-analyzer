@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 TData = TypeVar("TData", ImageData, FrameData)
 
 
-class PipelineModule(Generic[TData], ABC):
+class PipelineModule(ABC, Generic[TData]):
     """A generic pipeline module that can process either File-based or Visual data."""
 
     run_times: list[float]

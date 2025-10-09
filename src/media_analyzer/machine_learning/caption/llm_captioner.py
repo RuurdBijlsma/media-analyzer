@@ -24,14 +24,15 @@ class LLMCaptioner(CaptionerProtocol):
         """Initialize the LLM captioner."""
         self.llm_provider = get_llm_by_provider(provider)
 
-    def caption(self, image: Image) -> str:
+    def caption(self, image: Image, instruction: str | None = None) -> str:
         """Generate a caption for the given image.
 
         Args:
             image: The image to caption.
+            instruction: Optional instruction to prompt the caption model.
         """
         caption = self.llm_provider.image_question(
             image=image,
-            question=self.prompt,
+            question=self.prompt if instruction is None else instruction,
         )
         return caption.replace('"', "").replace("'", "")

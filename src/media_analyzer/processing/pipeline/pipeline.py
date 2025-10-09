@@ -17,9 +17,6 @@ from media_analyzer.processing.pipeline.file_based.time_module import TimeModule
 from media_analyzer.processing.pipeline.file_based.weather_module import WeatherModule
 from media_analyzer.processing.pipeline.pipeline_module import PipelineModule
 from media_analyzer.processing.pipeline.visual_based.caption_module import CaptionModule
-from media_analyzer.processing.pipeline.visual_based.classification_module import (
-    ClassificationModule,
-)
 from media_analyzer.processing.pipeline.visual_based.color_module import ColorModule
 from media_analyzer.processing.pipeline.visual_based.embedding_module import EmbeddingModule
 from media_analyzer.processing.pipeline.visual_based.faces_module import FacesModule
@@ -39,7 +36,6 @@ pipeline_classes: list[type[PipelineModule[Any]]] = [
     TimeModule,
     WeatherModule,
     CaptionModule,
-    ClassificationModule,
     EmbeddingModule,
     FacesModule,
     ObjectsModule,

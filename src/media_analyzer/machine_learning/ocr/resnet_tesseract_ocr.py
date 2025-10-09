@@ -24,7 +24,7 @@ def get_detector_model_and_processor() -> tuple[
     model = AutoModelForImageClassification.from_pretrained(
         "miguelcarv/resnet-152-text-detector",
     )
-    processor = AutoImageProcessor.from_pretrained(
+    processor = AutoImageProcessor.from_pretrained(  # type: ignore[no-untyped-call]
         "microsoft/resnet-50",
         do_resize=False,
     )

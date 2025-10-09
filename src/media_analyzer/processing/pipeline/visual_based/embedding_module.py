@@ -10,4 +10,4 @@ class EmbeddingModule(PipelineModule[FrameData]):
         """Embed an image using CLIP."""
         embedding = config.embedder.embed_image(data.image).tolist()
         assert isinstance(embedding, list)
-        data.embedding = embedding  # type: ignore[assignment]
+        data.embedding = embedding

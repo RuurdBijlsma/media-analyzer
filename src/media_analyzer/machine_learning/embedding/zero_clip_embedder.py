@@ -23,7 +23,7 @@ def get_model_and_processor() -> tuple[PreTrainedModel, CLIPProcessor]:
     return model, processor
 
 
-class CLIPEmbedder(EmbedderProtocol):
+class ZeroCLIPEmbedder(EmbedderProtocol):
     """Embedder implementation using the CLIP model."""
 
     def embed_text(self, text: str) -> NDArray[np.float32]:
@@ -50,7 +50,7 @@ class CLIPEmbedder(EmbedderProtocol):
         model, processor = get_model_and_processor()
         inputs_text = processor(text=texts, return_tensors="pt", padding=True)
         with torch.no_grad():
-            text_embedding = model.get_text_features(**inputs_text)
+            text_embedding = model.get_text_features(**inputs_text)  # type: ignore[operator]
         return F.normalize(text_embedding, p=2, dim=-1).numpy()
 
     def embed_image(self, image: Image) -> NDArray[np.float32]:
@@ -77,5 +77,5 @@ class CLIPEmbedder(EmbedderProtocol):
         model, processor = get_model_and_processor()
         inputs_image = processor(images=images, return_tensors="pt", padding=True)
         with torch.no_grad():
-            text_embedding = model.get_image_features(**inputs_image)
+            text_embedding = model.get_image_features(**inputs_image)  # type: ignore[operator]
         return F.normalize(text_embedding, p=2, dim=-1).numpy()
