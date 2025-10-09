@@ -17,10 +17,17 @@ def default_config() -> AnalyzerSettings:
     """Return a default instance of AnalyzerSettings."""
     return AnalyzerSettings()
 
+
 @pytest.fixture
-def non_cuda_config()->AnalyzerSettings:
+def non_cuda_config() -> AnalyzerSettings:
     """Return a non-cuda instance of AnalyzerSettings."""
-    return AnalyzerSettings(enabled_visual_modules={VisualModule.FACES, VisualModule.OBJECTS,
-                                                      VisualModule.OCR,
-                                                      VisualModule.QUALITY_DETECTION,
-                                                      VisualModule.SUMMARY, VisualModule.COLOR})
+    return AnalyzerSettings(
+        enabled_visual_modules={
+            VisualModule.FACES,
+            VisualModule.OBJECTS,
+            VisualModule.OCR,
+            VisualModule.QUALITY_DETECTION,
+            VisualModule.SUMMARY,
+            VisualModule.COLOR,
+        }
+    )
