@@ -21,8 +21,8 @@ def analyze_image(captioner: CaptionerProtocol, image: Image) -> CaptionData:
     main_subject = ask("Question: What is the single main subject of this photo? Answer:")
     in_or_outdoors_raw = ask("Question: Is this photo taken indoors or outdoors? Answer:")
 
-    is_landscape = None
-    is_cityscape = None
+    is_landscape = False
+    is_cityscape = False
     if "outdoor" in in_or_outdoors_raw.lower():
         is_landscape_raw = ask(
             "Question: Is this a landscape featuring natural scenery such as "
@@ -37,17 +37,16 @@ def analyze_image(captioner: CaptionerProtocol, image: Image) -> CaptionData:
 
     has_pet_raw = ask("Question: Does this photo contain one or more pets? yes or no. Answer:")
     pet_type = None
-    has_animals = None
-    animal_type = None
     if "yes" in has_pet_raw.lower():
         pet_type = ask("Question: What kind of pet is shown in this photo? Answer:")
-    else:
-        has_animals_raw = ask(
-            "Question: Does this photo contain one or more live animals? yes or no. Answer:"
-        )
-        has_animals = "yes" in has_animals_raw.lower()
-        if has_animals:
-            animal_type = ask("Question: What animal is shown in this photo? Answer:")
+
+    has_animals_raw = ask(
+        "Question: Does this photo contain one or more live animals? yes or no. Answer:"
+    )
+    has_animals = "yes" in has_animals_raw.lower()
+    animal_type = None
+    if has_animals:
+        animal_type = ask("Question: What animal is shown in this photo? Answer:")
 
     is_food_raw = ask("Question: Is this a photo of food or drink? yes or no. Answer:")
     food_type = None
