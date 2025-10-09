@@ -121,7 +121,7 @@ The AnalyzerSettings class allows you to customize various aspects of the analys
     document_detection_threshold: Confidence threshold for document detection.
     face_detection_threshold: Confidence threshold for face detection.
     enabled_file_modules: List of file modules to enable (e.g., exif data, gps, weather detection).
-    enabled_visual_modules: List of visual modules to enable (e.g., 'classification', 'captioning', 'ocr', 'facial_recognition').
+    enabled_visual_modules: List of visual modules to enable (e.g., 'captioning', 'ocr', 'facial_recognition').
 
 Full docs can be found at https://ruurdbijlsma.github.io/media-analyzer.
 
